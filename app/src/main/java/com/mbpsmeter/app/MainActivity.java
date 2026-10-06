@@ -1,114 +1,137 @@
 package com.mbpsmeter.app;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.AsyncTask;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
+import android.telephony.*;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import com.google.android.gms.location.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends Activity {
+    private FusedLocationProviderClient fusedLocation;
+    private Location currentLocation;
+    private int currentDbm = -110;
+    private List<Spot> spots = new ArrayList<>();
 
-    private TextView status;
-    private Button startButton;
+    private TextView tvCurrent, tvBest, tvArrow;
+    private Button btnFind;
+
+    static class Spot {
+        double lat, lng, mbps;
+        int dbm;
+        Spot(double lat, double lng, int dbm, double mbps) {
+            this.lat = lat; this.lng = lng; this.dbm = dbm; this.mbps = mbps;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setGravity(Gravity.CENTER);
-        layout.setPadding(40, 40, 40, 40);
-        layout.setBackgroundColor(Color.rgb(15, 23, 42));
+        tvCurrent = findViewById(R.id.tvCurrent);
+        tvBest = findViewById(R.id.tvBest);
+        tvArrow = findViewById(R.id.tvArrow);
+        btnFind = findViewById(R.id.btnFind);
 
-        TextView title = new TextView(this);
-        title.setText("MbpsMeter");
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(32);
-        title.setGravity(Gravity.CENTER);
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this);
 
-        status = new TextView(this);
-        status.setText("Ready to test your internet speed");
-        status.setTextColor(Color.LTGRAY);
-        status.setTextSize(18);
-        status.setGravity(Gravity.CENTER);
-        status.setPadding(0, 40, 0, 40);
+        startSignalListener();
+        startLocationUpdates();
 
-        startButton = new Button(this);
-        startButton.setText("Start Speed Test");
-        startButton.setTextSize(18);
-        startButton.setBackgroundColor(Color.rgb(33, 150, 243));
-        startButton.setTextColor(Color.WHITE);
-        startButton.setPadding(40, 30, 40, 30);
-
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startButton.setEnabled(false);
-                status.setText("Testing... Please wait");
-                new SpeedTestTask().execute();
-            }
-        });
-
-        layout.addView(title);
-        layout.addView(status);
-        layout.addView(startButton);
-
-        setContentView(layout);
+        btnFind.setOnClickListener(v -> doSpeedTest());
     }
 
-    private class SpeedTestTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                // 10 MB test file from Cloudflare
-                URL url = new URL("https://speed.cloudflare.com/__down?bytes=10000000");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(15000);
-
-                long startTime = System.currentTimeMillis();
-
-                InputStream input = connection.getInputStream();
-                byte[] buffer = new byte[8192];
-                long totalBytes = 0;
-                int bytesRead;
-
-                while ((bytesRead = input.read(buffer)) != -1) {
-                    totalBytes += bytesRead;
+    private void startSignalListener() {
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+            tm.listen(new PhoneStateListener() {
+                @Override
+                public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+                    try {
+                        List<CellInfo> infos = tm.getAllCellInfo();
+                        if (infos != null && !infos.isEmpty() && infos.get(0) instanceof CellInfoLte) {
+                            currentDbm = ((CellInfoLte) infos.get(0)).getCellSignalStrength().getDbm();
+                        }
+                        updateUI();
+                    } catch (Exception ignored) {}
                 }
+            }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }
+    }
 
-                input.close();
-                connection.disconnect();
+    private void startLocationUpdates() {
+        LocationRequest req = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000).build();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocation.requestLocationUpdates(req, new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult result) {
+                    currentLocation = result.getLastLocation();
+                    updateUI();
+                }
+            }, getMainLooper());
+        }
+    }
 
-                long endTime = System.currentTimeMillis();
-                double timeTakenSeconds = (endTime - startTime) / 1000.0;
+    private void updateUI() {
+        if (currentLocation != null) {
+            tvCurrent.setText("You: " + currentDbm + " dBm | Lat: " + String.format("%.5f", currentLocation.getLatitude()));
+        }
+    }
 
-                // Convert to Mbps
-                double speedMbps = (totalBytes * 8) / (timeTakenSeconds * 1000 * 1000);
+    private void doSpeedTest() {
+        tvBest.setText("Testing... 5MB downloading...");
+        new Thread(() -> {
+            long start = System.currentTimeMillis();
+            try {
+                byte[] data = new java.net.URL("https://speed.cloudflare.com/__down?bytes=5000000").openStream().readAllBytes();
+                double timeSec = (System.currentTimeMillis() - start) / 1000.0;
+                double mbps = (data.length * 8 / 1_000_000.0) / timeSec;
 
-                return String.format("%.2f Mbps", speedMbps);
-
+                runOnUiThread(() -> {
+                    if (currentLocation != null) {
+                        spots.add(new Spot(currentLocation.getLatitude(), currentLocation.getLongitude(), currentDbm, mbps));
+                        tvBest.setText("Saved: " + String.format("%.2f Mbps @ %d dBm", mbps, currentDbm));
+                        findBestSpot();
+                    }
+                });
             } catch (Exception e) {
-                return "Error: " + e.getMessage();
+                runOnUiThread(() -> tvBest.setText("Test failed: " + e.getMessage()));
             }
-        }
+        }).start();
+    }
 
-        @Override
-        protected void onPostExecute(String result) {
-            status.setText("Download Speed: " + result);
-            startButton.setEnabled(true);
-            startButton.setText("Test Again");
+    private void findBestSpot() {
+        if (currentLocation == null || spots.size() < 2) {
+            tvArrow.setText("Thora chalo aur 2-3 jagah test karo");
+            return;
         }
+        Spot best = spots.get(0);
+        for (Spot s : spots) if (s.mbps > best.mbps) best = s;
+
+        Location bestLoc = new Location("");
+        bestLoc.setLatitude(best.lat);
+        bestLoc.setLongitude(best.lng);
+
+        float distance = currentLocation.distanceTo(bestLoc);
+        float bearing = currentLocation.bearingTo(bestLoc);
+
+        String dir;
+        if (bearing >= -45 && bearing <= 45) dir = "↑ North";
+        else if (bearing > 45 && bearing <= 135) dir = "→ East";
+        else if (bearing > 135 || bearing < -135) dir = "↓ South";
+        else dir = "← West";
+
+        tvArrow.setText(dir + "\n" + (int)distance + "m\nExpected: " + String.format("%.1f Mbps", best.mbps));
+        tvBest.setText(tvBest.getText() + "\nBest is " + (int)distance + "m away");
     }
 }
