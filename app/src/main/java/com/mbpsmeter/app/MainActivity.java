@@ -108,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
         if(dbm > bestSignal) {
             bestSignal = dbm;
             bestPoint = p;
+            int finalBest = bestSignal;
             runOnUiThread(() -> {
-                best.setText("Best: " + bestSignal + " dBm");
+                best.setText("Best: " + finalBest + " dBm");
                 arrow.setText("BEST HERE");
             });
         }
@@ -120,9 +121,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSignalStrengthsChanged(SignalStrength s) {
                 int dbm = -100;
-                try { if(s.getCellSignalStrengths().size()>0) dbm = s.getCellSignalStrengths().get(0).getDbm(); } catch (Exception e) {}
+                try {
+                    if(s.getCellSignalStrengths().size()>0)
+                        dbm = s.getCellSignalStrengths().get(0).getDbm();
+                } catch (Exception e) {}
                 currentDbm = dbm;
-                runOnUiThread(() -> current.setText("Current: " + dbm + " dBm"));
+                int finalDbm = dbm; // FIX: lambda ke liye final banana zaroori hai
+                runOnUiThread(() -> current.setText("Current: " + finalDbm + " dBm"));
             }
         }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
