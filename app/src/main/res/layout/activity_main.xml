@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#0F172A">
-
-    <!-- ================= HEADER ================= -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,11 +40,7 @@
             android:textStyle="bold"
             android:textColor="#38BDF8"
             android:layout_marginTop="3dp" />
-
     </LinearLayout>
-
-
-    <!-- ================= TABS ================= -->
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
@@ -64,28 +56,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LIVE" />
-
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FIND BEST" />
-
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="MAP" />
-
     </com.google.android.material.tabs.TabLayout>
 
-
-    <!-- ================================================= -->
-    <!-- LIVE TAB                                         -->
-    <!-- ================================================= -->
-
+    <!-- LIVE TAB -->
     <LinearLayout
         android:id="@+id/tabLive"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
         android:padding="25dp">
@@ -116,18 +102,14 @@
             android:textSize="15sp"
             android:textColor="#94A3B8"
             android:layout_marginTop="8dp" />
-
     </LinearLayout>
 
-
-    <!-- ================================================= -->
-    <!-- FIND BEST TAB                                    -->
-    <!-- ================================================= -->
-
+    <!-- FIND BEST TAB -->
     <LinearLayout
         android:id="@+id/tabFind"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="12dp"
         android:visibility="gone">
@@ -137,14 +119,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SEARCHING FOR BEST SIGNAL..."
-            android:textSize="19sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#22C55E"
             android:gravity="center"
             android:padding="8dp" />
-
-
-        <!-- Small Map Preview -->
 
         <androidx.cardview.widget.CardView
             android:id="@+id/mapCard"
@@ -174,40 +153,29 @@
                     android:padding="7dp"
                     android:layout_gravity="top|end"
                     android:layout_margin="8dp" />
-
             </FrameLayout>
-
         </androidx.cardview.widget.CardView>
-
-
-        <!-- Distance -->
 
         <TextView
             android:id="@+id/distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Distance: searching..."
-            android:textSize="29sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:gravity="center"
             android:layout_marginTop="14dp" />
-
-
-        <!-- Steps -->
 
         <TextView
             android:id="@+id/steps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Steps: --"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="#38BDF8"
             android:gravity="center"
             android:layout_marginTop="4dp" />
-
-
-        <!-- Direction -->
 
         <TextView
             android:id="@+id/direction"
@@ -219,27 +187,14 @@
             android:textColor="#22C55E"
             android:gravity="center"
             android:layout_marginTop="2dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Walk around to discover stronger signal"
-            android:textSize="13sp"
-            android:textColor="#94A3B8"
-            android:gravity="center"
-            android:layout_marginTop="2dp" />
-
     </LinearLayout>
 
-
-    <!-- ================================================= -->
-    <!-- MAP TAB                                          -->
-    <!-- ================================================= -->
-
+    <!-- MAP TAB -->
     <LinearLayout
         android:id="@+id/tabMap"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone"
@@ -247,4 +202,12 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout
+            android:layout_height="wrap_content"
+            android:text="SIGNAL MAP"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:padding="8dp" />
+    </LinearLayout>
+</LinearLayout>
