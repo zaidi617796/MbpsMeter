@@ -1,213 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical"
+
     android:background="#0F172A">
 
+    <!-- HEADER -->
+
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="14dp"
-        android:background="#111B2F">
+
+        android:padding="20dp"
+
+        android:gravity="center">
 
         <TextView
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:text="MbpsMeter"
-            android:textSize="27sp"
+
+            android:textSize="28sp"
+
             android:textStyle="bold"
+
             android:textColor="#FFFFFF" />
 
         <TextView
-            android:id="@+id/current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Current: -- dBm"
-            android:textSize="18sp"
-            android:textColor="#94A3B8"
-            android:layout_marginTop="4dp" />
 
-        <TextView
-            android:id="@+id/network"
+            android:id="@+id/current"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SIGNAL: WAITING"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="#38BDF8"
-            android:layout_marginTop="3dp" />
+
+            android:text="Current: - dBm"
+
+            android:textSize="16sp"
+
+            android:textColor="#94A3B8"
+
+            android:layout_marginTop="10dp" />
+
     </LinearLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
+
+    <!-- MAP -->
+
+    <org.osmdroid.views.MapView
+
+        android:id="@+id/map"
+
+        android:layout_width="match_parent"
+
+        android:layout_height="0dp"
+
+        android:layout_weight="1" />
+
+
+    <!-- BOTTOM PANEL -->
+
+    <ScrollView
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1E293B"
-        app:tabTextColor="#94A3B8"
-        app:tabSelectedTextColor="#38BDF8"
-        app:tabIndicatorColor="#38BDF8"
-        app:tabIndicatorHeight="3dp">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LIVE" />
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FIND BEST" />
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MAP" />
-    </com.google.android.material.tabs.TabLayout>
+        android:fillViewport="true">
 
-    <!-- LIVE TAB -->
-    <LinearLayout
-        android:id="@+id/tabLive"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="25dp">
+        <LinearLayout
 
-        <TextView
-            android:id="@+id/arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="✓"
-            android:textSize="58sp"
-            android:textStyle="bold"
-            android:textColor="#22C55E" />
-
-        <TextView
-            android:id="@+id/best"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Best: -- dBm"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#22C55E"
-            android:layout_marginTop="15dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Live cellular signal monitoring"
-            android:textSize="15sp"
-            android:textColor="#94A3B8"
-            android:layout_marginTop="8dp" />
-    </LinearLayout>
-
-    <!-- FIND BEST TAB -->
-    <LinearLayout
-        android:id="@+id/tabFind"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="12dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SEARCHING FOR BEST SIGNAL..."
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#22C55E"
-            android:gravity="center"
-            android:padding="8dp" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/mapCard"
-            android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:layout_marginTop="6dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            android:orientation="vertical"
 
-            <FrameLayout
+            android:padding="20dp"
+
+            android:gravity="center">
+
+
+            <!-- STATUS -->
+
+            <TextView
+
+                android:id="@+id/arrow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="SEARCHING..."
+
+                android:textSize="28sp"
+
+                android:textStyle="bold"
+
+                android:textColor="#22C55E" />
+
+
+            <!-- BEST SIGNAL -->
+
+            <TextView
+
+                android:id="@+id/best"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Best: - dBm"
+
+                android:textSize="16sp"
+
+                android:textColor="#22C55E"
+
+                android:layout_marginTop="5dp"
+
+                android:layout_marginBottom="15dp" />
+
+
+            <!-- FIND BUTTON -->
+
+            <Button
+
+                android:id="@+id/find"
+
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="55dp"
 
-                <org.osmdroid.views.MapView
-                    android:id="@+id/map"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                android:text="FIND BETTER INTERNET"
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TAP MAP TO EXPAND"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:background="#CC111827"
-                    android:padding="7dp"
-                    android:layout_gravity="top|end"
-                    android:layout_margin="8dp" />
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
+                android:backgroundTint="#2563EB"
 
-        <TextView
-            android:id="@+id/distance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Distance: searching..."
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:layout_marginTop="14dp" />
+                android:textColor="#FFFFFF" />
 
-        <TextView
-            android:id="@+id/steps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Steps: --"
-            android:textSize="16sp"
-            android:textColor="#38BDF8"
-            android:gravity="center"
-            android:layout_marginTop="4dp" />
 
-        <TextView
-            android:id="@+id/direction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="↑"
-            android:textSize="52sp"
-            android:textStyle="bold"
-            android:textColor="#22C55E"
-            android:gravity="center"
-            android:layout_marginTop="2dp" />
-    </LinearLayout>
+            <!-- NAVIGATE -->
 
-    <!-- MAP TAB -->
-    <LinearLayout
-        android:id="@+id/tabMap"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        android:padding="12dp">
+            <Button
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SIGNAL MAP"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:padding="8dp" />
-    </LinearLayout>
+                android:id="@+id/navigate"
+
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+
+                android:layout_marginTop="10dp"
+
+                android:text="Navigate to Best Spot"
+
+                android:backgroundTint="#1E293B"
+
+                android:textColor="#38BDF8" />
+
+
+            <!-- HISTORY TITLE -->
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="Signal History"
+
+                android:textSize="22sp"
+
+                android:textStyle="bold"
+
+                android:textColor="#FFFFFF"
+
+                android:layout_marginTop="20dp"
+
+                android:layout_marginBottom="8dp" />
+
+
+            <!-- HISTORY -->
+
+            <TextView
+
+                android:id="@+id/history"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="No saved signal history."
+
+                android:textSize="14sp"
+
+                android:textColor="#CBD5E1"
+
+                android:background="#1E293B"
+
+                android:padding="15dp" />
+
+
+            <!-- CLEAR HISTORY -->
+
+            <Button
+
+                android:id="@+id/clearHistory"
+
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+
+                android:layout_marginTop="10dp"
+
+                android:text="CLEAR SIGNAL HISTORY"
+
+                android:backgroundTint="#7F1D1D"
+
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
 </LinearLayout>
