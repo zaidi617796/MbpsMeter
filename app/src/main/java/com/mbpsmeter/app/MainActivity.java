@@ -1,891 +1,167 @@
 package com.mbpsmeter.app;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.widget.Button;
-import android.widget.TextView;
-
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.android.gms.location.*;
+import com.google.android.material.tabs.TabLayout;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polygon;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.osmdroid.views.overlay.Polyline;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import android.widget.TextView;
+import androidx.cardview.widget.CardView;
 
 public class MainActivity extends AppCompatActivity {
-
-    private TextView current;
-    private TextView best;
-    private TextView arrow;
-    private TextView history;
-
-    private Button find;
-    private Button navigate;
-    private Button clearHistory;
-
+    private static final int REQUEST_PERMISSIONS = 101;
+    private TextView current, best, status, distance, steps, direction, network, arrow;
+    private View livePanel, findPanel, mapPanel;
+    private CardView mapCard;
     private MapView map;
-
-    private int bestSignal = -120;
-    private GeoPoint bestPoint = null;
-
-    private GeoPoint currentPoint = null;
-    private int currentDbm = -100;
-
+    private TabLayout tabs;
     private FusedLocationProviderClient fusedClient;
+    private LocationCallback locationCallback;
+    private GeoPoint currentPoint, bestPoint;
     private TelephonyManager tm;
-
-    private SharedPreferences preferences;
-
-    private static final String PREFS_NAME = "MbpsMeterPrefs";
-    private static final String HISTORY_KEY = "signal_history";
-    private static final String BEST_DBM_KEY = "best_dbm";
-    private static final String BEST_LAT_KEY = "best_lat";
-    private static final String BEST_LON_KEY = "best_lon";
-
-    private long lastSavedTime = 0;
+    private int currentDbm = -120, bestSignal = -120;
+    private boolean findingBest = false;
+    private Marker currentMarker, bestMarker;
+    private final List<Polygon> signalZones = new ArrayList<>();
+    private Polyline directionLine;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
+        Configuration.getInstance().load(this, getSharedPreferences("osmdroid", MODE_PRIVATE));
         Configuration.getInstance().setUserAgentValue(getPackageName());
-
         setContentView(R.layout.activity_main);
-
         current = findViewById(R.id.current);
         best = findViewById(R.id.best);
+        status = findViewById(R.id.status);
+        distance = findViewById(R.id.distance);
+        steps = findViewById(R.id.steps);
+        direction = findViewById(R.id.direction);
+        network = findViewById(R.id.network);
         arrow = findViewById(R.id.arrow);
-        history = findViewById(R.id.history);
-
-        find = findViewById(R.id.find);
-        navigate = findViewById(R.id.navigate);
-        clearHistory = findViewById(R.id.clearHistory);
-
+        livePanel = findViewById(R.id.tabLive);
+        findPanel = findViewById(R.id.tabFind);
+        mapPanel = findViewById(R.id.tabMap);
+        mapCard = findViewById(R.id.mapCard);
         map = findViewById(R.id.map);
+        tabs = findViewById(R.id.tabs);
 
-        // OSM MAP
         map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setUseDataConnection(true);
+        map.setTilesScaledToDpi(true);
         map.setMultiTouchControls(true);
+        map.getController().setZoom(17.0);
+        map.getController().setCenter(new GeoPoint(24.8607, 67.0011));
+        directionLine = new Polyline(); directionLine.setWidth(7f); directionLine.setColor(0xFF22C55E);
+        map.getOverlays().add(directionLine);
+        mapCard.setOnClickListener(v -> expandMap());
 
-        // Zoom close enough to see approximately 100m area
-        map.getController().setZoom(19.5);
-
-        fusedClient =
-                LocationServices.getFusedLocationProviderClient(this);
-
-        tm =
-                (TelephonyManager)
-                        getSystemService(TELEPHONY_SERVICE);
-
-        preferences =
-                getSharedPreferences(
-                        PREFS_NAME,
-                        MODE_PRIVATE
-                );
-
-        // Restore previous best signal
-        loadSavedBest();
-
-        // Restore previous signal history
-        loadHistory();
-
-        checkPermission();
-
-        // FIND BETTER SIGNAL
-        find.setOnClickListener(v -> {
-
-            bestSignal = -120;
-            bestPoint = null;
-
-            best.setText("Best: - dBm");
-            arrow.setText("SEARCHING...");
-
-            redrawNearbyHistory();
-
+        showTab(0);
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) { showTab(tab.getPosition()); }
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) { if (tab.getPosition() == 2) expandMap(); }
         });
 
-        // NAVIGATE TO BEST LOCATION
-        navigate.setOnClickListener(v -> {
-
-            if (bestPoint == null) {
-                arrow.setText("No best location yet");
-                return;
-            }
-
-            String uri =
-                    "google.navigation:q="
-                            + bestPoint.getLatitude()
-                            + ","
-                            + bestPoint.getLongitude();
-
-            Intent intent =
-                    new Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(uri)
-                    );
-
-            intent.setPackage(
-                    "com.google.android.apps.maps"
-            );
-
-            try {
-
-                startActivity(intent);
-
-            } catch (Exception e) {
-
-                String webUrl =
-                        "https://www.google.com/maps/dir/?api=1"
-                                + "&destination="
-                                + bestPoint.getLatitude()
-                                + ","
-                                + bestPoint.getLongitude();
-
-                startActivity(
-                        new Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(webUrl)
-                        )
-                );
-            }
-        });
-
-        // CLEAR ALL HISTORY
-        clearHistory.setOnClickListener(v -> {
-
-            preferences.edit()
-                    .remove(HISTORY_KEY)
-                    .remove(BEST_DBM_KEY)
-                    .remove(BEST_LAT_KEY)
-                    .remove(BEST_LON_KEY)
-                    .apply();
-
-            bestSignal = -120;
-            bestPoint = null;
-
-            history.setText(
-                    "No saved signal history."
-            );
-
-            best.setText(
-                    "Best: - dBm"
-            );
-
-            arrow.setText(
-                    "SEARCHING..."
-            );
-
-            map.getOverlays().clear();
-
-            map.invalidate();
-        });
+        fusedClient = LocationServices.getFusedLocationProviderClient(this);
+        tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        checkPermissions();
+        handler.postDelayed(new Runnable() { @Override public void run() { updateNavigation(); handler.postDelayed(this, 1000); } }, 1000);
     }
 
-    // =========================================================
-    // PERMISSIONS
-    // =========================================================
-
-    private void checkPermission() {
-
-        boolean locationGranted =
-                ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED;
-
-        boolean phoneGranted =
-                ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_PHONE_STATE
-                ) == PackageManager.PERMISSION_GRANTED;
-
-        if (!locationGranted || !phoneGranted) {
-
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.READ_PHONE_STATE
-                    },
-                    101
-            );
-
-        } else {
-
-            startAll();
-        }
+    private void showTab(int position) {
+        livePanel.setVisibility(View.GONE); findPanel.setVisibility(View.GONE); mapPanel.setVisibility(View.GONE);
+        if (position == 0) { livePanel.setVisibility(View.VISIBLE); findingBest = false; }
+        else if (position == 1) { findPanel.setVisibility(View.VISIBLE); findingBest = true; if(status!=null) status.setText("SEARCHING FOR BEST SIGNAL..."); }
+        else if (position == 2) { mapPanel.setVisibility(View.VISIBLE); findingBest = true; expandMap(); }
     }
-
-    private void startAll() {
-
-        startLocation();
-        startSignal();
+    private void expandMap() {
+        ViewGroup.LayoutParams params = mapCard.getLayoutParams(); params.height = ViewGroup.LayoutParams.MATCH_PARENT; mapCard.setLayoutParams(params);
+        mapCard.setOnClickListener(v -> shrinkMap()); map.getController().setZoom(18.0); map.invalidate();
     }
-
-    // =========================================================
-    // LOCATION
-    // =========================================================
-
+    private void shrinkMap() {
+        ViewGroup.LayoutParams params = mapCard.getLayoutParams(); params.height = Math.round(230 * getResources().getDisplayMetrics().density);
+        mapCard.setLayoutParams(params); mapCard.setOnClickListener(v -> expandMap()); map.invalidate();
+    }
+    private void checkPermissions() {
+        List<String> perms = new ArrayList<>();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) perms.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED) perms.add(Manifest.permission.READ_PHONE_STATE);
+        if (!perms.isEmpty()) ActivityCompat.requestPermissions(this, perms.toArray(new String[0]), REQUEST_PERMISSIONS);
+        else startAll();
+    }
+    private void startAll() { startLocation(); startSignal(); }
     private void startLocation() {
-
-        if (
-                ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return;
-        }
-
-        LocationRequest request =
-                LocationRequest.create();
-
-        request.setInterval(2000);
-        request.setFastestInterval(1000);
-        request.setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY
-        );
-
-        fusedClient.requestLocationUpdates(
-                request,
-                new LocationCallback() {
-
-                    @Override
-                    public void onLocationResult(
-                            LocationResult result
-                    ) {
-
-                        if (
-                                result == null ||
-                                result.getLastLocation() == null
-                        ) {
-                            return;
-                        }
-
-                        Location location =
-                                result.getLastLocation();
-
-                        currentPoint =
-                                new GeoPoint(
-                                        location.getLatitude(),
-                                        location.getLongitude()
-                                );
-
-                        // Center map on current location
-                        map.getController()
-                                .animateTo(currentPoint);
-
-                        // Show saved signals within 100m
-                        redrawNearbyHistory();
-
-                        // Save current signal reading
-                        long now =
-                                System.currentTimeMillis();
-
-                        if (
-                                now - lastSavedTime
-                                        >= 10000
-                        ) {
-
-                            saveSignal(
-                                    currentPoint,
-                                    currentDbm
-                            );
-
-                            lastSavedTime = now;
-                        }
-
-                        // Add/update best signal
-                        updateBestSignal(
-                                currentPoint,
-                                currentDbm
-                        );
-                    }
-                },
-                getMainLooper()
-        );
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) return;
+        LocationRequest request = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000).setMinUpdateIntervalMillis(1000).setMinUpdateDistanceMeters(1).build();
+        locationCallback = new LocationCallback() {
+            @Override public void onLocationResult(@NonNull LocationResult result) {
+                if (result.getLastLocation() == null) return;
+                android.location.Location loc = result.getLastLocation();
+                currentPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
+                if (currentMarker == null) { currentMarker = new Marker(map); currentMarker.setTitle("YOUR LOCATION"); map.getOverlays().add(currentMarker); }
+                currentMarker.setPosition(currentPoint);
+                if (findingBest) addSignalZone(currentPoint, currentDbm);
+                updateNavigation(); map.invalidate();
+            }
+        };
+        fusedClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
     }
-
-    // =========================================================
-    // SIGNAL
-    // =========================================================
-
+    private void addSignalZone(GeoPoint point, int dbm) {
+        if (point == null) return;
+        if (signalZones.size() > 80) { Polygon old = signalZones.remove(0); map.getOverlays().remove(old); }
+        int color = dbm >= -85? 0x7034D399 : dbm >= -100? 0x70FACC15 : 0x70EF4444;
+        Polygon circle = new Polygon(map); circle.setPoints(Polygon.pointsAsCircle(point, 7)); circle.setFillColor(color); circle.setStrokeWidth(1); circle.setStrokeColor(color);
+        map.getOverlays().add(circle); signalZones.add(circle);
+        if (dbm > bestSignal) { bestSignal = dbm; bestPoint = new GeoPoint(point.getLatitude(), point.getLongitude()); if (bestMarker == null) { bestMarker = new Marker(map); map.getOverlays().add(bestMarker); } bestMarker.setPosition(bestPoint); bestMarker.setTitle("BEST: " + bestSignal + " dBm"); if(best!=null) best.setText("Best: " + bestSignal + " dBm"); if(status!=null) status.setText("BEST SIGNAL FOUND"); }
+        map.invalidate();
+    }
     private void startSignal() {
-
-        if (
-                ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_PHONE_STATE
-                ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return;
-        }
-
-        tm.listen(
-                new PhoneStateListener() {
-
-                    @Override
-                    public void onSignalStrengthsChanged(
-                            SignalStrength signalStrength
-                    ) {
-
-                        int dbm = -100;
-
-                        try {
-
-                            if (
-                                    signalStrength
-                                            .getCellSignalStrengths()
-                                            .size() > 0
-                            ) {
-
-                                dbm =
-                                        signalStrength
-                                                .getCellSignalStrengths()
-                                                .get(0)
-                                                .getDbm();
-                            }
-
-                        } catch (Exception ignored) {
-                        }
-
-                        currentDbm = dbm;
-
-                        String category =
-                                getSignalCategory(dbm);
-
-                        runOnUiThread(() -> {
-
-                            current.setText(
-                                    "Current: "
-                                            + dbm
-                                            + " dBm • "
-                                            + category
-                            );
-                        });
-                    }
-
-                },
-                PhoneStateListener
-                        .LISTEN_SIGNAL_STRENGTHS
-        );
-    }
-
-    // =========================================================
-    // SIGNAL CATEGORY
-    // =========================================================
-
-    private String getSignalCategory(int dbm) {
-
-        if (dbm >= -85) {
-            return "BEST";
-        }
-
-        if (dbm >= -100) {
-            return "GOOD";
-        }
-
-        return "WEAK";
-    }
-
-    // =========================================================
-    // SAVE SIGNAL
-    // =========================================================
-
-    private void saveSignal(
-            GeoPoint point,
-            int dbm
-    ) {
-
-        if (point == null) {
-            return;
-        }
-
         try {
-
-            JSONArray array =
-                    new JSONArray(
-                            preferences.getString(
-                                    HISTORY_KEY,
-                                    "[]"
-                            )
-                    );
-
-            JSONObject item =
-                    new JSONObject();
-
-            String time =
-                    new SimpleDateFormat(
-                            "dd MMM yyyy, hh:mm:ss a",
-                            Locale.getDefault()
-                    ).format(
-                            new Date()
-                    );
-
-            item.put(
-                    "dbm",
-                    dbm
-            );
-
-            item.put(
-                    "category",
-                    getSignalCategory(dbm)
-            );
-
-            item.put(
-                    "time",
-                    time
-            );
-
-            item.put(
-                    "latitude",
-                    point.getLatitude()
-            );
-
-            item.put(
-                    "longitude",
-                    point.getLongitude()
-            );
-
-            array.put(item);
-
-            // Keep maximum 200 readings
-            while (array.length() > 200) {
-                array.remove(0);
-            }
-
-            preferences.edit()
-                    .putString(
-                            HISTORY_KEY,
-                            array.toString()
-                    )
-                    .apply();
-
-            loadHistoryText();
-
-        } catch (Exception ignored) {
-        }
-    }
-
-    // =========================================================
-    // LOAD HISTORY
-    // =========================================================
-
-    private void loadHistory() {
-
-        loadHistoryText();
-
-        // Best saved location
-        if (
-                preferences.contains(
-                        BEST_DBM_KEY
-                )
-        ) {
-
-            loadSavedBest();
-        }
-    }
-
-    private void loadHistoryText() {
-
-        try {
-
-            JSONArray array =
-                    new JSONArray(
-                            preferences.getString(
-                                    HISTORY_KEY,
-                                    "[]"
-                            )
-                    );
-
-            if (array.length() == 0) {
-
-                history.setText(
-                        "No saved signal history."
-                );
-
-                return;
-            }
-
-            StringBuilder result =
-                    new StringBuilder();
-
-            result.append(
-                    "SAVED SIGNALS\n\n"
-            );
-
-            // Newest first
-            for (
-                    int i = array.length() - 1;
-                    i >= 0;
-                    i--
-            ) {
-
-                JSONObject item =
-                        array.getJSONObject(i);
-
-                int dbm =
-                        item.getInt("dbm");
-
-                String category =
-                        item.getString(
-                                "category"
-                        );
-
-                String time =
-                        item.getString(
-                                "time"
-                        );
-
-                result.append(
-                        category
-                                + "  "
-                                + dbm
-                                + " dBm\n"
-                );
-
-                result.append(
-                        time
-                                + "\n\n"
-                );
-            }
-
-            history.setText(
-                    result.toString()
-            );
-
-        } catch (Exception e) {
-
-            history.setText(
-                    "Unable to load signal history."
-            );
-        }
-    }
-
-    // =========================================================
-    // DRAW SAVED SIGNALS WITHIN 100 METERS
-    // =========================================================
-
-    private void redrawNearbyHistory() {
-
-        if (map == null) {
-            return;
-        }
-
-        // Remove old circles
-        map.getOverlays().clear();
-
-        if (currentPoint == null) {
-
-            map.invalidate();
-            return;
-        }
-
-        try {
-
-            JSONArray array =
-                    new JSONArray(
-                            preferences.getString(
-                                    HISTORY_KEY,
-                                    "[]"
-                            )
-                    );
-
-            for (
-                    int i = 0;
-                    i < array.length();
-                    i++
-            ) {
-
-                JSONObject item =
-                        array.getJSONObject(i);
-
-                double latitude =
-                        item.getDouble(
-                                "latitude"
-                        );
-
-                double longitude =
-                        item.getDouble(
-                                "longitude"
-                        );
-
-                int dbm =
-                        item.getInt("dbm");
-
-                GeoPoint savedPoint =
-                        new GeoPoint(
-                                latitude,
-                                longitude
-                        );
-
-                float[] distance =
-                        new float[1];
-
-                Location.distanceBetween(
-                        currentPoint.getLatitude(),
-                        currentPoint.getLongitude(),
-                        savedPoint.getLatitude(),
-                        savedPoint.getLongitude(),
-                        distance
-                );
-
-                // ONLY show readings within 100 meters
-                if (distance[0] <= 100) {
-
-                    addSignalCircle(
-                            savedPoint,
-                            dbm
-                    );
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)!= PackageManager.PERMISSION_GRANTED) return;
+            tm.listen(new PhoneStateListener() {
+                @Override public void onSignalStrengthsChanged(SignalStrength s) {
+                    int dbm = -120;
+                    try { if (s.getCellSignalStrengths().size() > 0) dbm = s.getCellSignalStrengths().get(0).getDbm(); } catch (Exception ignored) {}
+                    currentDbm = dbm; int finalDbm = dbm;
+                    runOnUiThread(() -> { if(current!=null) current.setText("Current: " + finalDbm + " dBm"); if(network!=null){ if(finalDbm >= -85) network.setText("SIGNAL: BEST"); else if(finalDbm >= -100) network.setText("SIGNAL: GOOD"); else network.setText("SIGNAL: WEAK"); } });
                 }
-            }
-
-            // Current location marker
-            addSignalCircle(
-                    currentPoint,
-                    currentDbm
-            );
-
-            map.invalidate();
-
-        } catch (Exception ignored) {
-
-            map.invalidate();
-        }
+            }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        } catch (Exception e) { current.setText("Current: unavailable"); }
     }
-
-    // =========================================================
-    // DRAW SIGNAL CIRCLE
-    // =========================================================
-
-    private void addSignalCircle(
-            GeoPoint point,
-            int dbm
-    ) {
-
-        if (point == null) {
-            return;
-        }
-
-        int fillColor;
-
-        if (dbm >= -85) {
-
-            // BEST
-            fillColor = 0x8022C55E;
-
-        } else if (dbm >= -100) {
-
-            // GOOD
-            fillColor = 0x80EAB308;
-
-        } else {
-
-            // WEAK
-            fillColor = 0x80EF4444;
-        }
-
-        Polygon circle =
-                new Polygon(map);
-
-        circle.setPoints(
-                Polygon.pointsAsCircle(
-                        point,
-                        5
-                )
-        );
-
-        circle.setFillColor(
-                fillColor
-        );
-
-        circle.setStrokeWidth(0);
-
-        map.getOverlays().add(
-                circle
-        );
+    private void updateNavigation() {
+        if (currentPoint == null || bestPoint == null) { if(distance!=null) distance.setText("Distance: searching..."); if(steps!=null) steps.setText("Steps: --"); return; }
+        float[] results = new float[3];
+        android.location.Location.distanceBetween(currentPoint.getLatitude(), currentPoint.getLongitude(), bestPoint.getLatitude(), bestPoint.getLongitude(), results);
+        float meters = results[0];
+        if (meters <= 10) { distance.setText("🎯 BEST SIGNAL AREA"); steps.setText("You are here"); direction.setText("✓"); }
+        else { distance.setText(String.format(Locale.US, "%.0f meters", meters)); steps.setText("≈ " + Math.round(meters/0.75f) + " steps"); }
+        List<GeoPoint> pts = new ArrayList<>(); pts.add(currentPoint); pts.add(bestPoint); directionLine.setPoints(pts); map.invalidate();
     }
-
-    // =========================================================
-    // BEST SIGNAL
-    // =========================================================
-
-    private void updateBestSignal(
-            GeoPoint point,
-            int dbm
-    ) {
-
-        if (point == null) {
-            return;
-        }
-
-        if (dbm > bestSignal) {
-
-            bestSignal = dbm;
-            bestPoint = point;
-
-            saveBest(
-                    dbm,
-                    point
-            );
-
-            String category =
-                    getSignalCategory(dbm);
-
-            runOnUiThread(() -> {
-
-                best.setText(
-                        "Best: "
-                                + dbm
-                                + " dBm • "
-                                + category
-                );
-
-                arrow.setText(
-                        "BEST SIGNAL FOUND"
-                );
-            });
-        }
-    }
-
-    // =========================================================
-    // SAVE BEST
-    // =========================================================
-
-    private void saveBest(
-            int dbm,
-            GeoPoint point
-    ) {
-
-        preferences.edit()
-                .putInt(
-                        BEST_DBM_KEY,
-                        dbm
-                )
-                .putString(
-                        BEST_LAT_KEY,
-                        String.valueOf(
-                                point.getLatitude()
-                        )
-                )
-                .putString(
-                        BEST_LON_KEY,
-                        String.valueOf(
-                                point.getLongitude()
-                        )
-                )
-                .apply();
-    }
-
-    // =========================================================
-    // LOAD BEST
-    // =========================================================
-
-    private void loadSavedBest() {
-
-        if (
-                !preferences.contains(
-                        BEST_DBM_KEY
-                )
-        ) {
-            return;
-        }
-
-        bestSignal =
-                preferences.getInt(
-                        BEST_DBM_KEY,
-                        -120
-                );
-
-        String lat =
-                preferences.getString(
-                        BEST_LAT_KEY,
-                        null
-                );
-
-        String lon =
-                preferences.getString(
-                        BEST_LON_KEY,
-                        null
-                );
-
-        try {
-
-            if (
-                    lat != null &&
-                    lon != null
-            ) {
-
-                bestPoint =
-                        new GeoPoint(
-                                Double.parseDouble(lat),
-                                Double.parseDouble(lon)
-                        );
-            }
-
-            best.setText(
-                    "Best: "
-                            + bestSignal
-                            + " dBm • "
-                            + getSignalCategory(
-                                    bestSignal
-                            )
-            );
-
-        } catch (Exception ignored) {
-        }
-    }
-
-    // =========================================================
-    // PERMISSION RESULT
-    // =========================================================
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            String[] permissions,
-            int[] grantResults
-    ) {
-
-        super.onRequestPermissionsResult(
-                requestCode,
-                permissions,
-                grantResults
-        );
-
-        if (requestCode == 101) {
-
-            boolean locationGranted =
-                    ActivityCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED;
-
-            boolean phoneGranted =
-                    ActivityCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.READ_PHONE_STATE
-                    ) == PackageManager.PERMISSION
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { super.onRequestPermissionsResult(requestCode, permissions, grantResults); if (requestCode == REQUEST_PERMISSIONS) { if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) startAll(); } }
+    @Override protected void onResume() { super.onResume(); if (map!= null) map.onResume(); }
+    @Override protected void onPause() { if (map!= null) map.onPause(); super.onPause(); }
+    @Override protected void onDestroy() { if (fusedClient!= null && locationCallback!= null) fusedClient.removeLocationUpdates(locationCallback); if (tm!= null) tm.listen(null, PhoneStateListener.LISTEN_NONE); super.onDestroy(); }
+}
