@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#070E2B" android:orientation="vertical" android:padding="16dp">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="HISTORY" android:textSize="28sp" android:textStyle="bold" android:textColor="#00E5FF"/>
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvHistory"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="16dp"/>
+    <Button android:id="@+id/btnExport" android:layout_width="match_parent" android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_btn" android:text="Export History" android:textColor="#FFFFFF" android:textStyle="bold" android:textAllCaps="false" android:layout_marginTop="12dp"/>
+</LinearLayout>

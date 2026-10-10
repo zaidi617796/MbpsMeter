@@ -1,0 +1,2 @@
+<Button android:id="@+id/btnNavigateBest"... android:text="NAVIGATE TO BEST" android:background="@drawable/bg_gradient_btn"/>
+<TextView android:id="@+id/tvNavigateBtn" android:text="Best location ka distance yahan ayega"/>

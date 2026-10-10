@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#070E2B" android:orientation="vertical"
+    android:padding="20dp" android:gravity="center_horizontal">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="SPEED" android:textSize="28sp" android:textStyle="bold" android:textColor="#00E5FF"/>
+
+    <TextView android:id="@+id/tvMainSpeed" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" android:text="-- Mbps" android:textSize="42sp" android:textStyle="bold" android:textColor="#FFFFFF"/>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Current download speed" android:textColor="#8A9ABF" android:textSize="12sp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="24dp">
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="110dp"
+            android:background="@drawable/bg_glass_card" android:padding="12dp" android:orientation="vertical" android:layout_marginEnd="8dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DOWNLOAD" android:textColor="#00E5FF" android:textSize="11sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/tvDownload" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="-- Mbps" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="16sp"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="110dp"
+            android:background="@drawable/bg_glass_card" android:padding="12dp" android:orientation="vertical" android:layout_marginStart="8dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UPLOAD" android:textColor="#7C4DFF" android:textSize="11sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/tvUpload" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="-- Mbps" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="16sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button android:id="@+id/btnStartSpeed" android:layout_width="120dp" android:layout_height="120dp"
+        android:layout_marginTop="30dp" android:background="@drawable/bg_neon_ring"
+        android:text="GO" android:textSize="26sp" android:textStyle="bold" android:textColor="#00E5FF"/>
+    <TextView android:id="@+id/tvStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+        android:text="Tap to run test" android:textColor="#8A9ABF" android:textSize="12sp"/>
+</LinearLayout>

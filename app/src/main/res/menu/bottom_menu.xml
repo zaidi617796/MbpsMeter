@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_live" android:title="LIVE" android:icon="@android:drawable/ic_menu_compass"/>
+    <item android:id="@+id/nav_speed" android:title="SPEED" android:icon="@android:drawable/ic_media_play"/>
+    <item android:id="@+id/nav_map" android:title="MAP" android:icon="@android:drawable/ic_menu_mapmode"/>
+    <item android:id="@+id/nav_history" android:title="HISTORY" android:icon="@android:drawable/ic_menu_recent_history"/>
+</menu>
