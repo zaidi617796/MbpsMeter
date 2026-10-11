@@ -153,7 +153,7 @@ public class LiveV4Fragment extends Fragment {
             if ("ur".equals(cur.get(i).getLanguage())) { isUr = true; break; }
         }
         if (isUr) {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmpty());
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create());
         } else {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ur"));
         }
