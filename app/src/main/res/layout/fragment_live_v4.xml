@@ -3,44 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:background="#0F172A"
+    android:padding="24dp"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/tvDbm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-85 dBm"
-        android:textSize="48sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvStrength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="FAIR SIGNAL"
-        android:textSize="20sp"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/tvGps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GPS: searching..."
-        android:layout_marginTop="16dp" />
-
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="--:--:--"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/btnSave"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Reading"
-        android:layout_marginTop="32dp" />
+        android:layout_margin="8dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="#1E293B">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center">
+
+            <TextView android:id="@+id/tvDbm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-71 dBm"
+                android:textColor="#FFFFFF"
+                android:textSize="56sp"
+                android:textStyle="bold"/>
+
+            <TextView android:id="@+id/tvStrength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GOOD SIGNAL"
+                android:textColor="#22C55E"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"/>
+
+            <TextView android:id="@+id/tvGps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GPS: 33.6844, 73.0479"
+                android:textColor="#94A3B8"
+                android:layout_marginTop="16dp"/>
+
+            <TextView android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01:58 PM"
+                android:textColor="#94A3B8"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <Button android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Save Manually"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#2563EB"
+        android:layout_marginTop="24dp"/>
 </LinearLayout>

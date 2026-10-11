@@ -3,35 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#0F172A">
 
-    <TextView
-        android:id="@+id/tvBestSignal"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No best location saved yet"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#1E293B">
 
-    <TextView
-        android:id="@+id/tvBestLocation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Move to find GOOD signal"
-        android:layout_marginTop="8dp" />
+        <TextView
+            android:id="@+id/tvBestSignal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Best: -71 dBm"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/btnNavigateBest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Navigate to Best"
-        android:layout_marginTop="24dp" />
+        <TextView
+            android:id="@+id/tvBestLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lat: 33.6844, Lng: 73.0479"
+            android:textColor="#94A3B8"
+            android:layout_marginTop="4dp"/>
 
-    <Button
-        android:id="@+id/btnOpenMap"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/btnNavigateBest"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="NAVIGATE TO BEST"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#2563EB"/>
+
+            <Button
+                android:id="@+id/btnOpenMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="OPEN IN MAP"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#334155"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- OSM MAP VIEW -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/osmMap"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open in Map"
-        android:layout_marginTop="12dp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
