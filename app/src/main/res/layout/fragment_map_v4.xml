@@ -29,6 +29,17 @@
             android:textColor="#94A3B8"
             android:layout_marginTop="4dp"/>
 
+        <!-- ZAROORI: MapV4Fragment.java is id ko use karta hai, delete na karein -->
+        <TextView
+            android:id="@+id/tvBestDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Abhi koi reading nahi"
+            android:textColor="#00E5FF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginTop="6dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
