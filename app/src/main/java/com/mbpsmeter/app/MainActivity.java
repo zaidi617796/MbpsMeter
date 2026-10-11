@@ -23,27 +23,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Fix for Android nav bar overlapping
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         
         setContentView(R.layout.activity_main);
 
         bottomNav = findViewById(R.id.bottomNav);
 
-        // Apply inset to bottom nav so it stays above system navigation bar
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
             Insets navInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), navInsets.bottom + 8);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), navInsets.bottom + 16);
             return WindowInsetsCompat.CONSUMED;
         });
 
-        // Also apply inset to fragment container
         View container = findViewById(R.id.fragmentContainer);
-        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
-            Insets statusInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(v.getPaddingLeft(), statusInsets.top, v.getPaddingRight(), v.getPaddingBottom());
-            return WindowInsetsCompat.CONSUMED;
-        });
+        if (container != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+                Insets statusInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+                v.setPadding(v.getPaddingLeft(), statusInsets.top, v.getPaddingRight(), v.getPaddingBottom());
+                return WindowInsetsCompat.CONSUMED;
+            });
+        }
 
         bottomNav.setOnItemSelectedListener(item -> {
             Fragment selected = null;
@@ -65,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // Default fragment
         if (savedInstanceState == null) {
-           
+            bottomNav.setSelectedItemId(R.id.nav_live);
+        }
+    }
+}
