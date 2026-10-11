@@ -22,11 +22,23 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="SIGNAL TEST"
+                android:text="@string/live_title"
                 android:textColor="#8A9ABF"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.15" />
+
+            <Button
+                android:id="@+id/btnLang"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_pill_dark"
+                android:text="اردو"
+                android:textAllCaps="false"
+                android:textColor="#00E5FF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
 
             <TextView
                 android:id="@+id/tvStrength"
@@ -86,6 +98,15 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvCellInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#5A6B8C"
+                android:textSize="11sp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
                 android:id="@+id/tvGps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,7 +132,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:background="@drawable/bg_badge"
-            android:text="⚠ Weak zone — calls may drop here"
+            android:text="@string/drop_alert"
             android:textColor="#EF4444"
             android:textStyle="bold"
             android:textSize="13sp"
@@ -132,7 +153,7 @@
                 android:layout_weight="1"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_pill_mint"
-                android:text="● Record"
+                android:text="@string/record"
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
                 android:textStyle="bold"
@@ -145,7 +166,7 @@
                 android:layout_height="52dp"
                 android:layout_marginStart="12dp"
                 android:background="@drawable/bg_pill_dark"
-                android:text="Stop"
+                android:text="@string/stop"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
@@ -165,7 +186,7 @@
                 android:layout_weight="1"
                 android:layout_height="48dp"
                 android:background="@drawable/bg_pill_dark"
-                android:text="🚶 Start Walk Test"
+                android:text="@string/walk_start"
                 android:textAllCaps="false"
                 android:textColor="#00E5FF"
                 android:textSize="14sp" />
@@ -180,10 +201,24 @@
                 android:layout_marginStart="12dp" />
         </LinearLayout>
 
+        <!-- Compare SIMs -->
+        <Button
+            android:id="@+id/btnSim"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/compare_sims"
+            android:textAllCaps="false"
+            android:textColor="#A7F3D0"
+            android:textSize="14sp"
+            android:drawableStart="@drawable/ic_sim"
+            android:drawablePadding="8dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tip: Walk Test ON karke ghar me ghumein — har 10 meter par reading auto-save hogi. Sirf wahi spots compare hongi jahan reading li."
+            android:text="@string/tip_live"
             android:textColor="#5A6B8C"
             android:textSize="12sp"
             android:layout_marginTop="14dp"

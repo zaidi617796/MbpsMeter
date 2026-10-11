@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <string name="app_name">MbpsMeter</string>
+    <string name="ok">ٹھیک ہے</string>
+    <string name="cancel">منسوخ کریں</string>
+    <string name="delete">ڈیلیٹ کریں</string>
+    <string name="back">واپس</string>
+    <string name="perm_title">اجازت درکار ہے</string>
+    <string name="perm_msg">سگنل چیک کرنے کے لیے لوکیشن اور فون اسٹیٹ کی اجازت ضروری ہے۔ براہ کرم اجازت دیں۔</string>
+    <string name="perm_loc_needed">لوکیشن کے بغیر نقشہ اور واک ٹیسٹ کام نہیں کرے گا۔</string>
+    <string name="clear_title">ہسٹری صاف کریں؟</string>
+    <string name="clear_msg">تمام محفوظ ریڈنگز اور اسپیڈ ٹیسٹ ڈیلیٹ ہو جائیں گے۔ یہ واپس نہیں آئیں گے۔</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_live">لائیو</string>
+    <string name="nav_rooms">کمرے</string>
+    <string name="nav_speed">اسپیڈ</string>
+    <string name="nav_map">نقشہ</string>
+    <string name="nav_history">ہسٹری</string>
+
+    <!-- Live -->
+    <string name="live_title">سگنل ٹیسٹ</string>
+    <string name="record">ریکارڈ</string>
+    <string name="stop">روکیں</string>
+    <string name="start">شروع کریں</string>
+    <string name="started">شروع ہو گیا</string>
+    <string name="stopped">رک گیا</string>
+    <string name="walk_start">واک ٹیسٹ شروع کریں</string>
+    <string name="walk_stop">واک ٹیسٹ روکیں</string>
+    <string name="walk_on_toast">واک ٹیسٹ آن - ہر 10 میٹر پر خودکار ریکارڈ</string>
+    <string name="walk_off_toast">واک ٹیسٹ آف</string>
+    <string name="pts">پوائنٹس</string>
+    <string name="compare_sims">سمز کا موازنہ کریں</string>
+    <string name="tip_live">ٹپ: واک ٹیسٹ آن کر کے گھر میں گھومیں - ہر 10 میٹر پر ریڈنگ خود محفوظ ہوگی۔ صرف وہی جگہیں موازنہ ہوں گی جہاں ریڈنگ لی۔</string>
+    <string name="drop_alert">کمزور سگنل - یہاں کال گر سکتی ہے</string>
+    <string name="unknown_operator">نامعلوم آپریٹر</string>
+    <string name="demo_mode">ڈیمو موڈ</string>
+    <string name="tower_info">ٹاور</string>
+
+    <!-- Rooms -->
+    <string name="rooms_title">کمروں کا ہیٹ میپ</string>
+    <string name="add_room">+ کمرہ شامل کریں</string>
+    <string name="room_name_hint">کمرے کا نام (مثلاً بیڈروم)</string>
+    <string name="rooms_tip">سگنل ریکارڈ کرنے کے لیے کسی کمرے پر ٹیپ کریں۔ رنگ اوسط بتاتے ہیں: سبز = مضبوط، پیلا = درمیانہ، سرخ = کمزور۔ گھر کے اندر GPS ٹھیک کام نہیں کرتا، اس لیے کمرے نقشے کے پن سے بہتر ہیں۔</string>
+    <string name="best_room">بہترین کمرہ</string>
+    <string name="no_data_tap">کوئی ڈیٹا نہیں - ریکارڈ کے لیے ٹیپ کریں</string>
+    <string name="readings_count">ریڈنگز</string>
+    <string name="delete_room_title">کمرہ ڈیلیٹ کریں؟</string>
+    <string name="delete_room_msg">کمرہ ہٹا دیا جائے گا۔ اس کی پرانی ریڈنگز ہسٹری میں رہیں گی۔</string>
+    <string name="room_recorded">محفوظ ہو گیا</string>
+    <string name="room_exists">یہ کمرہ پہلے سے موجود ہے</string>
+    <string name="room_empty">پہلے کمرے کا نام لکھیں</string>
+
+    <!-- Dual SIM -->
+    <string name="sim_title">ڈوئل سم موازنہ</string>
+    <string name="sim_na">معلوم نہیں</string>
+    <string name="sim_recommend_better">اس وقت %1$s بہتر ہے</string>
+    <string name="sim_recommend_tie">دونوں سمز تقریباً ایک جیسی ہیں</string>
+    <string name="sim_recommend_none">سم کا ڈیٹا نہیں - اجازت چیک کریں</string>
+    <string name="sim_note">نوٹ: کچھ فونز پر بند سم کی ریڈنگ تقریبی ہو سکتی ہے۔</string>
+    <string name="sim_refresh">ریفریش</string>
+
+    <!-- Drops -->
+    <string name="tab_readings">ریڈنگز</string>
+    <string name="tab_drops">ڈراپ ڈائری</string>
+    <string name="drop_title">سگنل ڈراپ</string>
+    <string name="no_drops">کوئی ڈراپ ریکارڈ نہیں - اچھی خبر ہے!</string>
+
+    <!-- Speed -->
+    <string name="speed_title">اسپیڈ ٹیسٹ</string>
+    <string name="tap_go">ٹیسٹ کے لیے GO دبائیں</string>
+    <string name="download">ڈاؤن لوڈ</string>
+    <string name="upload">اپ لوڈ</string>
+    <string name="ping">پنگ</string>
+    <string name="jitter">جٹر</string>
+    <string name="mbps">Mbps</string>
+    <string name="ms">ms</string>
+    <string name="measuring_ping">پنگ ناپی جا رہی ہے…</string>
+    <string name="testing_down">ڈاؤن لوڈ ٹیسٹ ہو رہا ہے…</string>
+    <string name="testing_up">اپ لوڈ ٹیسٹ ہو رہا ہے…</string>
+    <string name="speed_done">مکمل - ہسٹری میں محفوظ ہو گیا</string>
+    <string name="speed_failed">ناکام - انٹرنیٹ چیک کریں</string>
+    <string name="speed_pattern_best">بہترین وقت</string>
+    <string name="speed_pattern_worst">بدترین وقت</string>
+    <string name="speed_pattern_none">بہترین/بدترین اوقات دیکھنے کے لیے چند ٹیسٹ کریں</string>
+    <string name="speed_tests_suffix">ٹیسٹ</string>
+    <string name="speed_tip">ہر ٹیسٹ ہسٹری میں محفوظ ہوتا ہے - اسپیڈ اور سگنل ایک جگہ موازنہ کریں۔</string>
+
+    <!-- Map -->
+    <string name="best">بہترین</string>
+    <string name="go_to_best">بہترین جگہ پر جائیں</string>
+    <string name="open_in_maps">نقشے میں کھولیں</string>
+    <string name="no_reading_yet">ابھی کوئی ریڈنگ نہیں - لائیو پر واک ٹیسٹ کریں</string>
+    <string name="best_spot_found">بہترین جگہ مل گئی - وہاں جائیں</string>
+    <string name="first_record">پہلے لائیو پر ریکارڈ کریں</string>
+    <string name="no_maps_app">نقشے کی ایپ نہیں ملی</string>
+    <string name="best_spot_go">بہترین جگہ %1$s %2$s - اس طرف جائیں</string>
+
+    <!-- History -->
+    <string name="history_title">ہسٹری</string>
+    <string name="history_cleared">ہسٹری صاف ہو گئی</string>
+    <string name="no_data">کوئی ڈیٹا نہیں</string>
+    <string name="export_csv">CSV ایکسپورٹ</string>
+    <string name="clear_history">ہسٹری صاف کریں</string>
+</resources>

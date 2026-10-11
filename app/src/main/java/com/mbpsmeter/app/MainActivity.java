@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
 import com.mbpsmeter.app.ui.live.LiveV4Fragment;
 import com.mbpsmeter.app.ui.map.MapV4Fragment;
+import com.mbpsmeter.app.ui.rooms.RoomHeatmapFragment;
 import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 
 import org.osmdroid.config.Configuration;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // OSM config — PreferenceManager ke baghair
+        // OSM config - PreferenceManager ke baghair
         try {
             File osmCache = new File(getCacheDir(), "osmdroid");
             Configuration.getInstance().setOsmdroidBasePath(osmCache);
@@ -67,10 +68,15 @@ public class MainActivity extends AppCompatActivity {
             Fragment sel = null;
             int id = item.getItemId();
             if (id == R.id.nav_live) sel = new LiveV4Fragment();
+            else if (id == R.id.nav_rooms) sel = new RoomHeatmapFragment();
             else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
             else if (id == R.id.nav_map) sel = new MapV4Fragment();
             else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
-            if (sel != null) getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commit();
+            if (sel != null) {
+                // back stack saaf taake DualSim se wapas par nav sahi rahe
+                getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commit();
+            }
             return true;
         });
 
@@ -119,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             if (!locOk) {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.perm_title)
-                        .setMessage("Location ke baghair map aur walk test kaam nahi karega.")
+                        .setMessage(R.string.perm_loc_needed)
                         .setPositiveButton(R.string.ok, null)
                         .show();
             }

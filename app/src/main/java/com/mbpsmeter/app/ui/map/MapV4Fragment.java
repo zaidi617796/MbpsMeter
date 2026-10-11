@@ -37,10 +37,7 @@ import org.osmdroid.views.overlay.Marker;
 import java.util.Locale;
 
 /**
- * MAP V5:
- * - Har reading ka pin uske signal ke rang me (green/amber/red)
- * - Best spot card: "42m → NE" distance + direction
- * - Open in Maps: Google Maps me kholein
+ * MAP V6: colored pins + best spot distance/direction + Open in Maps.
  */
 public class MapV4Fragment extends Fragment {
 
@@ -85,8 +82,7 @@ public class MapV4Fragment extends Fragment {
         Paint inner = new Paint(Paint.ANTI_ALIAS_FLAG);
         inner.setColor(color);
         c.drawCircle(s / 2f, s / 2f, 22f, inner);
-        BitmapDrawable d = new BitmapDrawable(getResources(), bmp);
-        return d;
+        return new BitmapDrawable(getResources(), bmp);
     }
 
     private void loadAll() {
@@ -112,17 +108,18 @@ public class MapV4Fragment extends Fragment {
                 GeoPoint p = new GeoPoint(o.optDouble("lat", 24.8607), o.optDouble("lng", 67.0011));
                 Marker m = new Marker(osmMap);
                 m.setPosition(p);
-                m.setTitle(dbm + " dBm • " + o.optString("type", "MANUAL"));
+                String title = dbm + " dBm | " + o.optString("type", "MANUAL");
+                if (!o.optString("room", "").isEmpty()) title = o.optString("room", "") + " | " + title;
+                m.setTitle(title);
                 m.setIcon(dotIcon(colorFor(dbm)));
                 m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
                 osmMap.getOverlays().add(m);
             }
 
-            // best spot star marker
             if (bestLat != 0 && bestDbm > -120) {
                 Marker b = new Marker(osmMap);
                 b.setPosition(new GeoPoint(bestLat, bestLng));
-                b.setTitle("⭐ Best: " + bestDbm + " dBm");
+                b.setTitle(getString(R.string.best) + ": " + bestDbm + " dBm");
                 b.setIcon(dotIcon(Color.parseColor("#00E5FF")));
                 b.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
                 osmMap.getOverlays().add(b);
@@ -138,12 +135,12 @@ public class MapV4Fragment extends Fragment {
 
     private void updateBestCard() {
         if (bestDbm <= -120 || bestLat == 0) {
-            tvBestSignal.setText("Best: -- dBm");
-            tvBestDistance.setText("Abhi koi reading nahi — Live par Walk Test karein");
+            tvBestSignal.setText(getString(R.string.best) + ": -- dBm");
+            tvBestDistance.setText(R.string.no_reading_yet);
             tvBestLocation.setText("");
             return;
         }
-        tvBestSignal.setText("Best: " + bestDbm + " dBm");
+        tvBestSignal.setText(getString(R.string.best) + ": " + bestDbm + " dBm");
         tvBestLocation.setText(String.format(Locale.getDefault(), "%.5f, %.5f", bestLat, bestLng));
 
         Location me = myLocation();
@@ -152,14 +149,13 @@ public class MapV4Fragment extends Fragment {
             target.setLatitude(bestLat);
             target.setLongitude(bestLng);
             float dist = me.distanceTo(target);
-            float bearing = me.bearingTo(target); // -180..180
-            String dir = compass(bearing);
+            String dir = compass(me.bearingTo(target));
             String distStr = dist < 1000
                     ? String.format(Locale.getDefault(), "%.0f m", dist)
                     : String.format(Locale.getDefault(), "%.1f km", dist / 1000);
-            tvBestDistance.setText("📍 Best spot " + distStr + " → " + dir + " isi taraf jayein");
+            tvBestDistance.setText(String.format(getString(R.string.best_spot_go), distStr, dir));
         } else {
-            tvBestDistance.setText("📍 Best spot mil gaya — wahan jayein");
+            tvBestDistance.setText(R.string.best_spot_found);
         }
     }
 
@@ -182,7 +178,7 @@ public class MapV4Fragment extends Fragment {
 
     private void centerBest() {
         if (bestLat == 0) {
-            Toast.makeText(getContext(), "Pehle Live par reading lein", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.first_record, Toast.LENGTH_SHORT).show();
             return;
         }
         osmMap.getController().animateTo(new GeoPoint(bestLat, bestLng));
@@ -191,14 +187,14 @@ public class MapV4Fragment extends Fragment {
 
     private void openInMaps() {
         if (bestLat == 0) {
-            Toast.makeText(getContext(), "Pehle Live par reading lein", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.first_record, Toast.LENGTH_SHORT).show();
             return;
         }
         try {
-            Uri uri = Uri.parse("geo:" + bestLat + "," + bestLng + "?q=" + bestLat + "," + bestLng + "(Best signal spot)");
+            Uri uri = Uri.parse("geo:" + bestLat + "," + bestLng + "?q=" + bestLat + "," + bestLng + "(best)");
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Maps app nahi mili", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.no_maps_app, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SPEED TEST"
+            android:text="@string/speed_title"
             android:textColor="#8A9ABF"
             android:textSize="13sp"
             android:textStyle="bold"
@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mbps"
+            android:text="@string/mbps"
             android:textColor="#00E5FF"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -55,16 +55,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Tap GO to run test"
+            android:text="@string/tap_go"
             android:textColor="#8A9ABF"
             android:textSize="12sp" />
+
+        <!-- Best / worst hour pattern -->
+        <TextView
+            android:id="@+id/tvPattern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:text="@string/speed_pattern_none"
+            android:textColor="#8A9ABF"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginTop="14dp"
+            android:lineSpacingExtra="3dp" />
 
         <!-- Download / Upload cards -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="14dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -78,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="↓ DOWNLOAD"
+                    android:text="@string/download"
                     android:textColor="#00E5FF"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -88,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="-- Mbps"
+                    android:text="--"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="17sp" />
@@ -106,7 +120,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="↑ UPLOAD"
+                    android:text="@string/upload"
                     android:textColor="#7C4DFF"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -116,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="-- Mbps"
+                    android:text="--"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="17sp" />
@@ -142,7 +156,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PING"
+                    android:text="@string/ping"
                     android:textColor="#8A9ABF"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -152,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="-- ms"
+                    android:text="--"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="16sp" />
@@ -170,7 +184,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="JITTER"
+                    android:text="@string/jitter"
                     android:textColor="#8A9ABF"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -180,7 +194,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="-- ms"
+                    android:text="--"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:textSize="16sp" />
@@ -191,7 +205,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Har test History me save hota hai — speed aur signal aik jagah compare karein."
+            android:text="@string/speed_tip"
             android:textColor="#5A6B8C"
             android:textSize="12sp"
             android:gravity="center" />

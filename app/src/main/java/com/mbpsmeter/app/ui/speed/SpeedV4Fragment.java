@@ -22,15 +22,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
- * SPEED TEST V5 (SwiftNet style):
- * Ping + Jitter + live download progress + result History me save.
+ * SPEED TEST V6: Ping + Jitter + live progress + History save + time pattern.
+ * Time pattern: saved tests se nikalta hai din ka best/worst hour (congestion).
  */
 public class SpeedV4Fragment extends Fragment {
 
-    private TextView tvMainSpeed, tvDownload, tvUpload, tvPing, tvJitter, tvStatus;
+    private TextView tvMainSpeed, tvDownload, tvUpload, tvPing, tvJitter, tvStatus, tvPattern;
     private Button btnStart;
     private volatile boolean running = false;
 
@@ -44,8 +47,10 @@ public class SpeedV4Fragment extends Fragment {
         tvPing = v.findViewById(R.id.tvPing);
         tvJitter = v.findViewById(R.id.tvJitter);
         tvStatus = v.findViewById(R.id.tvStatus);
+        tvPattern = v.findViewById(R.id.tvPattern);
         btnStart = v.findViewById(R.id.btnStartSpeed);
         btnStart.setOnClickListener(x -> runTest());
+        showPattern();
         return v;
     }
 
@@ -57,6 +62,53 @@ public class SpeedV4Fragment extends Fragment {
         ui(() -> { if (tv != null) tv.setText(s); });
     }
 
+    /** Saved tests se best/worst hour nikalein */
+    private void showPattern() {
+        try {
+            SharedPreferences prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+            JSONArray arr = new JSONArray(prefs.getString("speed_tests", "[]"));
+            if (arr.length() < 3) {
+                if (tvPattern != null) tvPattern.setText(getString(R.string.speed_pattern_none));
+                return;
+            }
+            double[] sum = new double[24];
+            int[] cnt = new int[24];
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(o.optLong("time", 0));
+                int h = cal.get(Calendar.HOUR_OF_DAY);
+                sum[h] += o.optDouble("down", 0);
+                cnt[h]++;
+            }
+            int bestH = -1, worstH = -1;
+            double bestV = -1, worstV = Double.MAX_VALUE;
+            for (int h = 0; h < 24; h++) {
+                if (cnt[h] == 0) continue;
+                double avg = sum[h] / cnt[h];
+                if (avg > bestV) { bestV = avg; bestH = h; }
+                if (avg < worstV) { worstV = avg; worstH = h; }
+            }
+            if (bestH >= 0 && tvPattern != null) {
+                String s = getString(R.string.speed_pattern_best) + ": " + hourStr(bestH)
+                        + String.format(Locale.US, " (%.1f Mbps avg)", bestV);
+                if (worstH >= 0 && worstH != bestH) {
+                    s += "\n" + getString(R.string.speed_pattern_worst) + ": " + hourStr(worstH)
+                            + String.format(Locale.US, " (%.1f Mbps avg)", worstV);
+                }
+                s += "\n" + arr.length() + " " + getString(R.string.speed_tests_suffix);
+                final String fs = s;
+                ui(() -> tvPattern.setText(fs));
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private String hourStr(int h) {
+        int h12 = h % 12 == 0 ? 12 : h % 12;
+        String ap = h < 12 ? "AM" : "PM";
+        return h12 + " " + ap;
+    }
+
     void runTest() {
         if (running) return;
         running = true;
@@ -64,17 +116,16 @@ public class SpeedV4Fragment extends Fragment {
             btnStart.setEnabled(false);
             btnStart.setAlpha(0.4f);
             tvMainSpeed.setText("--");
-            tvDownload.setText("-- Mbps");
-            tvUpload.setText("-- Mbps");
-            tvPing.setText("-- ms");
-            tvJitter.setText("-- ms");
+            tvDownload.setText("--");
+            tvUpload.setText("--");
+            tvPing.setText("--");
+            tvJitter.setText("--");
         });
-        setText(tvStatus, "Measuring ping…");
+        setText(tvStatus, getString(R.string.measuring_ping));
 
         new Thread(() -> {
             double pingMs = -1, jitterMs = -1, down = -1, up = -1;
 
-            // ---- Ping: 3 chhoti requests, min lo ----
             try {
                 double min = Double.MAX_VALUE, max = 0;
                 for (int i = 0; i < 3; i++) {
@@ -95,13 +146,12 @@ public class SpeedV4Fragment extends Fragment {
                 jitterMs = max - min;
                 double p = pingMs, j = jitterMs;
                 ui(() -> {
-                    tvPing.setText(String.format(Locale.US, "%.0f ms", p));
-                    tvJitter.setText(String.format(Locale.US, "%.0f ms", j));
+                    tvPing.setText(String.format(Locale.US, "%.0f %s", p, getString(R.string.ms)));
+                    tvJitter.setText(String.format(Locale.US, "%.0f %s", j, getString(R.string.ms)));
                 });
             } catch (Exception ignored) {}
 
-            // ---- Download: 10 MB, live progress ----
-            setText(tvStatus, "Testing download…");
+            setText(tvStatus, getString(R.string.testing_down));
             try {
                 long start = System.nanoTime();
                 long bytes = 0, lastUi = start;
@@ -120,7 +170,7 @@ public class SpeedV4Fragment extends Fragment {
                         if (sec > 0.5) {
                             double live = bytes * 8.0 / sec / 1e6;
                             setText(tvMainSpeed, String.format(Locale.US, "%.1f", live));
-                            setText(tvDownload, String.format(Locale.US, "%.1f Mbps", live));
+                            setText(tvDownload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
                         }
                     }
                 }
@@ -130,8 +180,7 @@ public class SpeedV4Fragment extends Fragment {
                 if (sec > 0) down = bytes * 8.0 / sec / 1e6;
             } catch (Exception ignored) {}
 
-            // ---- Upload: 500 KB ----
-            setText(tvStatus, "Testing upload…");
+            setText(tvStatus, getString(R.string.testing_up));
             try {
                 byte[] payload = new byte[500000];
                 java.util.Arrays.fill(payload, (byte) 65);
@@ -159,14 +208,16 @@ public class SpeedV4Fragment extends Fragment {
                 running = false;
                 btnStart.setEnabled(true);
                 btnStart.setAlpha(1f);
+                String mbps = getString(R.string.mbps);
                 tvMainSpeed.setText(fd >= 0 ? String.format(Locale.US, "%.1f", fd) : "--");
-                tvDownload.setText(fd >= 0 ? String.format(Locale.US, "%.2f Mbps", fd) : "Failed");
-                tvUpload.setText(fu >= 0 ? String.format(Locale.US, "%.2f Mbps", fu) : "Failed");
+                tvDownload.setText(fd >= 0 ? String.format(Locale.US, "%.2f %s", fd, mbps) : "--");
+                tvUpload.setText(fu >= 0 ? String.format(Locale.US, "%.2f %s", fu, mbps) : "--");
                 if (fd < 0 && fu < 0) {
-                    tvStatus.setText("Failed — internet check karein");
+                    tvStatus.setText(R.string.speed_failed);
                 } else {
-                    tvStatus.setText("Complete — History me save ho gaya");
+                    tvStatus.setText(R.string.speed_done);
                     saveResult(fd, fu, fp, fj);
+                    showPattern();
                 }
             });
         }).start();
@@ -183,7 +234,6 @@ public class SpeedV4Fragment extends Fragment {
             o.put("ping", Math.max(0, ping));
             o.put("jitter", Math.max(0, jitter));
             arr.put(o);
-            // aakhri 100 rakhein
             while (arr.length() > 100) arr.remove(0);
             prefs.edit().putString("speed_tests", arr.toString()).apply();
         } catch (Exception ignored) {}

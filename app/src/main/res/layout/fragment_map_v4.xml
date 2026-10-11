@@ -3,74 +3,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0F172A">
+    android:background="#070E2B">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#1E293B">
+        android:background="@drawable/bg_card_glass"
+        android:layout_margin="12dp"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvBestSignal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Best: -71 dBm"
+            android:text="--"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvBestLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lat: 33.6844, Lng: 73.0479"
-            android:textColor="#94A3B8"
-            android:layout_marginTop="4dp"/>
+            android:text=""
+            android:textColor="#8A9ABF"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp" />
 
         <!-- ZAROORI: MapV4Fragment.java is id ko use karta hai, delete na karein -->
         <TextView
             android:id="@+id/tvBestDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Abhi koi reading nahi"
+            android:text="@string/no_reading_yet"
             android:textColor="#00E5FF"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:layout_marginTop="6dp"/>
+            android:layout_marginTop="6dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="12dp">
 
             <Button
                 android:id="@+id/btnNavigateBest"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="NAVIGATE TO BEST"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#2563EB"/>
+                android:layout_height="48dp"
+                android:background="@drawable/bg_pill_mint"
+                android:text="@string/go_to_best"
+                android:textAllCaps="false"
+                android:textColor="#0F172A"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnOpenMap"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="OPEN IN MAP"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#334155"/>
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_pill_dark"
+                android:text="@string/open_in_maps"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- OSM MAP VIEW -->
     <org.osmdroid.views.MapView
         android:id="@+id/osmMap"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="12dp" />
 </LinearLayout>
