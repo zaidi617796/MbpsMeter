@@ -18,26 +18,26 @@ public class HistoryV4Fragment extends Fragment {
             SharedPreferences prefs=requireActivity().getSharedPreferences("MbpsMeter",Context.MODE_PRIVATE);
             String json=prefs.getString("signals","[]"); JSONArray arr=new JSONArray(json); list.clear();
             for(int i=arr.length()-1;i>=0;i--) list.add(arr.getJSONObject(i));
-            tvCount.setText("Total Readings: "+arr.length());
+            tvCount.setText("Total Readings: "+arr.length()+" - Tap CLEAR to reset old Islamabad data");
+            tvCount.setOnLongClickListener(v->{
+                prefs.edit().clear().apply(); load(); return true;
+            });
             recycler.setAdapter(new RecyclerView.Adapter<Holder>(){
                 @NonNull @Override public Holder onCreateViewHolder(@NonNull ViewGroup p,int t){return new Holder(LayoutInflater.from(p.getContext()).inflate(R.layout.item_history,p,false));}
                 @Override public void onBindViewHolder(@NonNull Holder h,int pos){
                     try{
-                        JSONObject o=list.get(pos); int dbm=o.getInt("dbm"); double lat=o.getDouble("lat");
+                        JSONObject o=list.get(pos); int dbm=o.optInt("dbm",-80);
                         h.tvDbm.setText(dbm+" dBm");
-                        String time=new SimpleDateFormat("dd MMM hh:mm a",Locale.getDefault()).format(new Date(o.getLong("time")));
-                        h.tvTime.setText(String.format(Locale.getDefault(),"%.4f, %.4f | %s | %s",o.getDouble("lat"),o.getDouble("lng"),o.getString("type"),time));
-                        if(dbm>=-80){h.tvBadge.setText("GOOD"); h.tvBadge.setTextColor(0xFF22C55E);} 
-                        else if(dbm>=-95){h.tvBadge.setText("FAIR"); h.tvBadge.setTextColor(0xFFF59E0B);} 
-                        else{h.tvBadge.setText("WEAK"); h.tvBadge.setTextColor(0xFFEF4444);}
+                        long time=o.optLong("time",System.currentTimeMillis());
+                        String t=new SimpleDateFormat("dd MMM hh:mm a",Locale.getDefault()).format(new Date(time));
+                        h.tvTime.setText(String.format(Locale.getDefault(),"%.4f, %.4f | %s | %s",o.optDouble("lat",0),o.optDouble("lng",0),o.optString("type","MANUAL"),t));
+                        if(dbm>=-80){h.tvBadge.setText("GOOD"); h.tvBadge.setTextColor(0xFF22C55E);} else if(dbm>=-95){h.tvBadge.setText("FAIR"); h.tvBadge.setTextColor(0xFFF59E0B);} else{h.tvBadge.setText("WEAK"); h.tvBadge.setTextColor(0xFFEF4444);}
                     }catch(Exception e){}
                 }
                 @Override public int getItemCount(){return list.size();}
             });
         }catch(Exception e){tvCount.setText("Total Readings: 0");}
     }
-    static class Holder extends RecyclerView.ViewHolder{
-        TextView tvDbm,tvTime,tvBadge; Holder(View v){super(v); tvDbm=v.findViewById(R.id.tvDbmItem); tvTime=v.findViewById(R.id.tvTimeItem); tvBadge=v.findViewById(R.id.tvBadge);}
-    }
+    static class Holder extends RecyclerView.ViewHolder{ TextView tvDbm,tvTime,tvBadge; Holder(View v){super(v); tvDbm=v.findViewById(R.id.tvDbmItem); tvTime=v.findViewById(R.id.tvTimeItem); tvBadge=v.findViewById(R.id.tvBadge);} }
     @Override public void onResume(){super.onResume(); load();}
 }
