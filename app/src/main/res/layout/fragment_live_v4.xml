@@ -1,66 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#0F172A"
-    android:padding="24dp"
-    android:gravity="center">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#0F172A" android:padding="16dp">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="#1E293B">
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        app:cardCornerRadius="24dp" app:cardBackgroundColor="#1E293B">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+            android:orientation="vertical" android:gravity="center" android:padding="20dp">
 
-            <TextView android:id="@+id/tvDbm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-71 dBm"
-                android:textColor="#FFFFFF"
-                android:textSize="56sp"
-                android:textStyle="bold"/>
+            <TextView android:id="@+id/tvStrength" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Strong" android:textColor="#22C55E" android:textSize="14sp" android:textStyle="bold"
+                android:background="#162C23" android:paddingHorizontal="12dp" android:paddingVertical="4dp"/>
 
-            <TextView android:id="@+id/tvStrength"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="GOOD SIGNAL"
-                android:textColor="#22C55E"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"/>
-
-            <TextView android:id="@+id/tvGps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="GPS: 33.6844, 73.0479"
-                android:textColor="#94A3B8"
+            <com.mbpsmeter.app.ui.custom.GaugeView
+                android:id="@+id/gauge"
+                android:layout_width="280dp" android:layout_height="280dp"
                 android:layout_marginTop="16dp"/>
 
-            <TextView android:id="@+id/tvTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="01:58 PM"
-                android:textColor="#94A3B8"
-                android:layout_marginTop="4dp"/>
+            <TextView android:id="@+id/tvGps" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="GPS: Karachi" android:textColor="#94A3B8" android:textSize="12sp" android:layout_marginTop="12dp"/>
+
+            <TextView android:id="@+id/tvTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="07:32 PM" android:textColor="#64748B" android:textSize="11sp" android:layout_marginTop="4dp"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <Button android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Save Manually"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#2563EB"
-        android:layout_marginTop="24dp"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="16dp">
+        <Button android:id="@+id/btnSave" android:layout_width="0dp" android:layout_weight="1" android:layout_height="50dp"
+            android:text="Record" android:textColor="#FFFFFF" android:backgroundTint="#2563EB"/>
+        <Button android:id="@+id/btnStop" android:layout_width="0dp" android:layout_weight="1" android:layout_height="50dp"
+            android:layout_marginStart="12dp" android:text="Stop" android:textColor="#FFFFFF" android:backgroundTint="#334155"/>
+    </LinearLayout>
 </LinearLayout>
