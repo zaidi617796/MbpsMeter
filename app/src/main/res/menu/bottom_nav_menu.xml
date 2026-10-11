@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_live" android:title="Live" android:icon="@android:drawable/ic_menu_compass"/>
-    <item android:id="@+id/nav_speed" android:title="Speed" android:icon="@android:drawable/ic_media_play"/>
-    <item android:id="@+id/nav_map" android:title="Map" android:icon="@android:drawable/ic_dialog_map"/>
-    <item android:id="@+id/nav_history" android:title="History" android:icon="@android:drawable/ic_menu_sort_by_size"/>
+    <item android:id="@+id/nav_live" android:title="Live" android:icon="@drawable/ic_nav_live" />
+    <item android:id="@+id/nav_speed" android:title="Speed" android:icon="@drawable/ic_nav_speed" />
+    <item android:id="@+id/nav_map" android:title="Map" android:icon="@drawable/ic_nav_map" />
+    <item android:id="@+id/nav_history" android:title="History" android:icon="@drawable/ic_nav_history" />
 </menu>

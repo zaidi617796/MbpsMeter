@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-
     <string name="app_name">MbpsMeter</string>
-
-    <string name="google_maps_key">PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE</string>
-
+    <string name="perm_title">Permissions chahiye</string>
+    <string name="perm_msg">Signal check karne ke liye Location aur Phone State permission zaroori hai. Please allow karein.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear_title">History clear karein?</string>
+    <string name="clear_msg">Saari saved readings aur speed tests delete ho jayengi. Ye wapas nahi aayengi.</string>
+    <string name="delete">Delete</string>
 </resources>

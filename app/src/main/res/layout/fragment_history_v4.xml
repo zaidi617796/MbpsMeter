@@ -3,20 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#070E2B"
     android:padding="16dp">
+
+    <!-- Top bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="History"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnExport"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_pill_dark"
+            android:src="@android:drawable/ic_menu_share"
+            android:contentDescription="Export CSV"
+            android:padding="10dp" />
+
+        <ImageButton
+            android:id="@+id/btnClear"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_pill_dark"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Clear history"
+            android:padding="10dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total Readings: 0"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:text="0 readings"
+        android:textColor="#8A9ABF"
+        android:textSize="13sp"
+        android:layout_marginTop="8dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp" />
-
+        android:layout_marginTop="12dp" />
 </LinearLayout>

@@ -3,44 +3,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#1E293B">
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardBackgroundColor="#1A2342"
+    app:strokeColor="#2A3A6B"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/badgeDbm"
+            android:layout_width="86dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_badge"
+            android:gravity="center"
+            android:text="-89 dBm"
+            android:textColor="#070E2B"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
 
-            <TextView android:id="@+id/tvDbmItem"
+            <TextView
+                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-71 dBm"
+                android:text="Fair Signal"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-            <TextView android:id="@+id/tvTimeItem"
+            <TextView
+                android:id="@+id/tvSub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Karachi - Manual"
-                android:textColor="#94A3B8"
-                android:textSize="12sp"/>
+                android:text="24.8448, 66.9907 • 4G"
+                android:textColor="#8A9ABF"
+                android:textSize="11sp"
+                android:layout_marginTop="2dp" />
         </LinearLayout>
 
-        <TextView android:id="@+id/tvBadge"
+        <TextView
+            android:id="@+id/tvExtra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GOOD"
-            android:textColor="#22C55E"
-            android:textStyle="bold"/>
+            android:text=""
+            android:textColor="#00E5FF"
+            android:textSize="12sp"
+            android:gravity="end" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

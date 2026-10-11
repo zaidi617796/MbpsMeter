@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="@drawable/bg_glass_card" android:orientation="horizontal"
-    android:padding="14dp" android:layout_marginBottom="10dp">
-    <TextView android:id="@+id/badgeDbm" android:layout_width="90dp" android:layout_height="36dp"
-        android:background="#7CFF8A" android:gravity="center" android:text="-81 dBm" android:textColor="#070E2B" android:textStyle="bold"/>
-    <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="12dp">
-        <TextView android:id="@+id/tvType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Strong Signal" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="13sp"/>
-        <TextView android:id="@+id/tvLoc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="24.8469, 66.9842" android:textColor="#8A9ABF" android:textSize="11sp"/>
+    android:layout_margin="6dp" app:cardCornerRadius="12dp" app:cardBackgroundColor="#1E293B">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+        <TextView android:id="@+id/tvTimeItem" android:layout_width="0dp" android:layout_weight="1.2" android:layout_height="wrap_content" android:text="19:24" android:textColor="#94A3B8" android:textSize="11sp"/>
+        <TextView android:id="@+id/tvDbmItem" android:layout_width="0dp" android:layout_weight="0.8" android:layout_height="wrap_content" android:text="-71 dBm" android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/tvLocItem" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Karachi" android:textColor="#64748B" android:textSize="10sp"/>
+        <TextView android:id="@+id/tvBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="GOOD" android:textColor="#22C55E" android:textSize="10sp" android:textStyle="bold" android:background="#162C23" android:padding="6dp"/>
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

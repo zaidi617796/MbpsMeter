@@ -1,27 +1,40 @@
 package com.mbpsmeter.app;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
 import com.mbpsmeter.app.ui.live.LiveV4Fragment;
 import com.mbpsmeter.app.ui.map.MapV4Fragment;
 import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
+
 import org.osmdroid.config.Configuration;
+
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQ_PERMS = 101;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // OSM FIX - Without PreferenceManager
+        // OSM config — PreferenceManager ke baghair
         try {
             File osmCache = new File(getCacheDir(), "osmdroid");
             Configuration.getInstance().setOsmdroidBasePath(osmCache);
@@ -62,5 +75,54 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState == null) bottomNav.setSelectedItemId(R.id.nav_live);
+
+        askPermissions();
+    }
+
+    /** App khulte hi permission popup */
+    private void askPermissions() {
+        String[] need = {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE
+        };
+        boolean missing = false;
+        for (String p : need) {
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
+                missing = true;
+                break;
+            }
+        }
+        if (!missing) return;
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.perm_title)
+                .setMessage(R.string.perm_msg)
+                .setPositiveButton(R.string.ok, (d, w) ->
+                        ActivityCompat.requestPermissions(MainActivity.this, need, REQ_PERMS))
+                .setNegativeButton(R.string.cancel, null)
+                .setCancelable(false)
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_PERMS) {
+            boolean locOk = false;
+            for (int i = 0; i < permissions.length; i++) {
+                if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissions[i])
+                        && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    locOk = true;
+                }
+            }
+            if (!locOk) {
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.perm_title)
+                        .setMessage("Location ke baghair map aur walk test kaam nahi karega.")
+                        .setPositiveButton(R.string.ok, null)
+                        .show();
+            }
+        }
     }
 }
