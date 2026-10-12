@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 
+import java.io.File;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+
+import org.osmdroid.config.Configuration;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
@@ -35,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
         // App hamesha dark theme me rahe - DayNight system mode se affect na ho
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
+
+        // OSM config - PreferenceManager ke baghair
+        try {
+            File osmCache = new File(getCacheDir(), "osmdroid");
+            Configuration.getInstance().setOsmdroidBasePath(osmCache);
+            Configuration.getInstance().setOsmdroidTileCache(new File(osmCache, "tiles"));
+            Configuration.getInstance().setUserAgentValue(getPackageName());
+        } catch (Exception e) { e.printStackTrace(); }
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
