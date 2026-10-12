@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -54,6 +55,7 @@
                 android:layout_weight="1"
                 android:layout_height="48dp"
                 android:background="@drawable/bg_pill_mint"
+                app:backgroundTint="@null"
                 android:text="@string/go_to_best"
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
@@ -66,6 +68,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="10dp"
                 android:background="@drawable/bg_pill_dark"
+                app:backgroundTint="@null"
                 android:text="@string/open_in_maps"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF" />

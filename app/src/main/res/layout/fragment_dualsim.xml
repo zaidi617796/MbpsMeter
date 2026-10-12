@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#070E2B"
@@ -22,6 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:background="@drawable/bg_pill_dark"
+                app:backgroundTint="@null"
                 android:text="@string/back"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
@@ -42,6 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:background="@drawable/bg_pill_mint"
+                app:backgroundTint="@null"
                 android:text="@string/sim_refresh"
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
