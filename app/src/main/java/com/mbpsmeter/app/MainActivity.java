@@ -24,9 +24,7 @@ import com.mbpsmeter.app.ui.map.MapV4Fragment;
 import com.mbpsmeter.app.ui.rooms.RoomHeatmapFragment;
 import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 
-import org.osmdroid.config.Configuration;
 
-import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,14 +35,6 @@ public class MainActivity extends AppCompatActivity {
         // App hamesha dark theme me rahe - DayNight system mode se affect na ho
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
-
-        // OSM config - PreferenceManager ke baghair
-        try {
-            File osmCache = new File(getCacheDir(), "osmdroid");
-            Configuration.getInstance().setOsmdroidBasePath(osmCache);
-            Configuration.getInstance().setOsmdroidTileCache(new File(osmCache, "tiles"));
-            Configuration.getInstance().setUserAgentValue(getPackageName());
-        } catch (Exception e) { e.printStackTrace(); }
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);

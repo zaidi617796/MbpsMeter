@@ -95,6 +95,7 @@
     <string name="best_spot_found">Best spot found - go there</string>
     <string name="first_record">Record on Live first</string>
     <string name="no_maps_app">No maps app found</string>
+    <string name="map_key_missing">Map needs a Google Maps API key — add it in res/values/google_maps_api.xml</string>
     <string name="best_spot_go">Best spot %1$s %2$s - walk that way</string>
 
     <!-- History -->

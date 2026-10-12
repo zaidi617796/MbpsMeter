@@ -95,6 +95,7 @@
     <string name="best_spot_found">بہترین جگہ مل گئی - وہاں جائیں</string>
     <string name="first_record">پہلے لائیو پر ریکارڈ کریں</string>
     <string name="no_maps_app">نقشے کی ایپ نہیں ملی</string>
+    <string name="map_key_missing">نقشے کے لیے Google Maps API key درکار ہے — res/values/google_maps_api.xml میں ڈالیں</string>
     <string name="best_spot_go">بہترین جگہ %1$s %2$s - اس طرف جائیں</string>
 
     <!-- History -->

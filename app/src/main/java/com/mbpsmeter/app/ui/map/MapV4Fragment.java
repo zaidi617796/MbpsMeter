@@ -5,11 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -25,25 +20,29 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.mbpsmeter.app.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
 
 import java.util.Locale;
 
 /**
- * MAP V6: colored pins + best spot distance/direction + Open in Maps.
+ * MAP V8: Google Maps SDK - colored pins + best spot + Open in Maps.
+ * API key res/values/google_maps_api.xml me (google_maps_key) dalein.
  */
-public class MapV4Fragment extends Fragment {
+public class MapV4Fragment extends Fragment implements OnMapReadyCallback {
 
-    private TextView tvBestSignal, tvBestLocation, tvBestDistance;
+    private TextView tvBestSignal, tvBestLocation, tvBestDistance, tvKeyNotice;
     private SharedPreferences prefs;
-    private MapView osmMap;
+    private GoogleMap gmap;
 
     private float bestLat = 0, bestLng = 0;
     private int bestDbm = -120;
@@ -55,80 +54,84 @@ public class MapV4Fragment extends Fragment {
         tvBestSignal = v.findViewById(R.id.tvBestSignal);
         tvBestLocation = v.findViewById(R.id.tvBestLocation);
         tvBestDistance = v.findViewById(R.id.tvBestDistance);
+        tvKeyNotice = v.findViewById(R.id.tvMapKeyNotice);
         v.findViewById(R.id.btnNavigateBest).setOnClickListener(x -> centerBest());
         v.findViewById(R.id.btnOpenMap).setOnClickListener(x -> openInMaps());
-        osmMap = v.findViewById(R.id.osmMap);
         prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
-        osmMap.setTileSource(TileSourceFactory.MAPNIK);
-        osmMap.setMultiTouchControls(true);
-        osmMap.setBuiltInZoomControls(false);
-        loadAll();
+
+        String key = getString(R.string.google_maps_key);
+        if (key == null || key.isEmpty() || "YOUR_API_KEY_HERE".equals(key)) {
+            tvKeyNotice.setVisibility(View.VISIBLE);
+        } else {
+            tvKeyNotice.setVisibility(View.GONE);
+        }
+
+        SupportMapFragment mf = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.googleMap);
+        if (mf != null) mf.getMapAsync(this);
+
+        updateBestCard();
         return v;
     }
 
-    private int colorFor(int dbm) {
-        if (dbm >= -80) return Color.parseColor("#22C55E");
-        if (dbm >= -95) return Color.parseColor("#F59E0B");
-        return Color.parseColor("#EF4444");
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        gmap = googleMap;
+        try {
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                gmap.setMyLocationEnabled(true);
+            }
+        } catch (Exception ignored) {}
+        gmap.getUiSettings().setZoomControlsEnabled(false);
+        gmap.getUiSettings().setMyLocationButtonEnabled(true);
+        loadAll();
     }
 
-    private BitmapDrawable dotIcon(int color) {
-        int s = 72;
-        Bitmap bmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmp);
-        Paint outer = new Paint(Paint.ANTI_ALIAS_FLAG);
-        outer.setColor(Color.WHITE);
-        c.drawCircle(s / 2f, s / 2f, 30f, outer);
-        Paint inner = new Paint(Paint.ANTI_ALIAS_FLAG);
-        inner.setColor(color);
-        c.drawCircle(s / 2f, s / 2f, 22f, inner);
-        return new BitmapDrawable(getResources(), bmp);
+    private float hueFor(int dbm) {
+        if (dbm >= -80) return BitmapDescriptorFactory.HUE_GREEN;
+        if (dbm >= -95) return BitmapDescriptorFactory.HUE_YELLOW;
+        return BitmapDescriptorFactory.HUE_RED;
     }
 
     private void loadAll() {
+        if (gmap == null) return;
         try {
-            osmMap.getOverlays().clear();
+            gmap.clear();
             String json = prefs.getString("signals", "[]");
             JSONArray arr = new JSONArray(json);
             bestLat = prefs.getFloat("best_lat", 0);
             bestLng = prefs.getFloat("best_lng", 0);
             bestDbm = prefs.getInt("best_dbm", -120);
 
-            GeoPoint center = new GeoPoint(24.8607, 67.0011);
+            LatLng center = new LatLng(24.8607, 67.0011);
             if (arr.length() > 0) {
                 JSONObject last = arr.getJSONObject(arr.length() - 1);
-                center = new GeoPoint(last.optDouble("lat", 24.8607), last.optDouble("lng", 67.0011));
+                center = new LatLng(last.optDouble("lat", 24.8607), last.optDouble("lng", 67.0011));
             } else if (bestLat != 0) {
-                center = new GeoPoint(bestLat, bestLng);
+                center = new LatLng(bestLat, bestLng);
             }
 
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject o = arr.getJSONObject(i);
                 int dbm = o.optInt("dbm", -80);
-                GeoPoint p = new GeoPoint(o.optDouble("lat", 24.8607), o.optDouble("lng", 67.0011));
-                Marker m = new Marker(osmMap);
-                m.setPosition(p);
+                LatLng p = new LatLng(o.optDouble("lat", 24.8607), o.optDouble("lng", 67.0011));
                 String title = dbm + " dBm | " + o.optString("type", "MANUAL");
                 if (!o.optString("room", "").isEmpty()) title = o.optString("room", "") + " | " + title;
-                m.setTitle(title);
-                m.setIcon(dotIcon(colorFor(dbm)));
-                m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                osmMap.getOverlays().add(m);
+                gmap.addMarker(new MarkerOptions()
+                        .position(p)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.defaultMarker(hueFor(dbm))));
             }
 
             if (bestLat != 0 && bestDbm > -120) {
-                Marker b = new Marker(osmMap);
-                b.setPosition(new GeoPoint(bestLat, bestLng));
-                b.setTitle(getString(R.string.best) + ": " + bestDbm + " dBm");
-                b.setIcon(dotIcon(Color.parseColor("#00E5FF")));
-                b.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                osmMap.getOverlays().add(b);
+                gmap.addMarker(new MarkerOptions()
+                        .position(new LatLng(bestLat, bestLng))
+                        .title(getString(R.string.best) + ": " + bestDbm + " dBm")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             }
 
-            osmMap.getController().setZoom(15.0);
-            osmMap.getController().setCenter(center);
-            osmMap.invalidate();
-
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 15f));
             updateBestCard();
         } catch (Exception e) { e.printStackTrace(); }
     }
@@ -181,8 +184,9 @@ public class MapV4Fragment extends Fragment {
             Toast.makeText(getContext(), R.string.first_record, Toast.LENGTH_SHORT).show();
             return;
         }
-        osmMap.getController().animateTo(new GeoPoint(bestLat, bestLng));
-        osmMap.getController().setZoom(17.0);
+        if (gmap != null) {
+            gmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(bestLat, bestLng), 17f));
+        }
     }
 
     private void openInMaps() {
@@ -198,6 +202,9 @@ public class MapV4Fragment extends Fragment {
         }
     }
 
-    @Override public void onResume() { super.onResume(); if (osmMap != null) { osmMap.onResume(); loadAll(); } }
-    @Override public void onPause() { super.onPause(); if (osmMap != null) osmMap.onPause(); }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (gmap != null) loadAll();
+    }
 }
