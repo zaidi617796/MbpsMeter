@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.util.SignalReader;
+import com.mbpsmeter.app.util.SupabaseSync;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,6 +72,9 @@ public class HistoryV4Fragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         view.findViewById(R.id.btnClear).setOnClickListener(v -> confirmClear());
         view.findViewById(R.id.btnExport).setOnClickListener(v -> exportCsv());
+        view.findViewById(R.id.btnCloudBackup).setOnClickListener(v -> cloudBackup());
+        view.findViewById(R.id.btnCloudRestore).setOnClickListener(v -> confirmRestore());
+        view.findViewById(R.id.btnCloudSettings).setOnClickListener(v -> cloudSettings());
         btnTabReadings.setOnClickListener(v -> { showDrops = false; styleTabs(); load(); });
         btnTabDrops.setOnClickListener(v -> { showDrops = true; styleTabs(); load(); });
         styleTabs();
@@ -196,6 +202,76 @@ public class HistoryV4Fragment extends Fragment {
                     + String.format(Locale.getDefault(), "\n%.5f, %.5f", r.lat, r.lng));
             h.extra.setText(dur);
         }
+    }
+
+    private SharedPreferences prefs() {
+        return requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+    }
+
+    private void needConfig() {
+        Toast.makeText(getContext(), R.string.cloud_no_config, Toast.LENGTH_LONG).show();
+        cloudSettings();
+    }
+
+    private void cloudBackup() {
+        if (getContext() == null) return;
+        if (!SupabaseSync.hasConfig(prefs())) { needConfig(); return; }
+        Toast.makeText(getContext(), R.string.cloud_backing_up, Toast.LENGTH_SHORT).show();
+        SupabaseSync.backup(requireContext(), (ok, msg) -> {
+            if (!isAdded()) return;
+            Toast.makeText(getContext(), ok ? R.string.cloud_done
+                    : getString(R.string.cloud_failed, msg), Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void confirmRestore() {
+        if (getContext() == null) return;
+        if (!SupabaseSync.hasConfig(prefs())) { needConfig(); return; }
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.cloud_restore)
+                .setMessage(R.string.cloud_restore_confirm)
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    Toast.makeText(getContext(), R.string.cloud_restoring, Toast.LENGTH_SHORT).show();
+                    SupabaseSync.restore(requireContext(), (ok, msg) -> {
+                        if (!isAdded()) return;
+                        Toast.makeText(getContext(), ok ? R.string.cloud_done
+                                : getString(R.string.cloud_failed, msg), Toast.LENGTH_LONG).show();
+                        if (ok) load();
+                    });
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void cloudSettings() {
+        if (getContext() == null) return;
+        SharedPreferences p = prefs();
+        LinearLayout ll = new LinearLayout(getContext());
+        ll.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        ll.setPadding(pad, pad, pad, pad);
+        final EditText etUrl = new EditText(getContext());
+        etUrl.setHint(R.string.sb_url_hint);
+        etUrl.setText(p.getString("sb_url", ""));
+        etUrl.setSingleLine(true);
+        final EditText etKey = new EditText(getContext());
+        etKey.setHint(R.string.sb_key_hint);
+        etKey.setText(p.getString("sb_key", ""));
+        etKey.setSingleLine(true);
+        ll.addView(etUrl);
+        ll.addView(etKey);
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.cloud_settings)
+                .setView(ll)
+                .setPositiveButton(R.string.ok, (d, w) -> {
+                    prefs().edit()
+                            .putString("sb_url", etUrl.getText().toString().trim())
+                            .putString("sb_key", etKey.getText().toString().trim())
+                            .apply();
+                    Toast.makeText(getContext(), R.string.cloud_saved, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void confirmClear() {

@@ -105,6 +105,20 @@
     <string name="export_csv">Export CSV</string>
     <string name="clear_history">Clear history</string>
 
+    <!-- Supabase cloud -->
+    <string name="cloud_backup">Cloud Backup</string>
+    <string name="cloud_restore">Restore</string>
+    <string name="cloud_settings">Supabase settings</string>
+    <string name="sb_url_hint">Supabase URL (https://xyz.supabase.co)</string>
+    <string name="sb_key_hint">Anon key</string>
+    <string name="cloud_no_config">Add your Supabase URL and key in settings first</string>
+    <string name="cloud_backing_up">Backing up…</string>
+    <string name="cloud_restoring">Restoring…</string>
+    <string name="cloud_done">Done</string>
+    <string name="cloud_failed">Failed: %1$s</string>
+    <string name="cloud_restore_confirm">Replace local data with the cloud backup?</string>
+    <string name="cloud_saved">Saved</string>
+
     <!-- Guide -->
     <string name="guide_title">Signal Guide</string>
     <string name="open_guide">Signal Guide — where is it best?</string>

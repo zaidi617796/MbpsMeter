@@ -105,6 +105,20 @@
     <string name="export_csv">CSV ایکسپورٹ</string>
     <string name="clear_history">ہسٹری صاف کریں</string>
 
+    <!-- Supabase cloud -->
+    <string name="cloud_backup">کلاؤڈ بیک اپ</string>
+    <string name="cloud_restore">ریسٹور</string>
+    <string name="cloud_settings">Supabase سیٹنگز</string>
+    <string name="sb_url_hint">Supabase URL (https://xyz.supabase.co)</string>
+    <string name="sb_key_hint">Anon key</string>
+    <string name="cloud_no_config">پہلے سیٹنگز میں اپنا Supabase URL اور key ڈالیں</string>
+    <string name="cloud_backing_up">بیک اپ ہو رہا ہے…</string>
+    <string name="cloud_restoring">ریسٹور ہو رہا ہے…</string>
+    <string name="cloud_done">ہو گیا</string>
+    <string name="cloud_failed">ناکام: %1$s</string>
+    <string name="cloud_restore_confirm">مقامی ڈیٹا کلاؤڈ بیک اپ سے بدل دیں؟</string>
+    <string name="cloud_saved">محفوظ ہو گیا</string>
+
     <!-- Guide -->
     <string name="guide_title">سگنل گائیڈ</string>
     <string name="open_guide">سگنل گائیڈ — سگنل کہاں بہتر ہے؟</string>
