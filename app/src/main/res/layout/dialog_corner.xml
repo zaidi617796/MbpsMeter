@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#0F1E4B">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/corner_pick_title"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="14dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cTL"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/corner_tl"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/cTR"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/corner_tr"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/cBL"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/corner_bl"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/cBR"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/corner_br"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/cC"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_pill_dark"
+        android:text="@string/corner_center"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp" />
+</LinearLayout>

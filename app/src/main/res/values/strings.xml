@@ -42,7 +42,7 @@
     <string name="rooms_title">Room Heatmap</string>
     <string name="add_room">+ Add room</string>
     <string name="room_name_hint">Room name (e.g. Bedroom)</string>
-    <string name="rooms_tip">Tap a room to record the signal there. Colors show average: green = strong, yellow = fair, red = weak. Indoor GPS is unreliable, so rooms beat map pins inside the house.</string>
+    <string name="rooms_tip">Tap a room, pick the corner you are standing in, and the signal is recorded. Colors show average: green = strong, yellow = fair, red = weak. Indoor GPS is unreliable, so rooms beat map pins inside the house.</string>
     <string name="best_room">Best room</string>
     <string name="no_data_tap">No data - tap to record</string>
     <string name="readings_count">readings</string>
@@ -103,4 +103,39 @@
     <string name="no_data">No data</string>
     <string name="export_csv">Export CSV</string>
     <string name="clear_history">Clear history</string>
+
+    <!-- Guide -->
+    <string name="guide_title">Signal Guide</string>
+    <string name="open_guide">Signal Guide — where is it best?</string>
+    <string name="guide_dir_title">Which way is the signal best?</string>
+    <string name="guide_dir_none">No readings yet — record a few spots first (Live, Walk Test or Rooms).</string>
+    <string name="guide_no_gps">Current location not available yet.</string>
+    <string name="guide_dir_body">Best signal %1$d dBm — %2$d m towards %3$s</string>
+    <string name="guide_rooms_title">Room corners</string>
+    <string name="guide_rooms_none">No room readings yet — tap a room in the Rooms tab and pick your corner.</string>
+    <string name="guide_room_line">%1$s — best corner: %2$s (%3$d dBm, %4$d readings)</string>
+    <string name="guide_outdoor_title">Outdoor trend</string>
+    <string name="guide_outdoor_none">Need readings from a few different outdoor spots to see a trend — try a Walk Test.</string>
+    <string name="guide_outdoor_body">Signal improves towards %1$s — walk 15–20 m that way and re-check.</string>
+    <string name="guide_outdoor_weak">Readings are too scattered — no clear direction yet. Record a few more spots.</string>
+    <string name="guide_tips_title">Tips</string>
+    <string name="tip_call_spot">Take important calls at your best spot (%1$d m %2$s).</string>
+    <string name="tip_corner_call">In %1$s, sit near the %2$s corner for calls.</string>
+    <string name="tip_weak_all">Signal is weak everywhere measured — try Wi-Fi calling or a signal booster.</string>
+    <string name="tip_walk_more">More readings = better guidance. Do a Walk Test around the house.</string>
+    <string name="corner_pick_title">Where in the room are you standing?</string>
+    <string name="corner_center">Center</string>
+    <string name="corner_tl">Top-left</string>
+    <string name="corner_tr">Top-right</string>
+    <string name="corner_bl">Bottom-left</string>
+    <string name="corner_br">Bottom-right</string>
+    <string name="corner_best_short">Best: %1$s</string>
+    <string name="dir_n">North</string>
+    <string name="dir_ne">North-East</string>
+    <string name="dir_e">East</string>
+    <string name="dir_se">South-East</string>
+    <string name="dir_s">South</string>
+    <string name="dir_sw">South-West</string>
+    <string name="dir_w">West</string>
+    <string name="dir_nw">North-West</string>
 </resources>

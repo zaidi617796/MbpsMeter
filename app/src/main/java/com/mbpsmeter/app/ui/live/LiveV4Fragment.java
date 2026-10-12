@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.ui.custom.GaugeView;
+import com.mbpsmeter.app.ui.guide.GuideFragment;
 import com.mbpsmeter.app.ui.sim.DualSimFragment;
 import com.mbpsmeter.app.util.SignalReader;
 
@@ -50,7 +51,7 @@ public class LiveV4Fragment extends Fragment {
 
     private TextView tvStrength, tvGps, tvTime, tvOperator, tvNetType, tvCellInfo, tvDropAlert, tvWalkCount;
     private GaugeView gauge;
-    private Button btnSave, btnStop, btnWalk, btnSim, btnLang;
+    private Button btnSave, btnStop, btnWalk, btnSim, btnLang, btnGuide;
     private SharedPreferences prefs;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -93,6 +94,7 @@ public class LiveV4Fragment extends Fragment {
         btnWalk = v.findViewById(R.id.btnWalk);
         btnSim = v.findViewById(R.id.btnSim);
         btnLang = v.findViewById(R.id.btnLang);
+        btnGuide = v.findViewById(R.id.btnGuide);
 
         prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
         updateLangBtn();
@@ -129,6 +131,14 @@ public class LiveV4Fragment extends Fragment {
             }
         });
         btnLang.setOnClickListener(view -> toggleLocale());
+        btnGuide.setOnClickListener(view -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new GuideFragment())
+                        .addToBackStack("guide")
+                        .commit();
+            }
+        });
 
         updateLocation();
         startLoop();

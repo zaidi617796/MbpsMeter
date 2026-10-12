@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.mbpsmeter.app.R;
+import com.mbpsmeter.app.util.SignalAdvisor;
 import com.mbpsmeter.app.util.SignalReader;
 
 import org.json.JSONArray;
@@ -134,11 +135,17 @@ public class RoomHeatmapFragment extends Fragment {
                     h.avg.setText(st[0] + " dBm");
                     int color = st[0] >= -80 ? 0xFF22C55E : (st[0] >= -95 ? 0xFFF59E0B : 0xFFEF4444);
                     h.avg.setTextColor(color);
-                    h.count.setText(st[1] + " " + getString(R.string.readings_count));
+                    String cnt = st[1] + " " + getString(R.string.readings_count);
+                    int[] cb = cornerBest(room);
+                    if (cb != null) {
+                        cnt += " • " + getString(R.string.corner_best_short,
+                                getString(SignalAdvisor.cornerRes(cb[0])));
+                    }
+                    h.count.setText(cnt);
                     h.card.setStrokeColor(color);
                     h.card.setStrokeWidth(3);
                 }
-                h.itemView.setOnClickListener(x -> recordFor(room));
+                h.itemView.setOnClickListener(x -> askCorner(room));
                 h.itemView.setOnLongClickListener(x -> { confirmDelete(room); return true; });
             }
             @Override public int getItemCount() { return rooms.size(); }
@@ -189,8 +196,54 @@ public class RoomHeatmapFragment extends Fragment {
                 .show();
     }
 
-    /** Us kamre me aik reading record karein */
-    private void recordFor(String room) {
+    /** us kamre ka sab se acha corner: {cornerId, avgDbm}, ya null */
+    private int[] cornerBest(String room) {
+        int[] sum = new int[5];
+        int[] n = new int[5];
+        try {
+            JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                if (room.equals(o.optString("room", ""))) {
+                    int c = o.optInt("corner", 0);
+                    if (c < 0 || c > 4) c = 0;
+                    sum[c] += o.optInt("dbm", -120);
+                    n[c]++;
+                }
+            }
+        } catch (Exception ignored) {}
+        int best = -1, bestAvg = -999;
+        for (int i = 0; i < 5; i++) {
+            if (n[i] > 0 && sum[i] / n[i] > bestAvg) {
+                bestAvg = sum[i] / n[i];
+                best = i;
+            }
+        }
+        return best < 0 ? null : new int[]{best, bestAvg};
+    }
+
+    /** corner picker dialog: user bataye kamre me kidhar khara hai */
+    private void askCorner(String room) {
+        if (getContext() == null) return;
+        View dv = LayoutInflater.from(getContext()).inflate(R.layout.dialog_corner, null);
+        AlertDialog dlg = new AlertDialog.Builder(getContext())
+                .setView(dv)
+                .create();
+        int[] ids = {R.id.cC, R.id.cTL, R.id.cTR, R.id.cBL, R.id.cBR};
+        int[] corners = {0, 1, 2, 3, 4};
+        for (int i = 0; i < ids.length; i++) {
+            final int c = corners[i];
+            View b = dv.findViewById(ids[i]);
+            if (b != null) b.setOnClickListener(x -> {
+                dlg.dismiss();
+                recordFor(room, c);
+            });
+        }
+        dlg.show();
+    }
+
+    /** Us kamre me aik reading record karein (corner ke sath) */
+    private void recordFor(String room, int corner) {
         SignalReader.Result r = SignalReader.read(requireContext());
         int dbm;
         String net;
@@ -211,6 +264,7 @@ public class RoomHeatmapFragment extends Fragment {
             o.put("lng", loc[1]);
             o.put("type", "ROOM");
             o.put("room", room);
+            o.put("corner", corner);
             o.put("net", net);
             arr.put(o);
             SharedPreferences.Editor ed = prefs.edit();

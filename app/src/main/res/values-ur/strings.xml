@@ -42,7 +42,7 @@
     <string name="rooms_title">کمروں کا ہیٹ میپ</string>
     <string name="add_room">+ کمرہ شامل کریں</string>
     <string name="room_name_hint">کمرے کا نام (مثلاً بیڈروم)</string>
-    <string name="rooms_tip">سگنل ریکارڈ کرنے کے لیے کسی کمرے پر ٹیپ کریں۔ رنگ اوسط بتاتے ہیں: سبز = مضبوط، پیلا = درمیانہ، سرخ = کمزور۔ گھر کے اندر GPS ٹھیک کام نہیں کرتا، اس لیے کمرے نقشے کے پن سے بہتر ہیں۔</string>
+    <string name="rooms_tip">کسی کمرے پر ٹیپ کریں، جس کونے میں کھڑے ہیں وہ منتخب کریں، سگنل ریکارڈ ہو جائے گا۔ رنگ اوسط بتاتے ہیں: سبز = مضبوط، پیلا = درمیانہ، سرخ = کمزور۔ گھر کے اندر GPS ٹھیک کام نہیں کرتا، اس لیے کمرے نقشے کے پن سے بہتر ہیں۔</string>
     <string name="best_room">بہترین کمرہ</string>
     <string name="no_data_tap">کوئی ڈیٹا نہیں - ریکارڈ کے لیے ٹیپ کریں</string>
     <string name="readings_count">ریڈنگز</string>
@@ -103,4 +103,39 @@
     <string name="no_data">کوئی ڈیٹا نہیں</string>
     <string name="export_csv">CSV ایکسپورٹ</string>
     <string name="clear_history">ہسٹری صاف کریں</string>
+
+    <!-- Guide -->
+    <string name="guide_title">سگنل گائیڈ</string>
+    <string name="open_guide">سگنل گائیڈ — سگنل کہاں بہتر ہے؟</string>
+    <string name="guide_dir_title">سگنل کس طرف بہتر ہے؟</string>
+    <string name="guide_dir_none">ابھی کوئی ریڈنگ نہیں — پہلے چند جگہوں کی ریڈنگ لیں (لائیو، واک ٹیسٹ یا کمرے)۔</string>
+    <string name="guide_no_gps">موجودہ لوکیشن دستیاب نہیں ہے۔</string>
+    <string name="guide_dir_body">بہترین سگنل %1$d dBm — %3$s کی طرف %2$d میٹر</string>
+    <string name="guide_rooms_title">کمروں کے کونے</string>
+    <string name="guide_rooms_none">ابھی کمروں کی کوئی ریڈنگ نہیں — کمرے ٹیب میں کسی کمرے پر ٹیپ کر کے کونا منتخب کریں۔</string>
+    <string name="guide_room_line">%1$s — بہترین کونا: %2$s (%3$d dBm، %4$d ریڈنگز)</string>
+    <string name="guide_outdoor_title">باہر کا رجحان</string>
+    <string name="guide_outdoor_none">رجحان دیکھنے کے لیے باہر کی چند مختلف جگہوں سے ریڈنگ چاہیے — واک ٹیسٹ کریں۔</string>
+    <string name="guide_outdoor_body">سگنل %1$s کی طرف بہتر ہو رہا ہے — اس طرف 15–20 میٹر چلیں اور دوبارہ چیک کریں۔</string>
+    <string name="guide_outdoor_weak">ریڈنگز بکھری ہوئی ہیں — ابھی کوئی واضح سمت نہیں۔ چند مزید جگہوں سے ریکارڈ کریں۔</string>
+    <string name="guide_tips_title">مشورے</string>
+    <string name="tip_call_spot">اہم کالز اپنی بہترین جگہ (%1$d میٹر %2$s) پر کریں۔</string>
+    <string name="tip_corner_call">%1$s میں کال کے لیے %2$s کونے کے قریب بیٹھیں۔</string>
+    <string name="tip_weak_all">ہر جگہ سگنل کمزور ہے — وائی فائی کالنگ یا سگنل بوسٹر آزمائیں۔</string>
+    <string name="tip_walk_more">جتنی زیادہ ریڈنگز، اتنی بہتر رہنمائی۔ گھر کے گرد واک ٹیسٹ کریں۔</string>
+    <string name="corner_pick_title">کمرے میں آپ کہاں کھڑے ہیں؟</string>
+    <string name="corner_center">درمیان</string>
+    <string name="corner_tl">اوپر بایاں</string>
+    <string name="corner_tr">اوپر دایاں</string>
+    <string name="corner_bl">نیچے بایاں</string>
+    <string name="corner_br">نیچے دایاں</string>
+    <string name="corner_best_short">بہترین: %1$s</string>
+    <string name="dir_n">شمال</string>
+    <string name="dir_ne">شمال مشرق</string>
+    <string name="dir_e">مشرق</string>
+    <string name="dir_se">جنوب مشرق</string>
+    <string name="dir_s">جنوب</string>
+    <string name="dir_sw">جنوب مغرب</string>
+    <string name="dir_w">مغرب</string>
+    <string name="dir_nw">شمال مغرب</string>
 </resources>

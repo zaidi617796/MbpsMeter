@@ -215,6 +215,20 @@
             android:drawableStart="@drawable/ic_sim"
             android:drawablePadding="8dp" />
 
+        <!-- Signal Guide -->
+        <Button
+            android:id="@+id/btnGuide"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_pill_dark"
+            android:text="@string/open_guide"
+            android:textAllCaps="false"
+            android:textColor="#FCD34D"
+            android:textSize="14sp"
+            android:drawableStart="@drawable/ic_arrow_up"
+            android:drawablePadding="8dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
