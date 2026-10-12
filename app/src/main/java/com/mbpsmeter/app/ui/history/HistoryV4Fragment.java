@@ -219,7 +219,7 @@ public class HistoryV4Fragment extends Fragment {
         Toast.makeText(getContext(), R.string.cloud_backing_up, Toast.LENGTH_SHORT).show();
         SupabaseSync.backup(requireContext(), (ok, msg) -> {
             if (!isAdded()) return;
-            Toast.makeText(getContext(), ok ? R.string.cloud_done
+            Toast.makeText(getContext(), ok ? getString(R.string.cloud_done)
                     : getString(R.string.cloud_failed, msg), Toast.LENGTH_LONG).show();
         });
     }
@@ -234,7 +234,7 @@ public class HistoryV4Fragment extends Fragment {
                     Toast.makeText(getContext(), R.string.cloud_restoring, Toast.LENGTH_SHORT).show();
                     SupabaseSync.restore(requireContext(), (ok, msg) -> {
                         if (!isAdded()) return;
-                        Toast.makeText(getContext(), ok ? R.string.cloud_done
+                        Toast.makeText(getContext(), ok ? getString(R.string.cloud_done)
                                 : getString(R.string.cloud_failed, msg), Toast.LENGTH_LONG).show();
                         if (ok) load();
                     });
