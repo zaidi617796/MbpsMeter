@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.mbpsmeter.app.R;
+import com.mbpsmeter.app.ui.custom.Room3DView;
 import com.mbpsmeter.app.util.SignalAdvisor;
 import com.mbpsmeter.app.util.SignalReader;
 
@@ -222,24 +223,45 @@ public class RoomHeatmapFragment extends Fragment {
         return best < 0 ? null : new int[]{best, bestAvg};
     }
 
-    /** corner picker dialog: user bataye kamre me kidhar khara hai */
+    /** 3D room me corner picker: user zone par tap kare */
     private void askCorner(String room) {
         if (getContext() == null) return;
-        View dv = LayoutInflater.from(getContext()).inflate(R.layout.dialog_corner, null);
-        AlertDialog dlg = new AlertDialog.Builder(getContext())
-                .setView(dv)
+        Room3DView rv = new Room3DView(getContext());
+        final AlertDialog[] holder = new AlertDialog[1];
+        rv.setData(cornerAvgs(room), corner -> {
+            if (holder[0] != null) holder[0].dismiss();
+            recordFor(room, corner);
+        });
+        holder[0] = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.corner_pick_title)
+                .setView(rv)
                 .create();
-        int[] ids = {R.id.cC, R.id.cTL, R.id.cTR, R.id.cBL, R.id.cBR};
-        int[] corners = {0, 1, 2, 3, 4};
-        for (int i = 0; i < ids.length; i++) {
-            final int c = corners[i];
-            View b = dv.findViewById(ids[i]);
-            if (b != null) b.setOnClickListener(x -> {
-                dlg.dismiss();
-                recordFor(room, c);
-            });
+        holder[0].show();
+        if (holder[0].getWindow() != null) {
+            int dw = (int) (getResources().getDisplayMetrics().widthPixels * 0.94);
+            holder[0].getWindow().setLayout(dw, (int) (dw * 0.8));
         }
-        dlg.show();
+    }
+
+    /** us kamre ke 5 zones ka average dBm (-999 = no data) */
+    private int[] cornerAvgs(String room) {
+        int[] sum = new int[5];
+        int[] n = new int[5];
+        int[] out = new int[]{-999, -999, -999, -999, -999};
+        try {
+            JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                if (room.equals(o.optString("room", ""))) {
+                    int c = o.optInt("corner", 0);
+                    if (c < 0 || c > 4) c = 0;
+                    sum[c] += o.optInt("dbm", -120);
+                    n[c]++;
+                }
+            }
+        } catch (Exception ignored) {}
+        for (int i = 0; i < 5; i++) if (n[i] > 0) out[i] = sum[i] / n[i];
+        return out;
     }
 
     /** Us kamre me aik reading record karein (corner ke sath) */
