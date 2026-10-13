@@ -23,13 +23,36 @@ import java.util.Scanner;
  */
 public class SupabaseSync {
 
+    // ================= SUPABASE SETUP =================
+    // Apna Project URL aur anon key yahan quotes ke andar paste karo.
+    // Supabase dashboard -> Project Settings (gear icon) -> API se copy karo.
+    // Ye key app me embed karne ke liye hi bani hai (anon/public key).
+    private static final String SB_URL = "https://xyz.supabase.co";
+    private static final String SB_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    // ==================================================
+
     public interface Cb {
         void onResult(boolean ok, String msg);
     }
 
+    /** Prefs me user value ho to wahi, warna upar wali hardcoded value */
+    private static String effUrl(SharedPreferences p) {
+        String u = p.getString("sb_url", "").trim();
+        if (u.isEmpty()) u = SB_URL.trim();
+        while (u.endsWith("/")) u = u.substring(0, u.length() - 1);
+        return u;
+    }
+
+    private static String effKey(SharedPreferences p) {
+        String k = p.getString("sb_key", "").trim();
+        if (k.isEmpty()) k = SB_KEY.trim();
+        return k;
+    }
+
     public static boolean hasConfig(SharedPreferences p) {
-        return !p.getString("sb_url", "").trim().isEmpty()
-                && !p.getString("sb_key", "").trim().isEmpty();
+        String u = effUrl(p), k = effKey(p);
+        return !u.isEmpty() && !u.equals("https://xyz.supabase.co")
+                && !k.isEmpty() && !k.equals("PASTE_YOUR_ANON_KEY_HERE");
     }
 
     public static String deviceId(Context c) {
@@ -38,9 +61,7 @@ public class SupabaseSync {
     }
 
     private static String base(SharedPreferences p) {
-        String u = p.getString("sb_url", "").trim();
-        while (u.endsWith("/")) u = u.substring(0, u.length() - 1);
-        return u + "/rest/v1/";
+        return effUrl(p) + "/rest/v1/";
     }
 
     private static HttpURLConnection conn(SharedPreferences p, String method,
@@ -50,7 +71,7 @@ public class SupabaseSync {
         c.setRequestMethod(method);
         c.setConnectTimeout(15000);
         c.setReadTimeout(25000);
-        String key = p.getString("sb_key", "").trim();
+        String key = effKey(p);
         c.setRequestProperty("apikey", key);
         c.setRequestProperty("Authorization", "Bearer " + key);
         c.setRequestProperty("Content-Type", "application/json");
