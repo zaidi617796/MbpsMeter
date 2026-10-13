@@ -3,6 +3,8 @@ package com.mbpsmeter.app.util;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.telephony.CellIdentityGsm;
 import android.telephony.CellIdentityLte;
@@ -13,6 +15,8 @@ import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoNr;
 import android.telephony.CellInfoWcdma;
+import android.telephony.CellSignalStrength;
+import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import androidx.core.app.ActivityCompat;
@@ -20,8 +24,9 @@ import androidx.core.app.ActivityCompat;
 import java.util.List;
 
 /**
- * ASAL signal + tower info (Cell ID, band) TelephonyManager se.
- * Agar permission/data na mile to real=false (caller demo fallback dikhaye).
+ * ASAL signal + tower info.
+ * Pehle WiFi (ghar me sab se relevant), phir mobile cell.
+ * Agar permission/data na mile to real=false (caller "--" dikhaye, fake numbers nahi).
  */
 public class SignalReader {
 
@@ -32,9 +37,42 @@ public class SignalReader {
         public String cellId = "";
         public String band = "";
         public boolean real = false;
+        public boolean isWifi = false;
     }
 
     public static Result read(Context ctx) {
+        // 1. WiFi - ghar/office me yehi asal signal hai
+        Result w = readWifi(ctx);
+        if (w.real) return w;
+        // 2. Mobile cell
+        return readMobile(ctx);
+    }
+
+    /** WiFi RSSI (dBm) - ACCESS_WIFI_STATE manifest permission chahiye */
+    private static Result readWifi(Context ctx) {
+        Result r = new Result();
+        try {
+            WifiManager wm = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if (wm == null || !wm.isWifiEnabled()) return r;
+            WifiInfo info = wm.getConnectionInfo();
+            if (info == null) return r;
+            int rssi = info.getRssi();
+            String ssid = info.getSSID();
+            // SSID unknown ya RSSI invalid = WiFi connected nahi
+            if (ssid == null || ssid.equals("<unknown ssid>")) return r;
+            if (rssi >= -100 && rssi < 0) {
+                r.dbm = rssi;
+                r.networkType = "WiFi";
+                r.operator = ssid.replace("\"", "");
+                r.real = true;
+                r.isWifi = true;
+            }
+        } catch (Exception ignored) {}
+        return r;
+    }
+
+    /** Mobile cell signal - getAllCellInfo, fallback getSignalStrength */
+    private static Result readMobile(Context ctx) {
         Result r = new Result();
         try {
             TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
@@ -47,53 +85,87 @@ public class SignalReader {
                     != PackageManager.PERMISSION_GRANTED) {
                 return r;
             }
-            List<CellInfo> infos = tm.getAllCellInfo();
-            if (infos == null) return r;
-            for (CellInfo ci : infos) {
-                if (!ci.isRegistered()) continue;
-                int dbm = Integer.MIN_VALUE;
-                if (ci instanceof CellInfoLte) {
-                    CellInfoLte lte = (CellInfoLte) ci;
-                    dbm = lte.getCellSignalStrength().getDbm();
-                    try {
-                        CellIdentityLte id = lte.getCellIdentity();
-                        if (id.getCi() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCi());
-                        r.band = lteBand(id.getEarfcn());
-                    } catch (Exception ignored) {}
-                } else if (ci instanceof CellInfoWcdma) {
-                    CellInfoWcdma w = (CellInfoWcdma) ci;
-                    dbm = w.getCellSignalStrength().getDbm();
-                    try {
-                        CellIdentityWcdma id = w.getCellIdentity();
-                        if (id.getCid() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCid());
-                        r.band = "3G";
-                    } catch (Exception ignored) {}
-                } else if (ci instanceof CellInfoGsm) {
-                    CellInfoGsm g = (CellInfoGsm) ci;
-                    dbm = g.getCellSignalStrength().getDbm();
-                    try {
-                        CellIdentityGsm id = g.getCellIdentity();
-                        if (id.getCid() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCid());
-                        r.band = "2G";
-                    } catch (Exception ignored) {}
-                } else if (Build.VERSION.SDK_INT >= 29 && ci instanceof CellInfoNr) {
-                    CellInfoNr nr = (CellInfoNr) ci;
-                    dbm = nr.getCellSignalStrength().getDbm();
-                    try {
-                        CellIdentityNr id = (CellIdentityNr) nr.getCellIdentity();
-                        long nci = id.getNci();
-                        if (nci != Long.MAX_VALUE) r.cellId = String.valueOf(nci);
-                        r.band = nrBand(id.getNrarfcn());
-                    } catch (Exception ignored) {}
+            // Primary: getAllCellInfo
+            try {
+                List<CellInfo> infos = tm.getAllCellInfo();
+                if (infos != null) {
+                    for (CellInfo ci : infos) {
+                        if (!ci.isRegistered()) continue;
+                        int dbm = cellDbm(ci, r);
+                        if (dbm != Integer.MIN_VALUE && dbm < 0 && dbm > -150) {
+                            r.dbm = dbm;
+                            r.real = true;
+                            return r;
+                        }
+                    }
                 }
-                if (dbm != Integer.MIN_VALUE && dbm < 0 && dbm > -150) {
-                    r.dbm = dbm;
-                    r.real = true;
-                    break;
+            } catch (Exception ignored) {}
+            // Fallback: SignalStrength (kuch devices par getAllCellInfo null deta hai)
+            try {
+                if (Build.VERSION.SDK_INT >= 29) {
+                    SignalStrength ss = tm.getSignalStrength();
+                    if (ss != null) {
+                        List<CellSignalStrength> strengths = ss.getCellSignalStrengths();
+                        if (strengths != null) {
+                            for (CellSignalStrength css : strengths) {
+                                int dbm = css.getDbm();
+                                if (dbm < 0 && dbm > -150) {
+                                    r.dbm = dbm;
+                                    r.real = true;
+                                    return r;
+                                }
+                            }
+                        }
+                    }
                 }
-            }
+            } catch (Exception ignored) {}
         } catch (Exception ignored) {}
         return r;
+    }
+
+    /** CellInfo se dBm + cellId/band nikalo */
+    private static int cellDbm(CellInfo ci, Result r) {
+        try {
+            if (ci instanceof CellInfoLte) {
+                CellInfoLte lte = (CellInfoLte) ci;
+                int dbm = lte.getCellSignalStrength().getDbm();
+                try {
+                    CellIdentityLte id = lte.getCellIdentity();
+                    if (id.getCi() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCi());
+                    r.band = lteBand(id.getEarfcn());
+                } catch (Exception ignored) {}
+                return dbm;
+            } else if (ci instanceof CellInfoWcdma) {
+                CellInfoWcdma w = (CellInfoWcdma) ci;
+                int dbm = w.getCellSignalStrength().getDbm();
+                try {
+                    CellIdentityWcdma id = w.getCellIdentity();
+                    if (id.getCid() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCid());
+                    r.band = "3G";
+                } catch (Exception ignored) {}
+                return dbm;
+            } else if (ci instanceof CellInfoGsm) {
+                CellInfoGsm g = (CellInfoGsm) ci;
+                int dbm = g.getCellSignalStrength().getDbm();
+                try {
+                    CellIdentityGsm id = g.getCellIdentity();
+                    if (id.getCid() != Integer.MAX_VALUE) r.cellId = String.valueOf(id.getCid());
+                    r.band = "2G";
+                } catch (Exception ignored) {}
+                return dbm;
+            } else if (Build.VERSION.SDK_INT >= 29 && ci instanceof CellInfoNr) {
+                CellInfoNr nr = (CellInfoNr) ci;
+                int dbm = nr.getCellSignalStrength().getDbm();
+                try {
+                    CellIdentityNr id = (CellIdentityNr) nr.getCellIdentity();
+                    long nci = id.getNci();
+                    if (nci != Long.MAX_VALUE) r.cellId = String.valueOf(nci);
+                    r.band = nrBand(id.getNrarfcn());
+                } catch (Exception ignored) {}
+                return dbm;
+            }
+        } catch (Exception ignored) {}
+        return Integer.MIN_VALUE;
     }
 
     /** LTE EARFCN -> band (Pakistan me common) */
