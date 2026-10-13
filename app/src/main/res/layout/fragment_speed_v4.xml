@@ -211,5 +211,36 @@
             android:textColor="#5A6B8C"
             android:textSize="12sp"
             android:gravity="center" />
+
+        <!-- Is speed par kya chalega (Meteor-style estimator) -->
+        <TextView
+            android:id="@+id/tvWorks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:textColor="#8A9ABF"
+            android:textSize="13sp"
+            android:padding="14dp"
+            android:layout_marginTop="14dp"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnShareSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_pill_dark"
+            app:backgroundTint="@null"
+            android:text="@string/share_result"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textStyle="bold"
+            android:drawableStart="@android:drawable/ic_menu_share"
+            android:drawablePadding="8dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>
