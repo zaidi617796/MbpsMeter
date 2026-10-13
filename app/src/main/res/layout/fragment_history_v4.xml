@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#070E2B"
+    android:background="@color/bg_main"
     android:padding="16dp">
 
     <!-- Top bar -->
@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/history_title"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_main"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="0"
-        android:textColor="#8A9ABF"
+        android:textColor="@color/text_muted"
         android:textSize="13sp"
         android:layout_marginTop="8dp" />
 
