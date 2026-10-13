@@ -317,6 +317,13 @@ public class LiveV4Fragment extends Fragment {
 
     private void updateLocation() {
         try {
+            // Pehle active helper se (fresh GPS)
+            android.location.Location h = com.mbpsmeter.app.util.LocationHelper.getLast();
+            if (h != null) {
+                curLat = h.getLatitude();
+                curLng = h.getLongitude();
+                return;
+            }
             LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -332,6 +339,8 @@ public class LiveV4Fragment extends Fragment {
 
     private Location currentLocation() {
         try {
+            android.location.Location h = com.mbpsmeter.app.util.LocationHelper.getLast();
+            if (h != null) return h;
             LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) return null;
@@ -375,6 +384,18 @@ public class LiveV4Fragment extends Fragment {
             ed.apply();
             if (!silent) Toast.makeText(getContext(), currentDbm + " dBm " + getString(R.string.room_recorded), Toast.LENGTH_SHORT).show();
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try { com.mbpsmeter.app.util.LocationHelper.start(requireContext()); } catch (Exception ignored) {}
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try { com.mbpsmeter.app.util.LocationHelper.stop(); } catch (Exception ignored) {}
     }
 
     @Override
