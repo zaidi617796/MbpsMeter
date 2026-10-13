@@ -158,4 +158,46 @@
     <string name="dir_sw">South-West</string>
     <string name="dir_w">West</string>
     <string name="dir_nw">North-West</string>
+
+    <!-- Onboarding -->
+    <string name="onboard1_title">Find your strong corners</string>
+    <string name="onboard1_desc">MbpsMeter maps your WiFi and mobile signal so every call is clear.</string>
+    <string name="onboard2_title">Walk &amp; auto-record</string>
+    <string name="onboard2_desc">Start walk test and walk around — a reading saves every 10 meters.</string>
+    <string name="onboard3_title">Sketch your home</string>
+    <string name="onboard3_desc">Draw your floor plan, tap where you stand — strong signals get pinned.</string>
+    <string name="onboard4_title">Test your speed</string>
+    <string name="onboard4_desc">See real download/upload speed and what will run on it.</string>
+    <string name="onboard_next">Next</string>
+    <string name="onboard_skip">Skip</string>
+    <string name="onboard_start">Get Started</string>
+
+    <!-- Naksha (floor plan sketch) -->
+    <string name="nav_naksha">Sketch</string>
+    <string name="sketch_title">HOME SKETCH</string>
+    <string name="sketch_draw">Draw</string>
+    <string name="sketch_walk">Walk</string>
+    <string name="sketch_wall">Wall</string>
+    <string name="sketch_room">Room</string>
+    <string name="sketch_erase">Erase</string>
+    <string name="sketch_undo">Undo</string>
+    <string name="sketch_clear">Clear</string>
+    <string name="sketch_save">Save</string>
+    <string name="sketch_walk_start">Start Walk</string>
+    <string name="sketch_walk_hint">Tap where you\'re standing — signal saves automatically</string>
+    <string name="sketch_room_name">Room name</string>
+    <string name="sketch_saved">Saved</string>
+    <string name="sketch_no_signal">No signal — check WiFi/mobile</string>
+    <string name="sketch_draw_hint">Draw walls with your finger, then switch to Walk</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="theme_title">Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_auto">Auto</string>
+    <string name="lang_title">Language</string>
+    <string name="user_guide_title">User Guide</string>
+    <string name="about_title">About</string>
+    <string name="about_text">MbpsMeter v6.0 — Made for Pakistan</string>
 </resources>
