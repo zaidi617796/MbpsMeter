@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#070E2B"
+    android:background="@color/bg_main"
     android:fillViewport="true">
 
     <LinearLayout
@@ -34,7 +34,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/sim_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center" />
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sim_note"
-            android:textColor="#5A6B8C"
+            android:textColor="@color/text_muted"
             android:textSize="12sp"
             android:layout_marginTop="12dp" />
     </LinearLayout>
