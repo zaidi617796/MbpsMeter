@@ -29,6 +29,8 @@ public class SupabaseSync {
     // Ye key app me embed karne ke liye hi bani hai (anon/public key).
     private static final String SB_URL = "https://xyz.supabase.co";
     private static final String SB_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    /** Sirf is se strong (ya equal) readings cloud par upload hongi. */
+    private static final int STRONG_DBM = -70;
     // ==================================================
 
     public interface Cb {
@@ -144,9 +146,12 @@ public class SupabaseSync {
         JSONArray out = new JSONArray();
         for (int i = 0; i < src.length(); i++) {
             JSONObject o = src.getJSONObject(i);
+            int dbm = o.optInt("dbm", -120);
+            // Sirf STRONG signal wali readings cloud par jayengi (user ki requirement)
+            if (dbm < STRONG_DBM) continue;
             JSONObject n = new JSONObject();
             n.put("device_id", dev);
-            n.put("dbm", o.optInt("dbm", -120));
+            n.put("dbm", dbm);
             n.put("time", o.optLong("time", 0));
             n.put("lat", o.optDouble("lat", 0));
             n.put("lng", o.optDouble("lng", 0));
