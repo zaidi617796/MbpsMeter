@@ -1,6 +1,7 @@
 package com.mbpsmeter.app;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +26,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
 import com.mbpsmeter.app.ui.live.LiveV4Fragment;
 import com.mbpsmeter.app.ui.map.MapV4Fragment;
+import com.mbpsmeter.app.ui.onboarding.OnboardingActivity;
 import com.mbpsmeter.app.ui.rooms.RoomHeatmapFragment;
+import com.mbpsmeter.app.ui.sketch.NakshaFragment;
 import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 
 
@@ -36,8 +39,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // App hamesha dark theme me rahe - DayNight system mode se affect na ho
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        // Theme: user ki pasand (dark/light/auto) - super.onCreate se PEHLE apply karna zaroori hai
+        String themeMode = getSharedPreferences("MbpsMeter", MODE_PRIVATE).getString("theme_mode", "dark");
+        if ("light".equals(themeMode)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if ("auto".equals(themeMode)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
+        // First launch: onboarding dikhao, phir main app
+        if (!getSharedPreferences("MbpsMeter", MODE_PRIVATE).getBoolean("onboarding_done", false)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            finish();
+            return;
+        }
+
         super.onCreate(savedInstanceState);
 
         // OSM config - PreferenceManager ke baghair
@@ -52,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        View container = findViewById(R.id.fragmentContainer);
+        View topBar = findViewById(R.id.topBar);
 
         if (bottomNav != null) {
             ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
@@ -61,11 +79,22 @@ public class MainActivity extends AppCompatActivity {
                 return WindowInsetsCompat.CONSUMED;
             });
         }
-        if (container != null) {
-            ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+        if (topBar != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(topBar, (v, insets) -> {
                 Insets st = insets.getInsets(WindowInsetsCompat.Type.statusBars());
                 v.setPadding(v.getPaddingLeft(), st.top, v.getPaddingRight(), v.getPaddingBottom());
                 return WindowInsetsCompat.CONSUMED;
+            });
+        }
+
+        View btnSettings = findViewById(R.id.btnSettings);
+        if (btnSettings != null) {
+            btnSettings.setOnClickListener(v -> {
+                getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.mbpsmeter.app.ui.settings.SettingsFragment())
+                        .addToBackStack(null)
+                        .commit();
             });
         }
 
@@ -76,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             else if (id == R.id.nav_rooms) sel = new RoomHeatmapFragment();
             else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
             else if (id == R.id.nav_map) sel = new MapV4Fragment();
+            else if (id == R.id.nav_naksha) sel = new NakshaFragment();
             else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
             if (sel != null) {
                 // back stack saaf taake DualSim se wapas par nav sahi rahe
