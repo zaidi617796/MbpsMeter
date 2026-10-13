@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#070E2B"
+    android:background="@color/bg_main"
     android:padding="16dp">
 
     <LinearLayout
@@ -18,7 +18,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/rooms_title"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_main"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/rooms_tip"
-        android:textColor="#5A6B8C"
+        android:textColor="@color/text_muted"
         android:textSize="12sp"
         android:layout_marginTop="12dp"
         android:lineSpacingExtra="3dp" />
