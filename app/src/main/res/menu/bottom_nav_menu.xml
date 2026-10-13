@@ -4,5 +4,6 @@
     <item android:id="@+id/nav_rooms" android:title="@string/nav_rooms" android:icon="@drawable/ic_nav_rooms" />
     <item android:id="@+id/nav_speed" android:title="@string/nav_speed" android:icon="@drawable/ic_nav_speed" />
     <item android:id="@+id/nav_map" android:title="@string/nav_map" android:icon="@drawable/ic_nav_map" />
+    <item android:id="@+id/nav_naksha" android:title="@string/nav_naksha" android:icon="@drawable/ic_nav_naksha" />
     <item android:id="@+id/nav_history" android:title="@string/nav_history" android:icon="@drawable/ic_nav_history" />
 </menu>
