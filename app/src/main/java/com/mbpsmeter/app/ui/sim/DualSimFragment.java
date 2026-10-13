@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.util.DualSimReader;
@@ -65,11 +66,11 @@ public class DualSimFragment extends Fragment {
                 int color = si.dbm >= -80 ? 0xFF22C55E : (si.dbm >= -95 ? 0xFFF59E0B : 0xFFEF4444);
                 avg.setTextColor(color);
                 count.setText(SignalReader.label(si.dbm));
-                count.setTextColor(0xFF8A9ABF);
+                count.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_muted));
                 if (best == null || si.dbm > best.dbm) best = si;
             } else {
                 avg.setText(getString(R.string.sim_na));
-                avg.setTextColor(0xFF8A9ABF);
+                avg.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_muted));
                 count.setText("");
             }
             simContainer.addView(card);
