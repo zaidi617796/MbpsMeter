@@ -1,6 +1,7 @@
 package com.mbpsmeter.app.ui.speed;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,9 +34,10 @@ import java.util.Locale;
  */
 public class SpeedV4Fragment extends Fragment {
 
-    private TextView tvMainSpeed, tvDownload, tvUpload, tvPing, tvJitter, tvStatus, tvPattern;
-    private Button btnStart;
+    private TextView tvMainSpeed, tvDownload, tvUpload, tvPing, tvJitter, tvStatus, tvPattern, tvWorks;
+    private Button btnStart, btnShareSpeed;
     private volatile boolean running = false;
+    private double lastDown = -1, lastUp = -1, lastPing = -1;
 
     @Nullable
     @Override
@@ -48,10 +50,46 @@ public class SpeedV4Fragment extends Fragment {
         tvJitter = v.findViewById(R.id.tvJitter);
         tvStatus = v.findViewById(R.id.tvStatus);
         tvPattern = v.findViewById(R.id.tvPattern);
+        tvWorks = v.findViewById(R.id.tvWorks);
         btnStart = v.findViewById(R.id.btnStartSpeed);
         btnStart.setOnClickListener(x -> runTest());
+        btnShareSpeed = v.findViewById(R.id.btnShareSpeed);
+        if (btnShareSpeed != null) btnShareSpeed.setOnClickListener(x -> shareResult());
         showPattern();
         return v;
+    }
+
+    /** Meteor-style: is speed par kaunsi apps chalengi */
+    private void showWorksOnSpeed(double down, double up) {
+        if (tvWorks == null) return;
+        StringBuilder sb = new StringBuilder(getString(R.string.works_title));
+        sb.append("\n").append(worksRow("YouTube 4K", down >= 20));
+        sb.append(worksRow("YouTube HD (1080p)", down >= 5));
+        sb.append(worksRow("YouTube (720p)", down >= 2.5));
+        sb.append(worksRow("WhatsApp video call", down >= 1.5 && up >= 1));
+        sb.append(worksRow("WhatsApp voice / browsing", down >= 0.5));
+        final String t = sb.toString();
+        ui(() -> {
+            tvWorks.setText(t);
+            tvWorks.setVisibility(View.VISIBLE);
+            if (btnShareSpeed != null) btnShareSpeed.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private String worksRow(String app, boolean ok) {
+        return "\n" + (ok ? "✅ " : "❌ ") + app;
+    }
+
+    private void shareResult() {
+        if (getContext() == null || lastDown < 0) return;
+        String text = String.format(Locale.US, getString(R.string.share_text),
+                lastDown, Math.max(0, lastUp), Math.max(0, lastPing));
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("text/plain");
+        i.putExtra(Intent.EXTRA_TEXT, text);
+        try {
+            startActivity(Intent.createChooser(i, getString(R.string.share_result)));
+        } catch (Exception ignored) {}
     }
 
     private void ui(Runnable r) {
@@ -120,6 +158,8 @@ public class SpeedV4Fragment extends Fragment {
             tvUpload.setText("--");
             tvPing.setText("--");
             tvJitter.setText("--");
+            if (tvWorks != null) tvWorks.setVisibility(View.GONE);
+            if (btnShareSpeed != null) btnShareSpeed.setVisibility(View.GONE);
         });
         setText(tvStatus, getString(R.string.measuring_ping));
 
@@ -233,8 +273,12 @@ public class SpeedV4Fragment extends Fragment {
                     tvStatus.setText(R.string.speed_failed);
                 } else {
                     tvStatus.setText(R.string.speed_done);
+                    lastDown = fd;
+                    lastUp = fu;
+                    lastPing = fp;
                     saveResult(fd, fu, fp, fj);
                     showPattern();
+                    showWorksOnSpeed(fd, fu);
                 }
             });
         }).start();
