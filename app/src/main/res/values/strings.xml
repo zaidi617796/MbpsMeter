@@ -92,6 +92,7 @@
     <string name="go_to_best">Go to best</string>
     <string name="open_in_maps">Open in Maps</string>
     <string name="no_reading_yet">No readings yet - do a Walk Test on Live</string>
+    <string name="my_location">My location</string>
     <string name="best_spot_found">Best spot found - go there</string>
     <string name="first_record">Record on Live first</string>
     <string name="no_maps_app">No maps app found</string>

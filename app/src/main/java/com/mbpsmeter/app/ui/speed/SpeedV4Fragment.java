@@ -164,10 +164,10 @@ public class SpeedV4Fragment extends Fragment {
                 while ((n = in.read(buf)) != -1) {
                     bytes += n;
                     long now = System.nanoTime();
-                    if (now - lastUi > 500_000_000L) {
+                    if (now - lastUi > 200_000_000L) {
                         lastUi = now;
                         double sec = (now - start) / 1e9;
-                        if (sec > 0.5) {
+                        if (sec > 0.2) {
                             double live = bytes * 8.0 / sec / 1e6;
                             setText(tvMainSpeed, String.format(Locale.US, "%.1f", live));
                             setText(tvDownload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
@@ -182,7 +182,7 @@ public class SpeedV4Fragment extends Fragment {
 
             setText(tvStatus, getString(R.string.testing_up));
             try {
-                byte[] payload = new byte[500000];
+                byte[] payload = new byte[1000000];
                 java.util.Arrays.fill(payload, (byte) 65);
                 HttpURLConnection upCon = (HttpURLConnection) new URL("https://speed.cloudflare.com/__up").openConnection();
                 upCon.setRequestMethod("POST");
@@ -192,7 +192,24 @@ public class SpeedV4Fragment extends Fragment {
                 upCon.setFixedLengthStreamingMode(payload.length);
                 long upStart = System.nanoTime();
                 OutputStream os = upCon.getOutputStream();
-                os.write(payload);
+                // Chunks me likho taake upload ke dauran bhi live speed nazar aaye
+                int chunk = 32768;
+                long upBytes = 0, upLastUi = upStart;
+                for (int off = 0; off < payload.length; off += chunk) {
+                    int len = Math.min(chunk, payload.length - off);
+                    os.write(payload, off, len);
+                    upBytes += len;
+                    long now = System.nanoTime();
+                    if (now - upLastUi > 200_000_000L) {
+                        upLastUi = now;
+                        double sec = (now - upStart) / 1e9;
+                        if (sec > 0.2) {
+                            double liveUp = upBytes * 8.0 / sec / 1e6;
+                            setText(tvMainSpeed, String.format(Locale.US, "%.1f", liveUp));
+                            setText(tvUpload, String.format(Locale.US, "%.1f %s", liveUp, getString(R.string.mbps)));
+                        }
+                    }
+                }
                 os.flush();
                 os.close();
                 InputStream r = upCon.getInputStream();

@@ -86,51 +86,96 @@ public class MapV4Fragment extends Fragment {
     }
 
     private void loadAll() {
+        // Best values pehle parho (type mismatch se bachne ke liye safe)
+        try { bestLat = prefs.getFloat("best_lat", 0); } catch (Exception e) { bestLat = 0; }
+        try { bestLng = prefs.getFloat("best_lng", 0); } catch (Exception e) { bestLng = 0; }
+        try { bestDbm = prefs.getInt("best_dbm", -120); } catch (Exception e) { bestDbm = -120; }
+
+        // 1. View PEHLE set karo - pins me koi masla ho tab bhi map sahi zoom par khule
+        GeoPoint center = decideCenter();
+        try {
+            osmMap.getController().setZoom(17.0);
+            osmMap.getController().setCenter(center);
+        } catch (Exception ignored) {}
+
+        // 2. Pins - har reading alag try me taake ek kharab reading baqiyon ko na roke
         try {
             osmMap.getOverlays().clear();
-            String json = prefs.getString("signals", "[]");
-            JSONArray arr = new JSONArray(json);
-            bestLat = prefs.getFloat("best_lat", 0);
-            bestLng = prefs.getFloat("best_lng", 0);
-            bestDbm = prefs.getInt("best_dbm", -120);
-
-            GeoPoint center = new GeoPoint(24.8607, 67.0011);
-            if (arr.length() > 0) {
-                JSONObject last = arr.getJSONObject(arr.length() - 1);
-                center = new GeoPoint(last.optDouble("lat", 24.8607), last.optDouble("lng", 67.0011));
-            } else if (bestLat != 0) {
-                center = new GeoPoint(bestLat, bestLng);
-            }
-
+            JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
             for (int i = 0; i < arr.length(); i++) {
-                JSONObject o = arr.getJSONObject(i);
-                int dbm = o.optInt("dbm", -80);
-                GeoPoint p = new GeoPoint(o.optDouble("lat", 24.8607), o.optDouble("lng", 67.0011));
-                Marker m = new Marker(osmMap);
-                m.setPosition(p);
-                String title = dbm + " dBm | " + o.optString("type", "MANUAL");
-                if (!o.optString("room", "").isEmpty()) title = o.optString("room", "") + " | " + title;
-                m.setTitle(title);
-                m.setIcon(dotIcon(colorFor(dbm)));
-                m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                osmMap.getOverlays().add(m);
+                try {
+                    JSONObject o = arr.getJSONObject(i);
+                    double lat = o.optDouble("lat", Double.NaN);
+                    double lng = o.optDouble("lng", Double.NaN);
+                    if (!validLatLng(lat, lng)) continue;
+                    int dbm = o.optInt("dbm", -120);
+                    Marker m = new Marker(osmMap);
+                    m.setPosition(new GeoPoint(lat, lng));
+                    String title = dbm + " dBm | " + o.optString("type", "");
+                    String room = o.optString("room", "");
+                    if (!room.isEmpty()) title = room + " | " + title;
+                    m.setTitle(title);
+                    m.setIcon(dotIcon(colorFor(dbm)));
+                    m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                    osmMap.getOverlays().add(m);
+                } catch (Exception ignored) {}
             }
 
-            if (bestLat != 0 && bestDbm > -120) {
-                Marker b = new Marker(osmMap);
-                b.setPosition(new GeoPoint(bestLat, bestLng));
-                b.setTitle(getString(R.string.best) + ": " + bestDbm + " dBm");
-                b.setIcon(dotIcon(Color.parseColor("#00E5FF")));
-                b.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                osmMap.getOverlays().add(b);
+            if (validLatLng(bestLat, bestLng) && bestDbm > -120) {
+                try {
+                    Marker b = new Marker(osmMap);
+                    b.setPosition(new GeoPoint(bestLat, bestLng));
+                    b.setTitle(getString(R.string.best) + ": " + bestDbm + " dBm");
+                    b.setIcon(dotIcon(Color.parseColor("#00E5FF")));
+                    b.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                    osmMap.getOverlays().add(b);
+                } catch (Exception ignored) {}
             }
 
-            osmMap.getController().setZoom(15.0);
-            osmMap.getController().setCenter(center);
+            // Meri maujooda location (neela dot)
+            try {
+                Location me = myLocation();
+                if (me != null && validLatLng(me.getLatitude(), me.getLongitude())) {
+                    Marker lm = new Marker(osmMap);
+                    lm.setPosition(new GeoPoint(me.getLatitude(), me.getLongitude()));
+                    lm.setTitle(getString(R.string.my_location));
+                    lm.setIcon(dotIcon(Color.parseColor("#3B82F6")));
+                    lm.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                    osmMap.getOverlays().add(lm);
+                }
+            } catch (Exception ignored) {}
+
             osmMap.invalidate();
-
-            updateBestCard();
         } catch (Exception e) { e.printStackTrace(); }
+
+        updateBestCard();
+    }
+
+    private boolean validLatLng(double lat, double lng) {
+        return !Double.isNaN(lat) && !Double.isNaN(lng)
+                && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180
+                && !(lat == 0 && lng == 0);
+    }
+
+    /** Center ka faisla: live location -> aakhri valid reading -> best spot -> Karachi */
+    private GeoPoint decideCenter() {
+        try {
+            Location me = myLocation();
+            if (me != null && validLatLng(me.getLatitude(), me.getLongitude())) {
+                return new GeoPoint(me.getLatitude(), me.getLongitude());
+            }
+        } catch (Exception ignored) {}
+        try {
+            JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
+            for (int i = arr.length() - 1; i >= 0; i--) {
+                JSONObject o = arr.getJSONObject(i);
+                double lat = o.optDouble("lat", Double.NaN);
+                double lng = o.optDouble("lng", Double.NaN);
+                if (validLatLng(lat, lng)) return new GeoPoint(lat, lng);
+            }
+        } catch (Exception ignored) {}
+        if (validLatLng(bestLat, bestLng)) return new GeoPoint(bestLat, bestLng);
+        return new GeoPoint(24.8607, 67.0011);
     }
 
     private void updateBestCard() {

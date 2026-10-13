@@ -92,6 +92,7 @@
     <string name="go_to_best">بہترین جگہ پر جائیں</string>
     <string name="open_in_maps">نقشے میں کھولیں</string>
     <string name="no_reading_yet">ابھی کوئی ریڈنگ نہیں - لائیو پر واک ٹیسٹ کریں</string>
+    <string name="my_location">میری لوکیشن</string>
     <string name="best_spot_found">بہترین جگہ مل گئی - وہاں جائیں</string>
     <string name="first_record">پہلے لائیو پر ریکارڈ کریں</string>
     <string name="no_maps_app">نقشے کی ایپ نہیں ملی</string>
