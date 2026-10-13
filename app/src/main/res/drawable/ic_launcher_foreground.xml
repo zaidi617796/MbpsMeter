@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Signal arcs (top) -->
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 45.5 49.5 A 12 12 0 0 1 62.5 49.5" />
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 39.9 43.9 A 20 20 0 0 1 68.1 43.9" />
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M 34.2 38.2 A 28 28 0 0 1 73.8 38.2" />
+    <!-- Signal dot -->
+    <path
+        android:fillColor="#22C55E"
+        android:pathData="M 54 61 m -3.2 0 a 3.2 3.2 0 1 0 6.4 0 a 3.2 3.2 0 1 0 -6.4 0" />
+
+    <!-- Gauge circle -->
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="4"
+        android:fillColor="#00000000"
+        android:pathData="M 54 80 m -15 0 a 15 15 0 1 0 30 0 a 15 15 0 1 0 -30 0" />
+    <!-- Gauge ticks -->
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 54 67.5 L 54 71" />
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 43.4 72.5 L 45.9 74" />
+    <path
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 64.6 72.5 L 62.1 74" />
+    <!-- Needle -->
+    <path
+        android:strokeColor="#22C55E"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M 54 80 L 63 70" />
+    <!-- Center dot -->
+    <path
+        android:fillColor="#22C55E"
+        android:pathData="M 54 80 m -3.2 0 a 3.2 3.2 0 1 0 6.4 0 a 3.2 3.2 0 1 0 -6.4 0" />
+</vector>
