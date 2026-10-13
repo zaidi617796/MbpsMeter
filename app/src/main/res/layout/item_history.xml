@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="14dp"
-    app:cardBackgroundColor="#1A2342"
+    app:cardBackgroundColor="@color/bg_card"
     app:strokeColor="#2A3A6B"
     app:strokeWidth="1dp">
 
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fair Signal"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="24.8448, 66.9907"
-                android:textColor="#8A9ABF"
+                android:textColor="@color/text_muted"
                 android:textSize="11sp"
                 android:layout_marginTop="2dp" />
         </LinearLayout>
