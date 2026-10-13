@@ -40,23 +40,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Theme: user ki pasand (dark/light/auto) - super.onCreate se PEHLE apply karna zaroori hai
-        String themeMode = getSharedPreferences("MbpsMeter", MODE_PRIVATE).getString("theme_mode", "dark");
-        if ("light".equals(themeMode)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } else if ("auto".equals(themeMode)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        } else {
+        // taake theme flash na ho. getSharedPreferences attach() ke baad safe hai.
+        try {
+            String themeMode = getSharedPreferences("MbpsMeter", MODE_PRIVATE).getString("theme_mode", "dark");
+            if ("light".equals(themeMode)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else if ("auto".equals(themeMode)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        } catch (Exception ignored) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
 
-        // First launch: onboarding dikhao, phir main app
-        if (!getSharedPreferences("MbpsMeter", MODE_PRIVATE).getBoolean("onboarding_done", false)) {
-            startActivity(new Intent(this, OnboardingActivity.class));
-            finish();
-            return;
-        }
-
         super.onCreate(savedInstanceState);
+
+        // First launch: onboarding dikhao. YE super.onCreate() KE BAAD hona chahiye -
+        // us se pehle startActivity() crash kar sakta hai.
+        try {
+            if (!getSharedPreferences("MbpsMeter", MODE_PRIVATE).getBoolean("onboarding_done", false)) {
+                startActivity(new Intent(this, OnboardingActivity.class));
+                finish();
+                return;
+            }
+        } catch (Exception ignored) {}
 
         // OSM config - PreferenceManager ke baghair
         try {
