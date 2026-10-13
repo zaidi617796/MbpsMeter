@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.mbpsmeter.app.R;
@@ -194,7 +195,7 @@ public class GuideFragment extends Fragment {
     private void addLine(LinearLayout parent, String text) {
         TextView tv = new TextView(getContext());
         tv.setText(text);
-        tv.setTextColor(0xFFFFFFFF);
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
         tv.setTextSize(14);
         int pad = (int) (6 * getResources().getDisplayMetrics().density);
         tv.setPadding(0, pad, 0, pad);
@@ -204,7 +205,7 @@ public class GuideFragment extends Fragment {
     private void addTip(String text) {
         TextView tv = new TextView(getContext());
         tv.setText("• " + text);
-        tv.setTextColor(0xFFA7F3D0);
+        tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_main));
         tv.setTextSize(13);
         tv.setLineSpacing(3, 1);
         int pad = (int) (6 * getResources().getDisplayMetrics().density);
