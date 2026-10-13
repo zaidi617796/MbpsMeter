@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#070E2B">
+    android:background="@color/bg_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="--"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_main"
             android:textSize="19sp"
             android:textStyle="bold" />
 
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:textColor="#8A9ABF"
+            android:textColor="@color/text_muted"
             android:textSize="12sp"
             android:layout_marginTop="4dp" />
 
