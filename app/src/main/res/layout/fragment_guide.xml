@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#070E2B"
+    android:background="@color/bg_main"
     android:fillViewport="true">
 
     <LinearLayout
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/guide_title"
-            android:textColor="#8A9ABF"
+            android:textColor="@color/text_muted"
             android:textSize="13sp"
             android:textStyle="bold"
             android:letterSpacing="0.15" />
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/guide_dir_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/guide_rooms_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/guide_outdoor_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/guide_tips_title"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
