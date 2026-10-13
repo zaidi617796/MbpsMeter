@@ -5,9 +5,9 @@
         <item name="colorPrimaryVariant">#070E2B</item>
         <item name="colorSecondary">#00E5FF</item>
         <item name="colorAccent">#00E5FF</item>
-        <item name="android:windowBackground">#070E2B</item>
-        <item name="android:statusBarColor">#070E2B</item>
-        <item name="android:navigationBarColor">#070E2B</item>
+        <item name="android:windowBackground">@color/window_bg</item>
+        <item name="android:statusBarColor">@color/window_bg</item>
+        <item name="android:navigationBarColor">@color/window_bg</item>
         <item name="android:fontFamily">sans</item>
     </style>
 </resources>
