@@ -158,4 +158,46 @@
     <string name="dir_sw">جنوب مغرب</string>
     <string name="dir_w">مغرب</string>
     <string name="dir_nw">شمال مغرب</string>
+
+    <!-- Onboarding -->
+    <string name="onboard1_title">مضبوط سگنل والے کونے ڈھونڈیں</string>
+    <string name="onboard1_desc">MbpsMeter آپ کے وائی فائی اور موبائل سگنل کا نقشہ بناتا ہے تاکہ ہر کال صاف ہو۔</string>
+    <string name="onboard2_title">چلیں اور خودکار ریکارڈ</string>
+    <string name="onboard2_desc">واک ٹیسٹ شروع کریں اور گھومیں — ہر 10 میٹر پر ریڈنگ خود محفوظ ہوگی۔</string>
+    <string name="onboard3_title">گھر کا نقشہ بنائیں</string>
+    <string name="onboard3_desc">گھر کا نقشہ بنائیں، جہاں کھڑے ہیں ٹیپ کریں — مضبوط سگنل پن ہو جائیں گے۔</string>
+    <string name="onboard4_title">اسپیڈ ٹیسٹ کریں</string>
+    <string name="onboard4_desc">اصل ڈاؤن لوڈ/اپ لوڈ اسپیڈ دیکھیں اور جانیں اس پر کیا چلے گا۔</string>
+    <string name="onboard_next">آگے</string>
+    <string name="onboard_skip">چھوڑیں</string>
+    <string name="onboard_start">شروع کریں</string>
+
+    <!-- Naksha (floor plan sketch) -->
+    <string name="nav_naksha">نقشہ</string>
+    <string name="sketch_title">گھر کا نقشہ</string>
+    <string name="sketch_draw">بنائیں</string>
+    <string name="sketch_walk">واک</string>
+    <string name="sketch_wall">دیوار</string>
+    <string name="sketch_room">کمرہ</string>
+    <string name="sketch_erase">مٹائیں</string>
+    <string name="sketch_undo">واپس</string>
+    <string name="sketch_clear">صاف</string>
+    <string name="sketch_save">محفوظ</string>
+    <string name="sketch_walk_start">واک شروع کریں</string>
+    <string name="sketch_walk_hint">جہاں کھڑے ہیں وہاں ٹیپ کریں — سگنل خود محفوظ ہوگا</string>
+    <string name="sketch_room_name">کمرے کا نام</string>
+    <string name="sketch_saved">محفوظ ہو گیا</string>
+    <string name="sketch_no_signal">سگنل نہیں — وائی فائی/موبائل چیک کریں</string>
+    <string name="sketch_draw_hint">انگلی سے دیواریں بنائیں، پھر واک پر جائیں</string>
+
+    <!-- Settings -->
+    <string name="settings_title">سیٹنگز</string>
+    <string name="theme_title">تھیم</string>
+    <string name="theme_dark">ڈارک</string>
+    <string name="theme_light">لائٹ</string>
+    <string name="theme_auto">آٹو</string>
+    <string name="lang_title">زبان</string>
+    <string name="user_guide_title">رہنمائی</string>
+    <string name="about_title">تعارف</string>
+    <string name="about_text">MbpsMeter v6.0 — پاکستان کے لیے</string>
 </resources>
