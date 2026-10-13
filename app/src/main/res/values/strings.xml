@@ -36,6 +36,7 @@
     <string name="drop_alert">Weak zone - calls may drop here</string>
     <string name="unknown_operator">Unknown operator</string>
     <string name="demo_mode">Demo mode</string>
+    <string name="no_signal_data">No signal data - check WiFi/mobile or permissions</string>
     <string name="tower_info">Tower</string>
 
     <!-- Rooms -->
@@ -85,6 +86,9 @@
     <string name="speed_pattern_worst">Worst time</string>
     <string name="speed_pattern_none">Run a few tests to see your best/worst hours</string>
     <string name="speed_tests_suffix">tests</string>
+    <string name="share_result">Share result</string>
+    <string name="works_title">Is speed par kya chalega:</string>
+    <string name="share_text">Meri internet speed: %.1f Mbps download / %.1f Mbps upload (Ping %.0f ms) - MbpsMeter se test kiya</string>
     <string name="speed_tip">Each test is saved to History - compare speed and signal in one place.</string>
 
     <!-- Map -->
