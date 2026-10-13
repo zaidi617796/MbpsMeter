@@ -36,6 +36,7 @@
     <string name="drop_alert">کمزور سگنل - یہاں کال گر سکتی ہے</string>
     <string name="unknown_operator">نامعلوم آپریٹر</string>
     <string name="demo_mode">ڈیمو موڈ</string>
+    <string name="no_signal_data">کوئی سگنل ڈیٹا نہیں - وائی فائی/موبائل یا اجازت چیک کریں</string>
     <string name="tower_info">ٹاور</string>
 
     <!-- Rooms -->
@@ -85,6 +86,9 @@
     <string name="speed_pattern_worst">بدترین وقت</string>
     <string name="speed_pattern_none">بہترین/بدترین اوقات دیکھنے کے لیے چند ٹیسٹ کریں</string>
     <string name="speed_tests_suffix">ٹیسٹ</string>
+    <string name="share_result">رزلٹ شیئر کریں</string>
+    <string name="works_title">اس سپیڈ پر کیا چلے گا:</string>
+    <string name="share_text">میری انٹرنیٹ سپیڈ: %.1f Mbps ڈاؤن لوڈ / %.1f Mbps اپ لوڈ (Ping %.0f ms) - MbpsMeter سے ٹیسٹ کیا</string>
     <string name="speed_tip">ہر ٹیسٹ ہسٹری میں محفوظ ہوتا ہے - اسپیڈ اور سگنل ایک جگہ موازنہ کریں۔</string>
 
     <!-- Map -->
