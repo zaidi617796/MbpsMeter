@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -129,7 +130,7 @@ public class RoomHeatmapFragment extends Fragment {
                 h.name.setText(room);
                 if (st[1] == 0) {
                     h.avg.setText("-- dBm");
-                    h.avg.setTextColor(0xFF8A9ABF);
+                    h.avg.setTextColor(ContextCompat.getColor(h.itemView.getContext(), R.color.text_muted));
                     h.count.setText(getString(R.string.no_data_tap));
                     h.card.setStrokeColor(0xFF2A3A6B);
                 } else {
