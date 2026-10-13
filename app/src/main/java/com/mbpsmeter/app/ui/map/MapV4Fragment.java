@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.mbpsmeter.app.R;
+import com.mbpsmeter.app.util.LocationHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -211,6 +212,11 @@ public class MapV4Fragment extends Fragment {
     }
 
     private Location myLocation() {
+        // Pehle active helper se lo (GPS actively maanga hua)
+        try {
+            Location h = LocationHelper.getLast();
+            if (h != null && validLatLng(h.getLatitude(), h.getLongitude())) return h;
+        } catch (Exception ignored) {}
         try {
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) return null;
@@ -243,6 +249,32 @@ public class MapV4Fragment extends Fragment {
         }
     }
 
-    @Override public void onResume() { super.onResume(); if (osmMap != null) { osmMap.onResume(); loadAll(); } }
-    @Override public void onPause() { super.onPause(); if (osmMap != null) osmMap.onPause(); }
+    @Override public void onResume() {
+        super.onResume();
+        if (osmMap != null) {
+            osmMap.onResume();
+            // Active location shuru karo taake blue dot aur center sahi aaye
+            try {
+                LocationHelper.start(requireContext());
+                LocationHelper.setListener(loc -> {
+                    if (getActivity() == null || osmMap == null) return;
+                    getActivity().runOnUiThread(() -> {
+                        try {
+                            // Pehli baar location mile to center karo
+                            osmMap.getController().setCenter(
+                                    new org.osmdroid.util.GeoPoint(loc.getLatitude(), loc.getLongitude()));
+                            loadAll();
+                        } catch (Exception ignored) {}
+                    });
+                });
+            } catch (Exception ignored) {}
+            loadAll();
+        }
+    }
+    @Override public void onPause() {
+        super.onPause();
+        try { LocationHelper.clearListener(); } catch (Exception ignored) {}
+        try { LocationHelper.stop(); } catch (Exception ignored) {}
+        if (osmMap != null) osmMap.onPause();
+    }
 }
