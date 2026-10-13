@@ -26,6 +26,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.onboarding.OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+
         <!-- CSV export ke liye -->
         <provider
             android:name="androidx.core.content.FileProvider"
