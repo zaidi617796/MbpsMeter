@@ -39,7 +39,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * LIVE V6:
@@ -56,9 +55,9 @@ public class LiveV4Fragment extends Fragment {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnable;
-    private final Random random = new Random();
 
     private int currentDbm = -85;
+    private boolean noSignal = false;
     private double curLat = 24.8607, curLng = 67.0011;
     private String curNet = "Unknown", curOp = "", curCell = "", curBand = "";
     private boolean isRunning = false;
@@ -195,10 +194,12 @@ public class LiveV4Fragment extends Fragment {
             curOp = r.operator;
             curCell = r.cellId;
             curBand = r.band;
+            noSignal = false;
         } else {
-            currentDbm = -65 - random.nextInt(35);
-            curNet = getString(R.string.demo_mode);
-            curOp = getString(R.string.demo_mode);
+            // Koi asal data nahi - fake numbers nahi, saaf "--" dikhao
+            noSignal = true;
+            curNet = getString(R.string.no_signal_data);
+            curOp = "";
             curCell = "";
             curBand = "";
         }
@@ -273,19 +274,28 @@ public class LiveV4Fragment extends Fragment {
     // ---------- UI ----------
 
     private void updateUI() {
-        if (gauge != null) gauge.setValueWithColor(currentDbm);
+        if (gauge != null) {
+            if (noSignal) gauge.setValueWithColor(-120);
+            else gauge.setValueWithColor(currentDbm);
+        }
 
         if (tvStrength != null) {
-            tvStrength.setText(SignalReader.label(currentDbm));
-            if (currentDbm >= -80) {
-                tvStrength.setTextColor(0xFF22C55E);
-                tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF162C23));
-            } else if (currentDbm >= -95) {
-                tvStrength.setTextColor(0xFFF59E0B);
-                tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF2E2410));
+            if (noSignal) {
+                tvStrength.setText("--");
+                tvStrength.setTextColor(0xFF8A9ABF);
+                tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF1A2340));
             } else {
-                tvStrength.setTextColor(0xFFEF4444);
-                tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF331418));
+                tvStrength.setText(SignalReader.label(currentDbm));
+                if (currentDbm >= -80) {
+                    tvStrength.setTextColor(0xFF22C55E);
+                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF162C23));
+                } else if (currentDbm >= -95) {
+                    tvStrength.setTextColor(0xFFF59E0B);
+                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF2E2410));
+                } else {
+                    tvStrength.setTextColor(0xFFEF4444);
+                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF331418));
+                }
             }
         }
         if (tvOperator != null) tvOperator.setText(curOp.isEmpty() ? getString(R.string.unknown_operator) : curOp);
@@ -334,6 +344,12 @@ public class LiveV4Fragment extends Fragment {
     // ---------- save ----------
 
     private void save(boolean silent, String type, String room) {
+        if (noSignal) {
+            if (!silent && getContext() != null) {
+                Toast.makeText(getContext(), R.string.no_signal_data, Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
         try {
             updateLocation();
             JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
