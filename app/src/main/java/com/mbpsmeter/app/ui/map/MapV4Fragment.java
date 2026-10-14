@@ -34,6 +34,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Locale;
 
@@ -45,6 +47,7 @@ public class MapV4Fragment extends Fragment {
     private TextView tvBestSignal, tvBestLocation, tvBestDistance;
     private SharedPreferences prefs;
     private MapView osmMap;
+    private MyLocationNewOverlay myLocOverlay;
 
     private float bestLat = 0, bestLng = 0;
     private int bestDbm = -120;
@@ -57,12 +60,18 @@ public class MapV4Fragment extends Fragment {
         tvBestLocation = v.findViewById(R.id.tvBestLocation);
         tvBestDistance = v.findViewById(R.id.tvBestDistance);
         v.findViewById(R.id.btnNavigateBest).setOnClickListener(x -> centerBest());
-        v.findViewById(R.id.btnOpenMap).setOnClickListener(x -> openInMaps());
         osmMap = v.findViewById(R.id.osmMap);
         prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
         osmMap.setTileSource(TileSourceFactory.MAPNIK);
         osmMap.setMultiTouchControls(true);
         osmMap.setBuiltInZoomControls(false);
+        // Blue dot: meri exact location dikhao
+        try {
+            myLocOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), osmMap);
+            myLocOverlay.enableMyLocation();
+            myLocOverlay.enableFollowLocation();
+            osmMap.getOverlays().add(myLocOverlay);
+        } catch (Exception ignored) {}
         loadAll();
         return v;
     }
@@ -236,19 +245,6 @@ public class MapV4Fragment extends Fragment {
         osmMap.getController().setZoom(17.0);
     }
 
-    private void openInMaps() {
-        if (bestLat == 0) {
-            Toast.makeText(getContext(), R.string.first_record, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        try {
-            Uri uri = Uri.parse("geo:" + bestLat + "," + bestLng + "?q=" + bestLat + "," + bestLng + "(best)");
-            startActivity(new Intent(Intent.ACTION_VIEW, uri));
-        } catch (Exception e) {
-            Toast.makeText(getContext(), R.string.no_maps_app, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override public void onResume() {
         super.onResume();
         if (osmMap != null) {
@@ -273,6 +269,7 @@ public class MapV4Fragment extends Fragment {
     }
     @Override public void onPause() {
         super.onPause();
+        try { if (myLocOverlay != null) myLocOverlay.disableMyLocation(); } catch (Exception ignored) {}
         try { LocationHelper.clearListener(); } catch (Exception ignored) {}
         try { LocationHelper.stop(); } catch (Exception ignored) {}
         if (osmMap != null) osmMap.onPause();

@@ -221,10 +221,13 @@ public class SpeedV4Fragment extends Fragment {
             } catch (Exception ignored) {}
 
             setText(tvStatus, getString(R.string.testing_up));
+            // Upload test: pehle Cloudflare, fail ho to httpbin fallback
+            String[] upUrls = {"https://speed.cloudflare.com/__up", "https://httpbin.org/post"};
+            for (String upUrl : upUrls) {
             try {
                 byte[] payload = new byte[1000000];
                 java.util.Arrays.fill(payload, (byte) 65);
-                HttpURLConnection upCon = (HttpURLConnection) new URL("https://speed.cloudflare.com/__up").openConnection();
+                HttpURLConnection upCon = (HttpURLConnection) new URL(upUrl).openConnection();
                 upCon.setRequestMethod("POST");
                 upCon.setDoOutput(true);
                 upCon.setConnectTimeout(15000);
@@ -258,7 +261,9 @@ public class SpeedV4Fragment extends Fragment {
                 double upSec = (System.nanoTime() - upStart) / 1e9;
                 if (upSec > 0) up = payload.length * 8.0 / upSec / 1e6;
                 upCon.disconnect();
+                if (up > 0) break; // Kamyaab ho gaya to fallback try nahi karo
             } catch (Exception ignored) {}
+            } // end fallback loop
 
             double fd = down, fu = up, fp = pingMs, fj = jitterMs;
             ui(() -> {

@@ -60,18 +60,6 @@
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
                 android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnOpenMap"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="48dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_pill_dark"
-                app:backgroundTint="@null"
-                android:text="@string/open_in_maps"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
 

@@ -27,7 +27,6 @@ import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
 import com.mbpsmeter.app.ui.live.LiveV4Fragment;
 import com.mbpsmeter.app.ui.map.MapV4Fragment;
 import com.mbpsmeter.app.ui.onboarding.OnboardingActivity;
-import com.mbpsmeter.app.ui.rooms.RoomHeatmapFragment;
 import com.mbpsmeter.app.ui.sketch.NakshaFragment;
 import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 
@@ -155,11 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 android.view.Menu menu = bottomNav.getMenu();
                 menu.clear();
                 addNavItem(menu, R.id.nav_live, R.string.nav_live, R.drawable.ic_nav_live, 0);
-                addNavItem(menu, R.id.nav_rooms, R.string.nav_rooms, R.drawable.ic_nav_rooms, 1);
-                addNavItem(menu, R.id.nav_speed, R.string.nav_speed, R.drawable.ic_nav_speed, 2);
-                addNavItem(menu, R.id.nav_map, R.string.nav_map, R.drawable.ic_nav_map, 3);
-                addNavItem(menu, R.id.nav_naksha, R.string.nav_naksha, R.drawable.ic_nav_naksha, 4);
-                addNavItem(menu, R.id.nav_history, R.string.nav_history, R.drawable.ic_nav_history, 5);
+                addNavItem(menu, R.id.nav_speed, R.string.nav_speed, R.drawable.ic_nav_speed, 1);
+                addNavItem(menu, R.id.nav_map, R.string.nav_map, R.drawable.ic_nav_map, 2);
+                addNavItem(menu, R.id.nav_naksha, R.string.nav_naksha, R.drawable.ic_nav_naksha, 3);
+                addNavItem(menu, R.id.nav_history, R.string.nav_history, R.drawable.ic_nav_history, 4);
             } catch (Exception e) {
                 android.util.Log.e("MbpsMeterCrash", "Menu build failed", e);
             }
@@ -168,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 try {
                     if (id == R.id.nav_live) sel = new LiveV4Fragment();
-                    else if (id == R.id.nav_rooms) sel = new RoomHeatmapFragment();
                     else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
                     else if (id == R.id.nav_map) sel = new MapV4Fragment();
                     else if (id == R.id.nav_naksha) sel = new NakshaFragment();

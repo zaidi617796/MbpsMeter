@@ -63,6 +63,36 @@ public class SettingsFragment extends Fragment {
             requireActivity().recreate();
         });
 
+        // ---------- Delete history (selective) ----------
+        android.widget.CheckBox cbSignals = v.findViewById(R.id.cbDelSignals);
+        android.widget.CheckBox cbSpeed = v.findViewById(R.id.cbDelSpeed);
+        android.widget.CheckBox cbDrops = v.findViewById(R.id.cbDelDrops);
+        android.widget.CheckBox cbSketch = v.findViewById(R.id.cbDelSketch);
+        v.findViewById(R.id.btnDeleteHistory).setOnClickListener(b -> {
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.delete_confirm_title)
+                    .setMessage(R.string.delete_confirm_msg)
+                    .setPositiveButton(R.string.delete, (d, w) -> {
+                        SharedPreferences.Editor ed = prefs.edit();
+                        if (cbSignals.isChecked()) {
+                            ed.remove("signals").remove("best_dbm").remove("best_lat").remove("best_lng");
+                        }
+                        if (cbSpeed.isChecked()) ed.remove("speed_tests");
+                        if (cbDrops.isChecked()) ed.remove("drops");
+                        if (cbSketch.isChecked()) {
+                            // Naksha sketch data (saare sketch keys)
+                            for (String k : prefs.getAll().keySet()) {
+                                if (k.startsWith("naksha_") || k.startsWith("sketch_")) ed.remove(k);
+                            }
+                        }
+                        ed.apply();
+                        android.widget.Toast.makeText(getContext(),
+                                getString(R.string.history_cleared), android.widget.Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        });
+
         // ---------- User guide ----------
         v.findViewById(R.id.btnGuide).setOnClickListener(b ->
                 requireActivity().getSupportFragmentManager().beginTransaction()

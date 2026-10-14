@@ -200,4 +200,12 @@
     <string name="user_guide_title">User Guide</string>
     <string name="about_title">About</string>
     <string name="about_text">MbpsMeter v6.0 — Made for Pakistan</string>
+    <string name="delete_history_title">Delete History</string>
+    <string name="del_signals">Signal readings</string>
+    <string name="del_speed">Speed tests</string>
+    <string name="del_drops">Drop records</string>
+    <string name="del_sketch">Sketch (Naksha) data</string>
+    <string name="delete_selected">Delete Selected</string>
+    <string name="delete_confirm_title">Delete selected?</string>
+    <string name="delete_confirm_msg">Ye data permanently delete ho jayega. Continue?</string>
 </resources>

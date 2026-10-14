@@ -134,6 +134,78 @@
             android:drawableStart="@drawable/ic_arrow_up"
             android:drawablePadding="10dp" />
 
+        <!-- Delete history (selective) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/delete_history_title"
+            android:textColor="@color/text_muted"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.15" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/bg_card"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <CheckBox
+                android:id="@+id/cbDelSignals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/del_signals"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:checked="true"
+                android:padding="6dp" />
+
+            <CheckBox
+                android:id="@+id/cbDelSpeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/del_speed"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:checked="true"
+                android:padding="6dp" />
+
+            <CheckBox
+                android:id="@+id/cbDelDrops"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/del_drops"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:checked="true"
+                android:padding="6dp" />
+
+            <CheckBox
+                android:id="@+id/cbDelSketch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/del_sketch"
+                android:textColor="@color/text_main"
+                android:textSize="15sp"
+                android:checked="false"
+                android:padding="6dp" />
+
+            <Button
+                android:id="@+id/btnDeleteHistory"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_pill_red"
+                android:text="@string/delete_selected"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
         <!-- About -->
         <TextView
             android:layout_width="match_parent"
