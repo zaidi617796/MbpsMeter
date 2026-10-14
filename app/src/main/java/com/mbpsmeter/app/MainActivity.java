@@ -149,12 +149,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (bottomNav != null) {
-            // Menu programmatically inflate karo taake XML inflation error na ho
+            // Menu bilkul code se banao - XML inflation se parhez
+            // Har item alag try-catch me taake ek kharab icon baaqi tabs na rokay
             try {
-                bottomNav.inflateMenu(R.menu.bottom_nav_menu);
+                android.view.Menu menu = bottomNav.getMenu();
+                menu.clear();
+                addNavItem(menu, R.id.nav_live, R.string.nav_live, R.drawable.ic_nav_live, 0);
+                addNavItem(menu, R.id.nav_rooms, R.string.nav_rooms, R.drawable.ic_nav_rooms, 1);
+                addNavItem(menu, R.id.nav_speed, R.string.nav_speed, R.drawable.ic_nav_speed, 2);
+                addNavItem(menu, R.id.nav_map, R.string.nav_map, R.drawable.ic_nav_map, 3);
+                addNavItem(menu, R.id.nav_naksha, R.string.nav_naksha, R.drawable.ic_nav_naksha, 4);
+                addNavItem(menu, R.id.nav_history, R.string.nav_history, R.drawable.ic_nav_history, 5);
             } catch (Exception e) {
-                android.util.Log.e("MbpsMeterCrash", "Menu inflate failed", e);
-                // Fallback: menu ke baghair bhi app chalegi
+                android.util.Log.e("MbpsMeterCrash", "Menu build failed", e);
             }
             bottomNav.setOnItemSelectedListener(item -> {
                 Fragment sel = null;
@@ -189,6 +196,18 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             android.util.Log.e("MbpsMeterCrash", "askPermissions failed", e);
         }
+    }
+
+    /** Bottom nav ka ek item banao - icon fail ho to bhi text wala item zaroor banao */
+    private void addNavItem(android.view.Menu menu, int id, int titleRes, int iconRes, int order) {
+        try {
+            android.view.MenuItem item = menu.add(0, id, order, titleRes);
+            try {
+                item.setIcon(iconRes);
+            } catch (Exception ignored) {
+                // Icon na lage to text hi sahi
+            }
+        } catch (Exception ignored) {}
     }
 
     /** App khulte hi permission popup */
