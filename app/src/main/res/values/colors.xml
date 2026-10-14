@@ -32,10 +32,10 @@
     <color name="pill_weak_bg">#331418</color>
 
     <!-- Semantic theme colors (light defaults; dark values in values-night/colors.xml) -->
-    <color name="bg_main">#F1F5F9</color>
+    <color name="bg_main">#F0F4FA</color>
     <color name="bg_card">#FFFFFF</color>
-    <color name="text_main">#0F172A</color>
-    <color name="text_muted">#64748B</color>
+    <color name="text_main">#0A1230</color>
+    <color name="text_muted">#5A6B8C</color>
     <color name="accent">#00E5FF</color>
-    <color name="window_bg">#F1F5F9</color>
+    <color name="window_bg">#F0F4FA</color>
 </resources>

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Semantic theme colors: dark values (default theme) -->
-    <color name="bg_main">#0F172A</color>
-    <color name="bg_card">#1E293B</color>
-    <color name="text_main">#F8FAFC</color>
-    <color name="text_muted">#94A3B8</color>
+    <!-- Amazing dark theme: deep space navy with electric cyan glow -->
+    <color name="bg_main">#070D24</color>
+    <color name="bg_card">#101A3A</color>
+    <color name="text_main">#FFFFFF</color>
+    <color name="text_muted">#8EA0C2</color>
     <color name="accent">#00E5FF</color>
-    <color name="window_bg">#0F172A</color>
+    <color name="window_bg">#070D24</color>
+    <!-- Glowing accents -->
+    <color name="glow_cyan">#3300E5FF</color>
+    <color name="card_border">#1E2D5A</color>
 </resources>
