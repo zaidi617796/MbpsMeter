@@ -149,6 +149,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (bottomNav != null) {
+            // Menu programmatically inflate karo taake XML inflation error na ho
+            try {
+                bottomNav.inflateMenu(R.menu.bottom_nav_menu);
+            } catch (Exception e) {
+                android.util.Log.e("MbpsMeterCrash", "Menu inflate failed", e);
+                // Fallback: menu ke baghair bhi app chalegi
+            }
             bottomNav.setOnItemSelectedListener(item -> {
                 Fragment sel = null;
                 int id = item.getItemId();
