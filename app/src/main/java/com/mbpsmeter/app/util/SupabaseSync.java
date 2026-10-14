@@ -27,8 +27,8 @@ public class SupabaseSync {
     // Apna Project URL aur anon key yahan quotes ke andar paste karo.
     // Supabase dashboard -> Project Settings (gear icon) -> API se copy karo.
     // Ye key app me embed karne ke liye hi bani hai (anon/public key).
-    private static final String SB_URL = "https://xyz.supabase.co";
-    private static final String SB_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+    private static final String SB_URL = "https://sogugyourgaacustjmjw.supabase.co";
+    private static final String SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvZ3VneW91cmdhYWN1c3RqbWp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4MTYyNjUsImV4cCI6MjEwNzM5MjI2NX0.9i--Lreqv2Pa5BUTo5AhEHja-a3uf0uJfuwawwuKFf4";
     /** Sirf is se strong (ya equal) readings cloud par upload hongi. */
     private static final int STRONG_DBM = -70;
     // ==================================================
