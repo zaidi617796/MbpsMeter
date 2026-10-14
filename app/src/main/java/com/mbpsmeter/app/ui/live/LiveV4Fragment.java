@@ -174,8 +174,14 @@ public class LiveV4Fragment extends Fragment {
         isRunning = true;
         runnable = new Runnable() {
             @Override public void run() {
-                tick();
-                handler.postDelayed(this, 2500);
+                try {
+                    tick();
+                } catch (Exception e) {
+                    // Signal reading me koi bhi error aaye to app crash nahi hogi,
+                    // loop agle tick par dobara try karega.
+                    e.printStackTrace();
+                }
+                if (isRunning) handler.postDelayed(this, 2500);
             }
         };
         handler.post(runnable);

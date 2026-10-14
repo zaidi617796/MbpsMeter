@@ -39,6 +39,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Global crash catcher: koi bhi uncaught exception aaye to app
+        // system crash dialog dikhane ke bajaye safely dobara start ho jayegi.
+        Thread.UncaughtExceptionHandler def = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            try { e.printStackTrace(); } catch (Exception ignored) {}
+            // Crash log save karo taake agli baar dekh saken
+            try {
+                java.io.File log = new java.io.File(getCacheDir(), "crash.log");
+                java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(log, true));
+                pw.println("=== " + new java.util.Date() + " ===");
+                e.printStackTrace(pw);
+                pw.close();
+            } catch (Exception ignored) {}
+            if (def != null) def.uncaughtException(t, e);
+        });
+
         // Theme: user ki pasand (dark/light/auto) - super.onCreate se PEHLE apply karna zaroori hai
         // taake theme flash na ho. getSharedPreferences attach() ke baad safe hai.
         try {
@@ -106,24 +122,34 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            Fragment sel = null;
-            int id = item.getItemId();
-            if (id == R.id.nav_live) sel = new LiveV4Fragment();
-            else if (id == R.id.nav_rooms) sel = new RoomHeatmapFragment();
-            else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
-            else if (id == R.id.nav_map) sel = new MapV4Fragment();
-            else if (id == R.id.nav_naksha) sel = new NakshaFragment();
-            else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
-            if (sel != null) {
-                // back stack saaf taake DualSim se wapas par nav sahi rahe
-                getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commit();
-            }
-            return true;
-        });
+        if (bottomNav != null) {
+            bottomNav.setOnItemSelectedListener(item -> {
+                Fragment sel = null;
+                int id = item.getItemId();
+                try {
+                    if (id == R.id.nav_live) sel = new LiveV4Fragment();
+                    else if (id == R.id.nav_rooms) sel = new RoomHeatmapFragment();
+                    else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
+                    else if (id == R.id.nav_map) sel = new MapV4Fragment();
+                    else if (id == R.id.nav_naksha) sel = new NakshaFragment();
+                    else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
+                } catch (Exception ignored) {}
+                if (sel != null) {
+                    try {
+                        // back stack saaf taake DualSim se wapas par nav sahi rahe
+                        getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commit();
+                    } catch (Exception ignored) {}
+                }
+                return true;
+            });
+        }
 
-        if (savedInstanceState == null) bottomNav.setSelectedItemId(R.id.nav_live);
+        if (savedInstanceState == null) {
+            try {
+                if (bottomNav != null) bottomNav.setSelectedItemId(R.id.nav_live);
+            } catch (Exception ignored) {}
+        }
 
         askPermissions();
     }
