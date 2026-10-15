@@ -169,6 +169,26 @@ public class HistoryV4Fragment extends Fragment {
     }
 
     private void bind(Holder h, Row r) {
+        // Reading par click -> Map tab par uski location dikhao
+        try {
+            if ((r.kind == 0 || r.kind == 2) && r.lat != 0 && r.lng != 0) {
+                h.itemView.setOnClickListener(v -> {
+                    try {
+                        requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE)
+                                .edit()
+                                .putString("map_focus_lat", String.valueOf(r.lat))
+                                .putString("map_focus_lng", String.valueOf(r.lng))
+                                .apply();
+                        android.app.Activity a = getActivity();
+                        if (a instanceof com.mbpsmeter.app.MainActivity) {
+                            ((com.mbpsmeter.app.MainActivity) a).selectTab(R.id.nav_map);
+                        }
+                    } catch (Exception ignored) {}
+                });
+            } else {
+                h.itemView.setOnClickListener(null);
+            }
+        } catch (Exception ignored) {}
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM hh:mm a", Locale.getDefault());
         if (r.kind == 0) {
             h.badge.setText(r.dbm + " dBm");

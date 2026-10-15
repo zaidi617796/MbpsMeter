@@ -13,7 +13,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="MbpsMeter"
+        android:label="Signal Map – Network Finder"
         android:usesCleartextTraffic="false"
         android:theme="@style/AppTheme">
 

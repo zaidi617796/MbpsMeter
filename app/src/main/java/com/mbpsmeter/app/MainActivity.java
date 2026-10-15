@@ -35,6 +35,7 @@ import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERMS = 101;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav = findViewById(R.id.bottomNav);
         View topBar = findViewById(R.id.topBar);
 
         if (bottomNav != null) {
@@ -193,6 +194,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             android.util.Log.e("MbpsMeterCrash", "askPermissions failed", e);
         }
+    }
+
+    /** Kisi bhi tab par programmatically jao (e.g. History se Map par) */
+    public void selectTab(int menuId) {
+        try {
+            if (bottomNav != null) bottomNav.setSelectedItemId(menuId);
+        } catch (Exception ignored) {}
     }
 
     /** Bottom nav ka ek item banao - icon fail ho to bhi text wala item zaroor banao */

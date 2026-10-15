@@ -48,6 +48,7 @@ public class MapV4Fragment extends Fragment {
     private SharedPreferences prefs;
     private MapView osmMap;
     private MyLocationNewOverlay myLocOverlay;
+    private boolean focusMode = false;
 
     private float bestLat = 0, bestLng = 0;
     private int bestDbm = -120;
@@ -249,6 +250,24 @@ public class MapV4Fragment extends Fragment {
         super.onResume();
         if (osmMap != null) {
             osmMap.onResume();
+            // History se aayi hui focus location? (reading par click)
+            try {
+                SharedPreferences fp = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+                String fla = fp.getString("map_focus_lat", "");
+                String fln = fp.getString("map_focus_lng", "");
+                if (!fla.isEmpty() && !fln.isEmpty()) {
+                    double flt = Double.parseDouble(fla), flg = Double.parseDouble(fln);
+                    fp.edit().remove("map_focus_lat").remove("map_focus_lng").apply();
+                    focusMode = true;
+                    try { if (myLocOverlay != null) myLocOverlay.disableFollowLocation(); } catch (Exception ignored) {}
+                    osmMap.getController().setZoom(17.0);
+                    osmMap.getController().animateTo(new org.osmdroid.util.GeoPoint(flt, flg));
+                    Toast.makeText(getContext(), R.string.map_focus_toast, Toast.LENGTH_SHORT).show();
+                } else {
+                    focusMode = false;
+                    try { if (myLocOverlay != null) myLocOverlay.enableFollowLocation(); } catch (Exception ignored) {}
+                }
+            } catch (Exception ignored) {}
             // Active location shuru karo taake blue dot aur center sahi aaye
             try {
                 LocationHelper.start(requireContext());
@@ -256,9 +275,11 @@ public class MapV4Fragment extends Fragment {
                     if (getActivity() == null || osmMap == null) return;
                     getActivity().runOnUiThread(() -> {
                         try {
-                            // Pehli baar location mile to center karo
-                            osmMap.getController().setCenter(
-                                    new org.osmdroid.util.GeoPoint(loc.getLatitude(), loc.getLongitude()));
+                            // Focus mode me user location par wapas na jao
+                            if (!focusMode) {
+                                osmMap.getController().setCenter(
+                                        new org.osmdroid.util.GeoPoint(loc.getLatitude(), loc.getLongitude()));
+                            }
                             loadAll();
                         } catch (Exception ignored) {}
                     });

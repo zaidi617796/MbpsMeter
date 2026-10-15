@@ -43,7 +43,7 @@ import java.util.Locale;
 /**
  * LIVE V6:
  * - Asal signal + tower info (Cell ID, band)
- * - Walk Test (har 10m auto-record), drop alarm, drop diary auto-log
+ * - Walk Test (har 5m auto-record), drop alarm, drop diary auto-log
  * - Compare SIMs, Urdu/English toggle
  */
 public class LiveV4Fragment extends Fragment {
@@ -214,10 +214,10 @@ public class LiveV4Fragment extends Fragment {
 
         long now = System.currentTimeMillis();
 
-        // Walk Test: 10 meter par auto record
+        // Walk Test: indoor ke liye har 5 meter par auto record
         if (walkMode) {
             Location loc = currentLocation();
-            if (loc != null && (lastWalkLoc == null || loc.distanceTo(lastWalkLoc) >= 10f)) {
+            if (loc != null && (lastWalkLoc == null || loc.distanceTo(lastWalkLoc) >= 5f)) {
                 save(false, "WALK", "");
                 lastWalkLoc = loc;
                 walkCount++;

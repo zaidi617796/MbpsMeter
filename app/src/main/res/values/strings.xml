@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- General -->
-    <string name="app_name">MbpsMeter</string>
+    <string name="app_name">Signal Map – Network Finder</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -208,4 +208,5 @@
     <string name="delete_selected">Delete Selected</string>
     <string name="delete_confirm_title">Delete selected?</string>
     <string name="delete_confirm_msg">Ye data permanently delete ho jayega. Continue?</string>
+    <string name="map_focus_toast">Reading ki location par le jaya ja raha hai…</string>
 </resources>
