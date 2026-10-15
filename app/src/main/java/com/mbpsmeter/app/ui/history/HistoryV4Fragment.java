@@ -74,7 +74,6 @@ public class HistoryV4Fragment extends Fragment {
         view.findViewById(R.id.btnExport).setOnClickListener(v -> exportCsv());
         view.findViewById(R.id.btnCloudBackup).setOnClickListener(v -> cloudBackup());
         view.findViewById(R.id.btnCloudRestore).setOnClickListener(v -> confirmRestore());
-        view.findViewById(R.id.btnCloudSettings).setOnClickListener(v -> cloudSettings());
         btnTabReadings.setOnClickListener(v -> { showDrops = false; styleTabs(); load(); });
         btnTabDrops.setOnClickListener(v -> { showDrops = true; styleTabs(); load(); });
         styleTabs();
