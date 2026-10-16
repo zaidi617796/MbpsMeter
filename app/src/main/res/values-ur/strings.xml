@@ -103,6 +103,14 @@
     <string name="map_key_missing">نقشے کے لیے Google Maps API key درکار ہے — res/values/google_maps_api.xml میں ڈالیں</string>
     <string name="best_spot_go">بہترین جگہ %1$s %2$s - اس طرف جائیں</string>
 
+    <!-- Towers -->
+    <string name="show_towers">ٹاورز</string>
+    <string name="show_readings">ریڈنگز</string>
+    <string name="tower_title">ٹاور %1$s</string>
+    <string name="tower_snippet">اوسط %1$d dBm • %2$d ریڈنگز • بہترین %3$d dBm</string>
+    <string name="no_towers_yet">ابھی کوئی ٹاور نہیں — لائیو پر موبائل ڈیٹا آن کر کے ریڈنگ کریں</string>
+    <string name="tower_approx">ٹاور کی جگہ آپ کی اپنی ریڈنگز سے اندازاً نکالی گئی ہے، کھمبے کی اصل جگہ نہیں</string>
+
     <!-- History -->
     <string name="history_title">ہسٹری</string>
     <string name="history_cleared">ہسٹری صاف ہو گئی</string>

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.util.LocationHelper;
+import com.mbpsmeter.app.util.TowerDb;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +39,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -45,10 +48,12 @@ import java.util.Locale;
 public class MapV4Fragment extends Fragment {
 
     private TextView tvBestSignal, tvBestLocation, tvBestDistance;
+    private Button btnTowers;
     private SharedPreferences prefs;
     private MapView osmMap;
     private MyLocationNewOverlay myLocOverlay;
     private boolean focusMode = false;
+    private boolean showTowers = false;
 
     private float bestLat = 0, bestLng = 0;
     private int bestDbm = -120;
@@ -63,6 +68,19 @@ public class MapV4Fragment extends Fragment {
         v.findViewById(R.id.btnNavigateBest).setOnClickListener(x -> centerBest());
         osmMap = v.findViewById(R.id.osmMap);
         prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+        btnTowers = v.findViewById(R.id.btnTowers);
+        showTowers = prefs.getBoolean("show_towers", false);
+        updateTowerBtn();
+        btnTowers.setOnClickListener(x -> {
+            showTowers = !showTowers;
+            prefs.edit().putBoolean("show_towers", showTowers).apply();
+            updateTowerBtn();
+            if (showTowers && !prefs.getBoolean("tower_note_seen", false)) {
+                prefs.edit().putBoolean("tower_note_seen", true).apply();
+                Toast.makeText(requireContext(), R.string.tower_approx, Toast.LENGTH_LONG).show();
+            }
+            loadAll();
+        });
         osmMap.setTileSource(TileSourceFactory.MAPNIK);
         osmMap.setMultiTouchControls(true);
         osmMap.setBuiltInZoomControls(false);
@@ -77,10 +95,75 @@ public class MapV4Fragment extends Fragment {
         return v;
     }
 
+    private void updateTowerBtn() {
+        if (btnTowers == null) return;
+        try {
+            btnTowers.setText(showTowers ? getString(R.string.show_readings) : getString(R.string.show_towers));
+        } catch (Exception ignored) {}
+    }
+
     private int colorFor(int dbm) {
         if (dbm >= -80) return Color.parseColor("#22C55E");
         if (dbm >= -95) return Color.parseColor("#F59E0B");
         return Color.parseColor("#EF4444");
+    }
+
+    /** Tower pins: har Cell ID ka andazan maqam + average/best signal. */
+    private void drawTowerPins() {
+        try {
+            List<TowerDb.Tower> towers = TowerDb.load(requireContext());
+            if (towers.isEmpty()) {
+                Toast.makeText(requireContext(), R.string.no_towers_yet, Toast.LENGTH_LONG).show();
+                return;
+            }
+            for (TowerDb.Tower t : towers) {
+                try {
+                    if (!validLatLng(t.lat, t.lng)) continue;
+                    Marker m = new Marker(osmMap);
+                    m.setPosition(new GeoPoint(t.lat, t.lng));
+                    String title = getString(R.string.tower_title, t.cellId);
+                    if (!t.op.isEmpty()) title += " | " + t.op;
+                    if (!t.band.isEmpty()) title += " | " + t.band;
+                    m.setTitle(title);
+                    m.setSnippet(getString(R.string.tower_snippet, t.avgDbm, t.count, t.bestDbm));
+                    m.setIcon(towerIcon());
+                    m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                    osmMap.getOverlays().add(m);
+                } catch (Exception ignored) {}
+            }
+        } catch (Exception ignored) {}
+    }
+
+    /** Tower ka icon: purple circle me safed antenna. */
+    private BitmapDrawable towerIcon() {
+        int s = 84;
+        Bitmap bmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        Paint white = new Paint(Paint.ANTI_ALIAS_FLAG);
+        white.setColor(Color.WHITE);
+        c.drawCircle(s / 2f, s / 2f, 34f, white);
+        Paint purple = new Paint(Paint.ANTI_ALIAS_FLAG);
+        purple.setColor(Color.parseColor("#A855F7"));
+        c.drawCircle(s / 2f, s / 2f, 27f, purple);
+        Paint w = new Paint(Paint.ANTI_ALIAS_FLAG);
+        w.setColor(Color.WHITE);
+        w.setStrokeWidth(5f);
+        w.setStyle(Paint.Style.STROKE);
+        w.setStrokeCap(Paint.Cap.ROUND);
+        float cx = s / 2f;
+        // Mast (khamba)
+        c.drawLine(cx, 24, cx - 11, 56, w);
+        c.drawLine(cx, 24, cx + 11, 56, w);
+        // Cross bars
+        c.drawLine(cx - 7, 42, cx + 7, 42, w);
+        c.drawLine(cx - 4, 33, cx + 4, 33, w);
+        // Base
+        c.drawLine(cx - 15, 58, cx + 15, 58, w);
+        // Antenna tip
+        Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
+        dot.setColor(Color.WHITE);
+        c.drawCircle(cx, 20, 4.5f, dot);
+        return new BitmapDrawable(getResources(), bmp);
     }
 
     private BitmapDrawable dotIcon(int color) {
@@ -112,24 +195,28 @@ public class MapV4Fragment extends Fragment {
         // 2. Pins - har reading alag try me taake ek kharab reading baqiyon ko na roke
         try {
             osmMap.getOverlays().clear();
-            JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
-            for (int i = 0; i < arr.length(); i++) {
-                try {
-                    JSONObject o = arr.getJSONObject(i);
-                    double lat = o.optDouble("lat", Double.NaN);
-                    double lng = o.optDouble("lng", Double.NaN);
-                    if (!validLatLng(lat, lng)) continue;
-                    int dbm = o.optInt("dbm", -120);
-                    Marker m = new Marker(osmMap);
-                    m.setPosition(new GeoPoint(lat, lng));
-                    String title = dbm + " dBm | " + o.optString("type", "");
-                    String room = o.optString("room", "");
-                    if (!room.isEmpty()) title = room + " | " + title;
-                    m.setTitle(title);
-                    m.setIcon(dotIcon(colorFor(dbm)));
-                    m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                    osmMap.getOverlays().add(m);
-                } catch (Exception ignored) {}
+            if (showTowers) {
+                drawTowerPins();
+            } else {
+                JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
+                for (int i = 0; i < arr.length(); i++) {
+                    try {
+                        JSONObject o = arr.getJSONObject(i);
+                        double lat = o.optDouble("lat", Double.NaN);
+                        double lng = o.optDouble("lng", Double.NaN);
+                        if (!validLatLng(lat, lng)) continue;
+                        int dbm = o.optInt("dbm", -120);
+                        Marker m = new Marker(osmMap);
+                        m.setPosition(new GeoPoint(lat, lng));
+                        String title = dbm + " dBm | " + o.optString("type", "");
+                        String room = o.optString("room", "");
+                        if (!room.isEmpty()) title = room + " | " + title;
+                        m.setTitle(title);
+                        m.setIcon(dotIcon(colorFor(dbm)));
+                        m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                        osmMap.getOverlays().add(m);
+                    } catch (Exception ignored) {}
+                }
             }
 
             if (validLatLng(bestLat, bestLng) && bestDbm > -120) {

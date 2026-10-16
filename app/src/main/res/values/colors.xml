@@ -38,4 +38,7 @@
     <color name="text_muted">#5A6B8C</color>
     <color name="accent">#00E5FF</color>
     <color name="window_bg">#F0F4FA</color>
+    <!-- Release lint fix: night-only colors ko base me declare karna lazmi hai -->
+    <color name="glow_cyan">#3300E5FF</color>
+    <color name="card_border">#1E2D5A</color>
 </resources>

@@ -103,6 +103,14 @@
     <string name="map_key_missing">Map needs a Google Maps API key — add it in res/values/google_maps_api.xml</string>
     <string name="best_spot_go">Best spot %1$s %2$s - walk that way</string>
 
+    <!-- Towers -->
+    <string name="show_towers">Towers</string>
+    <string name="show_readings">Readings</string>
+    <string name="tower_title">Tower %1$s</string>
+    <string name="tower_snippet">avg %1$d dBm • %2$d readings • best %3$d dBm</string>
+    <string name="no_towers_yet">No towers yet — record readings on Live with mobile data on</string>
+    <string name="tower_approx">Tower pins are estimated from your own readings, not exact mast locations</string>
+
     <!-- History -->
     <string name="history_title">History</string>
     <string name="history_cleared">History cleared</string>

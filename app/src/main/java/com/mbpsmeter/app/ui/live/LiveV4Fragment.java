@@ -377,6 +377,8 @@ public class LiveV4Fragment extends Fragment {
             if (!room.isEmpty()) obj.put("room", room);
             obj.put("net", curNet);
             obj.put("op", curOp);
+            if (!curCell.isEmpty()) obj.put("cell", curCell);
+            if (!curBand.isEmpty()) obj.put("band", curBand);
             arr.put(obj);
 
             SharedPreferences.Editor ed = prefs.edit();
