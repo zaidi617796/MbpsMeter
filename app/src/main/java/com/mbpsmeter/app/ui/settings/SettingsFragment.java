@@ -100,6 +100,32 @@ public class SettingsFragment extends Fragment {
                         .addToBackStack(null)
                         .commit());
 
+        // ---------- Last error viewer (diagnostic) ----------
+        try {
+            String lastCrash = prefs.getString("last_crash", "");
+            if (!lastCrash.isEmpty()) {
+                android.widget.Button btnErr = new android.widget.Button(requireContext());
+                btnErr.setText("⚠️ Last Error Dekho");
+                btnErr.setAllCaps(false);
+                ((android.view.ViewGroup) v.findViewById(R.id.btnGuide).getParent()).addView(btnErr);
+                final String crashText = lastCrash;
+                btnErr.setOnClickListener(x -> {
+                    android.widget.TextView tv = new android.widget.TextView(requireContext());
+                    tv.setText(crashText);
+                    tv.setTextSize(11);
+                    tv.setPadding(24, 24, 24, 24);
+                    android.widget.ScrollView sv = new android.widget.ScrollView(requireContext());
+                    sv.addView(tv);
+                    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                            .setTitle("Last Error")
+                            .setView(sv)
+                            .setPositiveButton("OK", null)
+                            .setNeutralButton("Clear", (d, w) -> prefs.edit().remove("last_crash").apply())
+                            .show();
+                });
+            }
+        } catch (Exception ignored) {}
+
         // ---------- About ----------
         TextView tvAbout = v.findViewById(R.id.tvAbout);
         tvAbout.setText(getString(R.string.about_text));

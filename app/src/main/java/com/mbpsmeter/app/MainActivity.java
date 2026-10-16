@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         // back stack saaf taake DualSim se wapas par nav sahi rahe
                         getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commitAllowingStateLoss();
                     } catch (Exception ignored) {}
                 }
                 return true;
