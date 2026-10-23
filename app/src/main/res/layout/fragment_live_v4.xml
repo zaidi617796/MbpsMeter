@@ -236,6 +236,20 @@
             android:drawableStart="@drawable/ic_arrow_up"
             android:drawablePadding="8dp" />
 
+        <!-- Signal Radar -->
+        <Button
+            android:id="@+id/btnRadar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_pill_dark"
+            app:backgroundTint="@null"
+            android:text="@string/open_radar"
+            android:textAllCaps="false"
+            android:textColor="#00E5FF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

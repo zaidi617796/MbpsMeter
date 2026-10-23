@@ -207,7 +207,7 @@
     <string name="lang_title">Language</string>
     <string name="user_guide_title">User Guide</string>
     <string name="about_title">About</string>
-    <string name="about_text">MbpsMeter v6.0 — Made for Pakistan</string>
+    <string name="about_text">MbpsMeter v6.1 — Made for Pakistan</string>
     <string name="delete_history_title">Delete History</string>
     <string name="del_signals">Signal readings</string>
     <string name="del_speed">Speed tests</string>
@@ -217,4 +217,19 @@
     <string name="delete_confirm_title">Delete selected?</string>
     <string name="delete_confirm_msg">Ye data permanently delete ho jayega. Continue?</string>
     <string name="map_focus_toast">Reading ki location par le jaya ja raha hai…</string>
+
+    <!-- Signal Radar -->
+    <string name="open_radar">Signal Radar — find the best spot</string>
+    <string name="radar_title">SIGNAL RADAR</string>
+    <string name="radar_hint">Walk around slowly. The beeps get faster and the buzz gets quicker as the signal gets stronger — like a metal detector, but for signal. When it races, you found a strong spot: save it! Sound and buzz can be turned off above.</string>
+    <string name="radar_warmer">▲ Warmer — signal improving, keep going this way</string>
+    <string name="radar_colder">▼ Colder — signal dropping, turn back</string>
+    <string name="radar_steady">● Steady — move a few steps to find the trend</string>
+    <string name="radar_best">Best this session: %1$d dBm</string>
+    <string name="radar_best_none">Best this session: —</string>
+    <string name="radar_save_spot">Save this spot</string>
+    <string name="radar_sound_on">Sound: ON</string>
+    <string name="radar_sound_off">Sound: OFF</string>
+    <string name="radar_vib_on">Buzz: ON</string>
+    <string name="radar_vib_off">Buzz: OFF</string>
 </resources>

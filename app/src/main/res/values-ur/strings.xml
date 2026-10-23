@@ -207,5 +207,20 @@
     <string name="lang_title">زبان</string>
     <string name="user_guide_title">رہنمائی</string>
     <string name="about_title">تعارف</string>
-    <string name="about_text">MbpsMeter v6.0 — پاکستان کے لیے</string>
+    <string name="about_text">MbpsMeter v6.1 — پاکستان کے لیے</string>
+
+    <!-- Signal Radar -->
+    <string name="open_radar">سگنل ریڈار — بہترین جگہ تلاش کریں</string>
+    <string name="radar_title">سگنل ریڈار</string>
+    <string name="radar_hint">آہستہ آہستہ اِدھر اُدھر چلیں۔ جیسے جیسے سگنل مضبوط ہوگا، بیپ تیز اور وائبریشن بڑھتی جائے گی — بالکل میٹل ڈیٹیکٹر کی طرح، بس یہ سگنل ڈھونڈتا ہے۔ جہاں بیپ سب سے تیز ہو جائے، وہی مضبوط جگہ ہے: محفوظ کر لیں! آواز اور وائبریشن اوپر سے بند بھی ہو سکتی ہے۔</string>
+    <string name="radar_warmer">▲ گرم — سگنل بہتر ہو رہا ہے، اسی طرف چلیں</string>
+    <string name="radar_colder">▼ ٹھنڈا — سگنل گھٹ رہا ہے، واپس مڑیں</string>
+    <string name="radar_steady">● مستحکم — چند قدم چل کر رجحان دیکھیں</string>
+    <string name="radar_best">اس سیشن کا بہترین: %1$d dBm</string>
+    <string name="radar_best_none">اس سیشن کا بہترین: —</string>
+    <string name="radar_save_spot">یہ جگہ محفوظ کریں</string>
+    <string name="radar_sound_on">آواز: آن</string>
+    <string name="radar_sound_off">آواز: آف</string>
+    <string name="radar_vib_on">وائبریشن: آن</string>
+    <string name="radar_vib_off">وائبریشن: آف</string>
 </resources>
