@@ -36,6 +36,7 @@ public class SpeedV4Fragment extends Fragment {
 
     private TextView tvMainSpeed, tvDownload, tvUpload, tvPing, tvJitter, tvStatus, tvPattern, tvWorks;
     private Button btnStart, btnShareSpeed;
+    private static final String UA = "Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36";
     private volatile boolean running = false;
     private double lastDown = -1, lastUp = -1, lastPing = -1;
 
@@ -173,6 +174,7 @@ public class SpeedV4Fragment extends Fragment {
                     HttpURLConnection c = (HttpURLConnection) new URL("https://speed.cloudflare.com/__down?bytes=1000").openConnection();
                     c.setConnectTimeout(8000);
                     c.setReadTimeout(8000);
+                    c.setRequestProperty("User-Agent", UA);
                     InputStream in = c.getInputStream();
                     byte[] buf = new byte[4096];
                     while (in.read(buf) != -1) {}
@@ -198,6 +200,7 @@ public class SpeedV4Fragment extends Fragment {
                 HttpURLConnection con = (HttpURLConnection) new URL("https://speed.cloudflare.com/__down?bytes=10000000").openConnection();
                 con.setConnectTimeout(15000);
                 con.setReadTimeout(30000);
+                con.setRequestProperty("User-Agent", UA);
                 InputStream in = con.getInputStream();
                 byte[] buf = new byte[32768];
                 int n;
@@ -221,20 +224,60 @@ public class SpeedV4Fragment extends Fragment {
             } catch (Exception ignored) {}
 
             setText(tvStatus, getString(R.string.testing_up));
-            // Upload test: pehle Cloudflare, fail ho to httpbin fallback
-            String[] upUrls = {"https://speed.cloudflare.com/__up", "https://httpbin.org/post"};
-            for (String upUrl : upUrls) {
+            up = measureUpload();
+
+            double fd = down, fu = up, fp = pingMs, fj = jitterMs;
+            ui(() -> {
+                running = false;
+                btnStart.setEnabled(true);
+                btnStart.setAlpha(1f);
+                String mbps = getString(R.string.mbps);
+                tvMainSpeed.setText(fd >= 0 ? String.format(Locale.US, "%.1f", fd) : "--");
+                tvDownload.setText(fd >= 0 ? String.format(Locale.US, "%.2f %s", fd, mbps) : "--");
+                tvUpload.setText(fu >= 0 ? String.format(Locale.US, "%.2f %s", fu, mbps) : "--");
+                if (fd < 0 && fu < 0) {
+                    tvStatus.setText(R.string.speed_failed);
+                } else {
+                    tvStatus.setText(fu < 0 ? R.string.speed_up_failed : R.string.speed_done);
+                    lastDown = fd;
+                    lastUp = fu;
+                    lastPing = fp;
+                    saveResult(fd, fu, fp, fj);
+                    showPattern();
+                    showWorksOnSpeed(fd, fu);
+                }
+            });
+        }).start();
+    }
+
+    /**
+     * Upload speed naapo. Do fix:
+     * 1) Browser wala User-Agent — Cloudflare aksar default Java UA ko block kar deta hai (403),
+     *    jis se purana test khamoshi se fail ho kar "--" dikhata rehta tha.
+     * 2) Waqt sirf data LIKHNE tak gina jata hai; server ka jawab parhna alag try me hai —
+     *    jawab ki error ab measurement ko nahi maar sakti.
+     */
+    private double measureUpload() {
+        String[] upUrls = {
+                "https://speed.cloudflare.com/__up",
+                "https://httpbin.org/post",
+                "https://postman-echo.com/post"
+        };
+        byte[] payload = new byte[1000000];
+        java.util.Arrays.fill(payload, (byte) 65);
+        for (String upUrl : upUrls) {
+            HttpURLConnection upCon = null;
             try {
-                byte[] payload = new byte[1000000];
-                java.util.Arrays.fill(payload, (byte) 65);
-                HttpURLConnection upCon = (HttpURLConnection) new URL(upUrl).openConnection();
+                upCon = (HttpURLConnection) new URL(upUrl).openConnection();
                 upCon.setRequestMethod("POST");
                 upCon.setDoOutput(true);
                 upCon.setConnectTimeout(15000);
-                upCon.setReadTimeout(30000);
+                upCon.setReadTimeout(20000);
+                upCon.setRequestProperty("User-Agent", UA);
+                upCon.setRequestProperty("Content-Type", "application/octet-stream");
                 upCon.setFixedLengthStreamingMode(payload.length);
-                long upStart = System.nanoTime();
                 OutputStream os = upCon.getOutputStream();
+                long upStart = System.nanoTime();
                 // Chunks me likho taake upload ke dauran bhi live speed nazar aaye
                 int chunk = 32768;
                 long upBytes = 0, upLastUi = upStart;
@@ -255,38 +298,21 @@ public class SpeedV4Fragment extends Fragment {
                 }
                 os.flush();
                 os.close();
-                InputStream r = upCon.getInputStream();
-                while (r.read(new byte[4096]) != -1) {}
-                r.close();
+                // Measurement yahin khatam — is ke baad jawab parhna sirf safai hai
                 double upSec = (System.nanoTime() - upStart) / 1e9;
-                if (upSec > 0) up = payload.length * 8.0 / upSec / 1e6;
-                upCon.disconnect();
-                if (up > 0) break; // Kamyaab ho gaya to fallback try nahi karo
-            } catch (Exception ignored) {}
-            } // end fallback loop
-
-            double fd = down, fu = up, fp = pingMs, fj = jitterMs;
-            ui(() -> {
-                running = false;
-                btnStart.setEnabled(true);
-                btnStart.setAlpha(1f);
-                String mbps = getString(R.string.mbps);
-                tvMainSpeed.setText(fd >= 0 ? String.format(Locale.US, "%.1f", fd) : "--");
-                tvDownload.setText(fd >= 0 ? String.format(Locale.US, "%.2f %s", fd, mbps) : "--");
-                tvUpload.setText(fu >= 0 ? String.format(Locale.US, "%.2f %s", fu, mbps) : "--");
-                if (fd < 0 && fu < 0) {
-                    tvStatus.setText(R.string.speed_failed);
-                } else {
-                    tvStatus.setText(R.string.speed_done);
-                    lastDown = fd;
-                    lastUp = fu;
-                    lastPing = fp;
-                    saveResult(fd, fu, fp, fj);
-                    showPattern();
-                    showWorksOnSpeed(fd, fu);
-                }
-            });
-        }).start();
+                double result = upSec > 0 ? payload.length * 8.0 / upSec / 1e6 : -1;
+                try {
+                    InputStream r = upCon.getInputStream();
+                    while (r.read(new byte[4096]) != -1) {}
+                    r.close();
+                } catch (Exception ignored) {}
+                if (result > 0) return result;
+            } catch (Exception ignored) {
+            } finally {
+                if (upCon != null) upCon.disconnect();
+            }
+        }
+        return -1;
     }
 
     private void saveResult(double down, double up, double ping, double jitter) {

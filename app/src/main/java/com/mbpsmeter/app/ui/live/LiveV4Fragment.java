@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -22,16 +21,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
-import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.ui.custom.GaugeView;
-import com.mbpsmeter.app.ui.guide.GuideFragment;
-import com.mbpsmeter.app.ui.radar.RadarFragment;
-import com.mbpsmeter.app.ui.sim.DualSimFragment;
 import com.mbpsmeter.app.util.SignalReader;
 
 import org.json.JSONArray;
@@ -45,13 +39,12 @@ import java.util.Locale;
  * LIVE V6:
  * - Asal signal + tower info (Cell ID, band)
  * - Walk Test (har 5m auto-record), drop alarm, drop diary auto-log
- * - Compare SIMs, Urdu/English toggle
  */
 public class LiveV4Fragment extends Fragment {
 
-    private TextView tvStrength, tvGps, tvTime, tvOperator, tvNetType, tvCellInfo, tvDropAlert, tvWalkCount;
+    private TextView tvGps, tvTime, tvOperator, tvNetType, tvCellInfo, tvDropAlert, tvWalkCount;
     private GaugeView gauge;
-    private Button btnSave, btnStop, btnWalk, btnSim, btnLang, btnGuide, btnRadar;
+    private Button btnSave, btnStop, btnWalk;
     private SharedPreferences prefs;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -80,7 +73,6 @@ public class LiveV4Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_live_v4, container, false);
 
-        tvStrength = v.findViewById(R.id.tvStrength);
         tvGps = v.findViewById(R.id.tvGps);
         tvTime = v.findViewById(R.id.tvTime);
         tvOperator = v.findViewById(R.id.tvOperator);
@@ -92,13 +84,8 @@ public class LiveV4Fragment extends Fragment {
         btnSave = v.findViewById(R.id.btnSave);
         btnStop = v.findViewById(R.id.btnStop);
         btnWalk = v.findViewById(R.id.btnWalk);
-        btnSim = v.findViewById(R.id.btnSim);
-        btnLang = v.findViewById(R.id.btnLang);
-        btnGuide = v.findViewById(R.id.btnGuide);
-        btnRadar = v.findViewById(R.id.btnRadar);
 
         prefs = requireActivity().getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
-        updateLangBtn();
 
         btnSave.setOnClickListener(view -> save(false, "MANUAL", ""));
         btnStop.setOnClickListener(view -> {
@@ -123,59 +110,9 @@ public class LiveV4Fragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.walk_off_toast) + " - " + walkCount, Toast.LENGTH_SHORT).show();
             }
         });
-        btnSim.setOnClickListener(view -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, new DualSimFragment())
-                        .addToBackStack("sim")
-                        .commit();
-            }
-        });
-        btnLang.setOnClickListener(view -> toggleLocale());
-        btnGuide.setOnClickListener(view -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, new GuideFragment())
-                        .addToBackStack("guide")
-                        .commit();
-            }
-        });
-        btnRadar.setOnClickListener(view -> {
-            if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, new RadarFragment())
-                        .addToBackStack("radar")
-                        .commit();
-            }
-        });
-
         updateLocation();
         startLoop();
         return v;
-    }
-
-    // ---------- locale ----------
-
-    private void updateLangBtn() {
-        boolean isUr = false;
-        LocaleListCompat cur = AppCompatDelegate.getApplicationLocales();
-        for (int i = 0; i < cur.size(); i++) {
-            if ("ur".equals(cur.get(i).getLanguage())) { isUr = true; break; }
-        }
-        if (btnLang != null) btnLang.setText(isUr ? "EN" : "اردو");
-    }
-
-    private void toggleLocale() {
-        boolean isUr = false;
-        LocaleListCompat cur = AppCompatDelegate.getApplicationLocales();
-        for (int i = 0; i < cur.size(); i++) {
-            if ("ur".equals(cur.get(i).getLanguage())) { isUr = true; break; }
-        }
-        if (isUr) {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create());
-        } else {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ur"));
-        }
     }
 
     // ---------- loop ----------
@@ -295,25 +232,6 @@ public class LiveV4Fragment extends Fragment {
             else gauge.setValueWithColor(currentDbm);
         }
 
-        if (tvStrength != null) {
-            if (noSignal) {
-                tvStrength.setText("--");
-                tvStrength.setTextColor(0xFF8A9ABF);
-                tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF1A2340));
-            } else {
-                tvStrength.setText(SignalReader.label(currentDbm));
-                if (currentDbm >= -80) {
-                    tvStrength.setTextColor(0xFF22C55E);
-                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF162C23));
-                } else if (currentDbm >= -95) {
-                    tvStrength.setTextColor(0xFFF59E0B);
-                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF2E2410));
-                } else {
-                    tvStrength.setTextColor(0xFFEF4444);
-                    tvStrength.setBackgroundTintList(ColorStateList.valueOf(0xFF331418));
-                }
-            }
-        }
         if (tvOperator != null) tvOperator.setText(curOp.isEmpty() ? getString(R.string.unknown_operator) : curOp);
         if (tvNetType != null) tvNetType.setText(curNet);
         if (tvCellInfo != null) {

@@ -137,16 +137,7 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        View btnSettings = findViewById(R.id.btnSettings);
-        if (btnSettings != null) {
-            btnSettings.setOnClickListener(v -> {
-                getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, new com.mbpsmeter.app.ui.settings.SettingsFragment())
-                        .addToBackStack(null)
-                        .commit();
-            });
-        }
+        // Settings ka icon ab History tab me hai (v6.2) — top bar me sirf naam
 
         if (bottomNav != null) {
             // Menu bilkul code se banao - XML inflation se parhez

@@ -82,13 +82,14 @@
     <string name="testing_up">Testing upload…</string>
     <string name="speed_done">Complete - saved to History</string>
     <string name="speed_failed">Failed - check internet</string>
+    <string name="speed_up_failed">Upload test failed - check connection and try again</string>
     <string name="speed_pattern_best">Best time</string>
     <string name="speed_pattern_worst">Worst time</string>
     <string name="speed_pattern_none">Run a few tests to see your best/worst hours</string>
     <string name="speed_tests_suffix">tests</string>
     <string name="share_result">Share result</string>
     <string name="works_title">Is speed par kya chalega:</string>
-    <string name="share_text">Meri internet speed: %.1f Mbps download / %.1f Mbps upload (Ping %.0f ms) - MbpsMeter se test kiya</string>
+    <string name="share_text">Meri internet speed: %.1f Mbps download / %.1f Mbps upload (Ping %.0f ms) - Signal Map se test kiya</string>
     <string name="speed_tip">Each test is saved to History - compare speed and signal in one place.</string>
 
     <!-- Map -->
@@ -169,7 +170,7 @@
 
     <!-- Onboarding -->
     <string name="onboard1_title">Find your strong corners</string>
-    <string name="onboard1_desc">MbpsMeter maps your WiFi and mobile signal so every call is clear.</string>
+    <string name="onboard1_desc">Signal Map maps your WiFi and mobile signal so every call is clear.</string>
     <string name="onboard2_title">Walk &amp; auto-record</string>
     <string name="onboard2_desc">Start walk test and walk around — a reading saves every 10 meters.</string>
     <string name="onboard3_title">Sketch your home</string>
@@ -207,7 +208,7 @@
     <string name="lang_title">Language</string>
     <string name="user_guide_title">User Guide</string>
     <string name="about_title">About</string>
-    <string name="about_text">MbpsMeter v6.1 — Made for Pakistan</string>
+    <string name="about_text">Signal Map v6.2 — Made for Pakistan</string>
     <string name="delete_history_title">Delete History</string>
     <string name="del_signals">Signal readings</string>
     <string name="del_speed">Speed tests</string>

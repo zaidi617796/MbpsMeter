@@ -183,4 +183,17 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <!-- Signal Radar — indoor best-spot finder -->
+    <Button
+        android:id="@+id/btnRadarNaksha"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_pill_dark"
+        android:text="@string/open_radar"
+        android:textAllCaps="false"
+        android:textColor="#00E5FF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
 </LinearLayout>

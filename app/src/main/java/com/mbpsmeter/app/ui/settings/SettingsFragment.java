@@ -51,17 +51,12 @@ public class SettingsFragment extends Fragment {
             requireActivity().recreate();
         });
 
-        // ---------- Language ----------
-        Button btnEnglish = v.findViewById(R.id.btnEnglish);
-        Button btnUrdu = v.findViewById(R.id.btnUrdu);
-        btnEnglish.setOnClickListener(b -> {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create());
-            requireActivity().recreate();
-        });
-        btnUrdu.setOnClickListener(b -> {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ur"));
-            requireActivity().recreate();
-        });
+        // ---------- Language (5 zubanein) ----------
+        v.findViewById(R.id.btnEnglish).setOnClickListener(b -> setLang(null));
+        v.findViewById(R.id.btnUrdu).setOnClickListener(b -> setLang("ur"));
+        v.findViewById(R.id.btnSindhi).setOnClickListener(b -> setLang("sd"));
+        v.findViewById(R.id.btnPashto).setOnClickListener(b -> setLang("ps"));
+        v.findViewById(R.id.btnPunjabi).setOnClickListener(b -> setLang("pa"));
 
         // ---------- Delete history (selective) ----------
         android.widget.CheckBox cbSignals = v.findViewById(R.id.cbDelSignals);
@@ -129,5 +124,14 @@ public class SettingsFragment extends Fragment {
         // ---------- About ----------
         TextView tvAbout = v.findViewById(R.id.tvAbout);
         tvAbout.setText(getString(R.string.about_text));
+    }
+
+    private void setLang(String tag) {
+        if (tag == null) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create());
+        } else {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag));
+        }
+        requireActivity().recreate();
     }
 }

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <string name="app_name">Signal Map – Network Finder</string>
+    <string name="ok">سمه ده</string>
+    <string name="cancel">لغوه کول</string>
+    <string name="delete">ړنګول</string>
+    <string name="back">بېرته</string>
+    <string name="perm_title">اجازې اړینې دي</string>
+    <string name="perm_msg">د سګنال کتلو لپاره د موقعیت او تلیفون حالت اجازه اړینه ده. مهرباني وکړئ اجازه ورکړئ.</string>
+    <string name="perm_loc_needed">له موقعیت پرته نقشه او واک ټیسټ به کار ونه کړي.</string>
+    <string name="clear_title">تاریخ پاک شي؟</string>
+    <string name="clear_msg">ټول خوندي شوي لوستل او سرعت ازمایښتونه به ړنګ شي. دا بېرته نه راګرځي.</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_live">ژوندی</string>
+    <string name="nav_rooms">خونې</string>
+    <string name="nav_speed">سرعت</string>
+    <string name="nav_map">نقشه</string>
+    <string name="nav_history">تاریخ</string>
+
+    <!-- Live -->
+    <string name="live_title">د سګنال ازمایښت</string>
+    <string name="record">ثبتول</string>
+    <string name="stop">درول</string>
+    <string name="start">پیل</string>
+    <string name="started">پیل شو</string>
+    <string name="stopped">ودرېد</string>
+    <string name="walk_start">واک ټیسټ پیل کړئ</string>
+    <string name="walk_stop">واک ټیسټ ودروئ</string>
+    <string name="walk_on_toast">واک ټیسټ فعال دی - په هرو 10 مترو کې خودکار ثبت</string>
+    <string name="walk_off_toast">واک ټیسټ بند شو</string>
+    <string name="pts">نومرې</string>
+    <string name="compare_sims">سیمونه پرتله کړئ</string>
+    <string name="tip_live">لارښوونه: واک ټیسټ فعال کړئ او په کور کې وګرځئ - په هرو 10 مترو کې لوستل پخپله خوندي کېږي. یوازې اندازه شوې ځایونه پرتله کېدای شي.</string>
+    <string name="drop_alert">کمزوری زون - دلته زنګ پرې کېدای شي</string>
+    <string name="unknown_operator">نامعلوم چلوونکی</string>
+    <string name="demo_mode">ډیمو حالت</string>
+    <string name="no_signal_data">د سګنال ډاټا نشته - وای فای/موبایل یا اجازې وګورئ</string>
+    <string name="tower_info">برج</string>
+
+    <!-- Rooms -->
+    <string name="rooms_title">د خونې د تودوخې نقشه</string>
+    <string name="add_room">+ خونه زیاته کړئ</string>
+    <string name="room_name_hint">د خونې نوم (بېلګه: د خوب خونه)</string>
+    <string name="rooms_tip">په خونه ټک وکړئ، هغه کونج وټاکئ چې پکې ولاړ یاست، او سګنال به ثبت شي. رنګونه اوسط ښيي: شین = قوي، زیړ = منځنی، سور = کمزوری. د کور دننه GPS باوري نه دی، نو د کور دننه خونې د نقشې له پنو څخه غوره دي.</string>
+    <string name="best_room">غوره خونه</string>
+    <string name="no_data_tap">ډاټا نشته - د ثبت لپاره ټک وکړئ</string>
+    <string name="readings_count">لوستل</string>
+    <string name="delete_room_title">خونه ړنګه شي؟</string>
+    <string name="delete_room_msg">خونه به لرې شي. زاړه لوستل به یې په تاریخ کې پاتې شي.</string>
+    <string name="room_recorded">خوندي شو</string>
+    <string name="room_exists">خونه وار له مخه شته</string>
+    <string name="room_empty">لومړی د خونې نوم ولیکئ</string>
+
+    <!-- Dual SIM -->
+    <string name="sim_title">د دوو سیمونو پرتله</string>
+    <string name="sim_na">نشته</string>
+    <string name="sim_recommend_better">%1$s همدا اوس غوره دی</string>
+    <string name="sim_recommend_tie">دواړه سیمونه یوشان دي</string>
+    <string name="sim_recommend_none">د سیم ډاټا نشته - اجازې وګورئ</string>
+    <string name="sim_note">یادونه: په ځینو تلیفونونو کې بې کاره سیم ښایي اټکلي ارزښتونه وښيي.</string>
+    <string name="sim_refresh">تازه کول</string>
+
+    <!-- Drops -->
+    <string name="tab_readings">لوستل</string>
+    <string name="tab_drops">د پرې کېدو ډایري</string>
+    <string name="drop_title">سګنال پرې شو</string>
+    <string name="no_drops">هېڅ پرې کېدل ثبت نه دي - ښه خبر!</string>
+
+    <!-- Speed -->
+    <string name="speed_title">د سرعت ازمایښت</string>
+    <string name="tap_go">د ازمایښت لپاره GO ټک وکړئ</string>
+    <string name="download">ډاونلوډ</string>
+    <string name="upload">اپلوډ</string>
+    <string name="ping">پنګ</string>
+    <string name="jitter">جیټر</string>
+    <string name="mbps">Mbps</string>
+    <string name="ms">ms</string>
+    <string name="measuring_ping">پنګ اندازه کېږي…</string>
+    <string name="testing_down">ډاونلوډ ازمېل کېږي…</string>
+    <string name="testing_up">اپلوډ ازمېل کېږي…</string>
+    <string name="speed_done">بشپړ شو - په تاریخ کې خوندي شو</string>
+    <string name="speed_failed">ناکام شو - انټرنېټ وګورئ</string>
+    <string name="speed_up_failed">د اپلوډ ازمایښت ناکام شو - اړیکه وګورئ او بیا هڅه وکړئ</string>
+    <string name="speed_pattern_best">غوره وخت</string>
+    <string name="speed_pattern_worst">ترټولو خراب وخت</string>
+    <string name="speed_pattern_none">د خپلو غوره/خراب ساعتونو لیدلو لپاره یو څو ازمایښتونه وکړئ</string>
+    <string name="speed_tests_suffix">ازمایښتونه</string>
+    <string name="share_result">پایله شریکه کړئ</string>
+    <string name="works_title">په دې سرعت به څه چلېږي:</string>
+    <string name="share_text">زما د انټرنېټ سرعت: %.1f Mbps ډاونلوډ / %.1f Mbps اپلوډ (پنګ %.0f ms) - د Signal Map په واسطه ازمېل شو</string>
+    <string name="speed_tip">هر ازمایښت په تاریخ کې خوندي کېږي - سرعت او سګنال په یوه ځای کې پرتله کړئ.</string>
+
+    <!-- Map -->
+    <string name="best">غوره</string>
+    <string name="go_to_best">غوره ځای ته لاړ شئ</string>
+    <string name="open_in_maps">په نقشه کې پرانیزئ</string>
+    <string name="no_reading_yet">تر اوسه لوستل نشته - په ژوندي کې واک ټیسټ وکړئ</string>
+    <string name="my_location">زما موقعیت</string>
+    <string name="best_spot_found">غوره ځای وموندل شو - هلته لاړ شئ</string>
+    <string name="first_record">لومړی په ژوندي کې ثبت کړئ</string>
+    <string name="no_maps_app">د نقشې اپ ونه موندل شو</string>
+    <string name="map_key_missing">نقشه د Google Maps API کیلي ته اړتیا لري — په res/values/google_maps_api.xml کې یې زیاته کړئ</string>
+    <string name="best_spot_go">غوره ځای %1$s %2$s - هغه لوري ته لاړ شئ</string>
+
+    <!-- Towers -->
+    <string name="show_towers">برجونه</string>
+    <string name="show_readings">لوستل</string>
+    <string name="tower_title">برج %1$s</string>
+    <string name="tower_snippet">اوسط %1$d dBm • %2$d لوستل • غوره %3$d dBm</string>
+    <string name="no_towers_yet">تر اوسه برجونه نشته — موبایل ډاټا په چالانولو سره په ژوندي کې لوستل ثبت کړئ</string>
+    <string name="tower_approx">د برج پنونه ستاسو له خپلو لوستلو څخه اټکل شوي دي، د انټنې دقیق ځایونه نه دي</string>
+
+    <!-- History -->
+    <string name="history_title">تاریخ</string>
+    <string name="history_cleared">تاریخ پاک شو</string>
+    <string name="no_data">ډاټا نشته</string>
+    <string name="export_csv">CSV صادرول</string>
+    <string name="clear_history">تاریخ پاک کړئ</string>
+
+    <!-- Supabase cloud -->
+    <string name="cloud_backup">کلاوډ بیک اپ</string>
+    <string name="cloud_restore">بېرته راګرځول</string>
+    <string name="cloud_settings">د Supabase تنظیمات</string>
+    <string name="sb_url_hint">Supabase URL (https://xyz.supabase.co)</string>
+    <string name="sb_key_hint">Anon کیلي</string>
+    <string name="cloud_no_config">لومړی په تنظیماتو کې خپل Supabase URL او کیلي زیاته کړئ</string>
+    <string name="cloud_backing_up">بیک اپ کېږي…</string>
+    <string name="cloud_restoring">بېرته راګرځي…</string>
+    <string name="cloud_done">وشو</string>
+    <string name="cloud_failed">ناکام شو: %1$s</string>
+    <string name="cloud_restore_confirm">ځايي ډاټا د کلاوډ بیک اپ سره بدل شي؟</string>
+    <string name="cloud_saved">خوندي شو</string>
+
+    <!-- Guide -->
+    <string name="guide_title">د سګنال لارښود</string>
+    <string name="open_guide">د سګنال لارښود — چېرته غوره دی؟</string>
+    <string name="guide_dir_title">سګنال کوم لوري ته غوره دی؟</string>
+    <string name="guide_dir_none">تر اوسه لوستل نشته — لومړی یو څو ځایونه ثبت کړئ (ژوندی، واک ټیسټ یا خونې).</string>
+    <string name="guide_no_gps">اوسنی موقعیت لا تر اوسه نشته.</string>
+    <string name="guide_dir_body">غوره سګنال %1$d dBm — %2$d متره د %3$s په لور</string>
+    <string name="guide_rooms_title">د خونو کونجونه</string>
+    <string name="guide_rooms_none">تر اوسه د خونې لوستل نشته — د خونو په ټب کې په خونه ټک وکړئ او خپل کونج وټاکئ.</string>
+    <string name="guide_room_line">%1$s — غوره کونج: %2$s (%3$d dBm، %4$d لوستل)</string>
+    <string name="guide_outdoor_title">بهرنی بهیر</string>
+    <string name="guide_outdoor_none">د بهیر لیدلو لپاره له څو بېلابېلو بهرنیو ځایونو لوستلو ته اړتیا ده — واک ټیسټ وازمویئ.</string>
+    <string name="guide_outdoor_body">سګنال د %1$s په لور ښه کېږي — هغه لوري ته 15–20 متره لاړ شئ او بیا وګورئ.</string>
+    <string name="guide_outdoor_weak">لوستل ډېر خپاره دي — تر اوسه روښانه لوری نشته. یو څو نور ځایونه ثبت کړئ.</string>
+    <string name="guide_tips_title">لارښوونې</string>
+    <string name="tip_call_spot">مهم زنګونه له خپل غوره ځای څخه وکړئ (%1$d متره %2$s).</string>
+    <string name="tip_corner_call">په %1$s کې، د زنګ لپاره د %2$s کونج ته نږدې کېنئ.</string>
+    <string name="tip_weak_all">هر چېرته چې اندازه شو، سګنال کمزوری دی — وای فای زنګ یا د سګنال بوسټر وازمویئ.</string>
+    <string name="tip_walk_more">ډېر لوستل = غوره لارښود. د کور په شاوخوا کې واک ټیسټ وکړئ.</string>
+    <string name="corner_pick_title">په خونه کې چېرته ولاړ یاست؟</string>
+    <string name="corner_center">منځ</string>
+    <string name="corner_tl">پورته-کیڼ</string>
+    <string name="corner_tr">پورته-ښی</string>
+    <string name="corner_bl">ښکته-کیڼ</string>
+    <string name="corner_br">ښکته-ښی</string>
+    <string name="corner_best_short">غوره: %1$s</string>
+    <string name="dir_n">شمال</string>
+    <string name="dir_ne">شمال-ختیځ</string>
+    <string name="dir_e">ختیځ</string>
+    <string name="dir_se">جنوب-ختیځ</string>
+    <string name="dir_s">جنوب</string>
+    <string name="dir_sw">جنوب-لوېدیځ</string>
+    <string name="dir_w">لوېدیځ</string>
+    <string name="dir_nw">شمال-لوېدیځ</string>
+
+    <!-- Onboarding -->
+    <string name="onboard1_title">خپل قوي کونجونه ومومئ</string>
+    <string name="onboard1_desc">Signal Map ستاسو د وای فای او موبایل سګنال نقشه کوي څو هر زنګ روښانه وي.</string>
+    <string name="onboard2_title">وګرځئ او خودکار ثبت کړئ</string>
+    <string name="onboard2_desc">واک ټیسټ پیل کړئ او وګرځئ — په هرو 10 مترو کې لوستل خوندي کېږي.</string>
+    <string name="onboard3_title">خپل کور رسم کړئ</string>
+    <string name="onboard3_desc">خپل د فرش پلان رسم کړئ، چېرته چې ولاړ یاست ټک وکړئ — قوي سګنالونه پن کېږي.</string>
+    <string name="onboard4_title">خپل سرعت وازمویئ</string>
+    <string name="onboard4_desc">اصلي ډاونلوډ/اپلوډ سرعت وګورئ او دا چې پرې به څه چلېږي.</string>
+    <string name="onboard_next">بل</string>
+    <string name="onboard_skip">تېر شئ</string>
+    <string name="onboard_start">پیل وکړئ</string>
+
+    <!-- Naksha (floor plan sketch) -->
+    <string name="nav_naksha">خاکه</string>
+    <string name="sketch_title">د کور خاکه</string>
+    <string name="sketch_draw">رسم</string>
+    <string name="sketch_walk">ګرځېدل</string>
+    <string name="sketch_wall">دېوال</string>
+    <string name="sketch_room">خونه</string>
+    <string name="sketch_erase">پاکول</string>
+    <string name="sketch_undo">بېرته کول</string>
+    <string name="sketch_clear">پاکول</string>
+    <string name="sketch_save">خوندي کول</string>
+    <string name="sketch_walk_start">ګرځېدل پیل کړئ</string>
+    <string name="sketch_walk_hint">چېرته چې ولاړ یاست ټک وکړئ — سګنال پخپله خوندي کېږي</string>
+    <string name="sketch_room_name">د خونې نوم</string>
+    <string name="sketch_saved">خوندي شو</string>
+    <string name="sketch_no_signal">سګنال نشته — وای فای/موبایل وګورئ</string>
+    <string name="sketch_draw_hint">په ګوته دېوالونه رسم کړئ، بیا ګرځېدو ته لاړ شئ</string>
+
+    <!-- Settings -->
+    <string name="settings_title">تنظیمات</string>
+    <string name="theme_title">بڼه</string>
+    <string name="theme_dark">تیاره</string>
+    <string name="theme_light">روښانه</string>
+    <string name="theme_auto">خودکار</string>
+    <string name="lang_title">ژبه</string>
+    <string name="user_guide_title">د کاروونکي لارښود</string>
+    <string name="about_title">په اړه</string>
+    <string name="about_text">Signal Map v6.2 — د پاکستان لپاره جوړ شوی</string>
+    <string name="delete_history_title">تاریخ ړنګ کړئ</string>
+    <string name="del_signals">د سګنال لوستل</string>
+    <string name="del_speed">د سرعت ازمایښتونه</string>
+    <string name="del_drops">د پرې کېدو ریکارډونه</string>
+    <string name="del_sketch">د خاکې (نقشې) ډاټا</string>
+    <string name="delete_selected">ټاکلي ړنګ کړئ</string>
+    <string name="delete_confirm_title">ټاکلي ړنګ شي؟</string>
+    <string name="delete_confirm_msg">دا ډاټا به د تل لپاره ړنګ شي. دوام ورکړئ؟</string>
+    <string name="map_focus_toast">د لوستلو موقعیت ته وړل کېږي…</string>
+
+    <!-- Signal Radar -->
+    <string name="open_radar">د سګنال راډار — غوره ځای ومومئ</string>
+    <string name="radar_title">د سګنال راډار</string>
+    <string name="radar_hint">ورو ورو وګرځئ. هرڅومره چې سګنال قوي کېږي، بیپونه ګړندي کېږي او لړزه تېزېږي — د فلز موندونکي په څېر، خو د سګنال لپاره. کله چې منډه وهي، قوي ځای مو وموند: خوندي یې کړئ! غږ او لړزه له پورته بندېدای شي.</string>
+    <string name="radar_warmer">▲ تود — سګنال ښه کېږي، دې لوري ته دوام ورکړئ</string>
+    <string name="radar_colder">▼ سوړ — سګنال کمېږي، بېرته وګرځئ</string>
+    <string name="radar_steady">● ثابت — د بهیر موندلو لپاره یو څو ګامونه واخلئ</string>
+    <string name="radar_best">د دې ناستې غوره: %1$d dBm</string>
+    <string name="radar_best_none">د دې ناستې غوره: —</string>
+    <string name="radar_save_spot">دا ځای خوندي کړئ</string>
+    <string name="radar_sound_on">غږ: فعال</string>
+    <string name="radar_sound_off">غږ: بند</string>
+    <string name="radar_vib_on">لړزه: فعاله</string>
+    <string name="radar_vib_off">لړزه: بنده</string>
+</resources>

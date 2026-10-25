@@ -72,6 +72,14 @@ public class HistoryV4Fragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         view.findViewById(R.id.btnClear).setOnClickListener(v -> confirmClear());
         view.findViewById(R.id.btnExport).setOnClickListener(v -> exportCsv());
+        view.findViewById(R.id.btnSettingsHistory).setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.mbpsmeter.app.ui.settings.SettingsFragment())
+                        .addToBackStack("settings")
+                        .commit();
+            }
+        });
         view.findViewById(R.id.btnCloudBackup).setOnClickListener(v -> cloudBackup());
         view.findViewById(R.id.btnCloudRestore).setOnClickListener(v -> confirmRestore());
         btnTabReadings.setOnClickListener(v -> { showDrops = false; styleTabs(); load(); });

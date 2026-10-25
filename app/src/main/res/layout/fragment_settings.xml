@@ -82,28 +82,78 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnEnglish"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_pill_cyan"
+                    android:text="English"
+                    android:textAllCaps="false"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnUrdu"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_pill_cyan"
+                    android:text="اردو"
+                    android:textAllCaps="false"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnSindhi"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_pill_cyan"
+                    android:text="سنڌي"
+                    android:textAllCaps="false"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnPashto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_pill_cyan"
+                    android:text="پښتو"
+                    android:textAllCaps="false"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/btnEnglish"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:id="@+id/btnPunjabi"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_pill_cyan"
-                android:text="English"
-                android:textAllCaps="false"
-                android:textColor="#0F172A"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnUrdu"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="48dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_pill_cyan"
-                android:text="اردو"
+                android:text="پنجابی"
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
                 android:textSize="16sp"

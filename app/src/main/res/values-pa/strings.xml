@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <string name="app_name">Signal Map – Network Finder</string>
+    <string name="ok">ٹھیک اے</string>
+    <string name="cancel">منسوخ</string>
+    <string name="delete">مٹاؤ</string>
+    <string name="back">پچھے</string>
+    <string name="perm_title">اجازتاں درکار نیں</string>
+    <string name="perm_msg">سگنل چیک کرن لئی لوکیشن تے فون سٹیٹ دی اجازت چاہیدی اے۔ مہربانی کر کے اجازت دیو۔</string>
+    <string name="perm_loc_needed">لوکیشن توں بغیر نقشہ تے واک ٹیسٹ کم نہیں کرن گے۔</string>
+    <string name="clear_title">ہسٹری صاف کرنی اے؟</string>
+    <string name="clear_msg">ساریاں محفوظ ریڈنگاں تے سپیڈ ٹیسٹ مٹ جان گے۔ ایہ واپس نہیں ہو سکدا۔</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_live">لائیو</string>
+    <string name="nav_rooms">کمرے</string>
+    <string name="nav_speed">سپیڈ</string>
+    <string name="nav_map">نقشہ</string>
+    <string name="nav_history">ہسٹری</string>
+
+    <!-- Live -->
+    <string name="live_title">سگنل ٹیسٹ</string>
+    <string name="record">ریکارڈ</string>
+    <string name="stop">روکو</string>
+    <string name="start">شروع</string>
+    <string name="started">شروع ہو گیا</string>
+    <string name="stopped">رک گیا</string>
+    <string name="walk_start">واک ٹیسٹ شروع کرو</string>
+    <string name="walk_stop">واک ٹیسٹ روکو</string>
+    <string name="walk_on_toast">واک ٹیسٹ آن - ہر 10 میٹر تے آٹو ریکارڈ</string>
+    <string name="walk_off_toast">واک ٹیسٹ بند</string>
+    <string name="pts">پوائنٹ</string>
+    <string name="compare_sims">سماں دا مقابلہ</string>
+    <string name="tip_live">ٹپ: واک ٹیسٹ آن کر کے گھر وچ ٹرو - ہر 10 میٹر تے ریڈنگ آپے محفوظ ہو جاندی اے۔ صرف ماپیاں جگہاں دا مقابلہ ہو سکدا اے۔</string>
+    <string name="drop_alert">کمزور علاقہ - ایتھے کال کٹ سکدی اے</string>
+    <string name="unknown_operator">نامعلوم آپریٹر</string>
+    <string name="demo_mode">ڈیمو موڈ</string>
+    <string name="no_signal_data">سگنل ڈیٹا نہیں - وائی فائی/موبائل یا اجازتاں چیک کرو</string>
+    <string name="tower_info">ٹاور</string>
+
+    <!-- Rooms -->
+    <string name="rooms_title">کمرے دا ہیٹ میپ</string>
+    <string name="add_room">+ کمرہ شامل کرو</string>
+    <string name="room_name_hint">کمرے دا نام (مثلاً بیڈ روم)</string>
+    <string name="rooms_tip">کمرے نوں ٹیپ کرو، جس کونے وچ کھڑے او اوہ چنو، تے سگنل ریکارڈ ہو جاوے گا۔ رنگ اوسط وکھاندے نیں: ہرا = مضبوط، پیلا = درمیانہ، لال = کمزور۔ اندر GPS بھروسے مند نہیں، اس لئی گھر دے اندر کمرے نقشے دیاں پناں توں بہتر نیں۔</string>
+    <string name="best_room">بہترین کمرہ</string>
+    <string name="no_data_tap">ڈیٹا نہیں - ریکارڈ کرن لئی ٹیپ کرو</string>
+    <string name="readings_count">ریڈنگاں</string>
+    <string name="delete_room_title">کمرہ مٹانا اے؟</string>
+    <string name="delete_room_msg">کمرہ ہٹا دتا جاوے گا۔ اوہدیاں پرانیاں ریڈنگاں ہسٹری وچ رہن گیاں۔</string>
+    <string name="room_recorded">محفوظ ہو گیا</string>
+    <string name="room_exists">کمرہ پہلاں توں موجود اے</string>
+    <string name="room_empty">پہلاں کمرے دا نام لکھو</string>
+
+    <!-- Dual SIM -->
+    <string name="sim_title">دو سماں دا مقابلہ</string>
+    <string name="sim_na">دستیاب نہیں</string>
+    <string name="sim_recommend_better">%1$s اس ویلے بہتر اے</string>
+    <string name="sim_recommend_tie">دوویں سماں اکو جہیاں نیں</string>
+    <string name="sim_recommend_none">سم ڈیٹا نہیں - اجازتاں چیک کرو</string>
+    <string name="sim_note">نوٹ: کچھ فوناں تے بے کار سم لگ بھگ قدراں وکھا سکدی اے۔</string>
+    <string name="sim_refresh">تازہ کرو</string>
+
+    <!-- Drops -->
+    <string name="tab_readings">ریڈنگاں</string>
+    <string name="tab_drops">ڈراپ ڈائری</string>
+    <string name="drop_title">سگنل ڈراپ</string>
+    <string name="no_drops">کوئی ڈراپ ریکارڈ نہیں - چنگی خبر!</string>
+
+    <!-- Speed -->
+    <string name="speed_title">سپیڈ ٹیسٹ</string>
+    <string name="tap_go">ٹیسٹ لئی GO دباؤ</string>
+    <string name="download">ڈاؤن لوڈ</string>
+    <string name="upload">اپ لوڈ</string>
+    <string name="ping">پنگ</string>
+    <string name="jitter">جٹر</string>
+    <string name="mbps">Mbps</string>
+    <string name="ms">ms</string>
+    <string name="measuring_ping">پنگ ماپیا جا رہیا اے…</string>
+    <string name="testing_down">ڈاؤن لوڈ ٹیسٹ ہو رہیا اے…</string>
+    <string name="testing_up">اپ لوڈ ٹیسٹ ہو رہیا اے…</string>
+    <string name="speed_done">مکمل - ہسٹری وچ محفوظ ہو گیا</string>
+    <string name="speed_failed">ناکام - انٹرنیٹ چیک کرو</string>
+    <string name="speed_up_failed">اپ لوڈ ٹیسٹ ناکام - کنکشن چیک کر کے فیر کوشش کرو</string>
+    <string name="speed_pattern_best">بہترین ویلا</string>
+    <string name="speed_pattern_worst">سب توں خراب ویلا</string>
+    <string name="speed_pattern_none">اپنے بہترین/خراب گھنٹے ویکھن لئی کجھ ٹیسٹ کرو</string>
+    <string name="speed_tests_suffix">ٹیسٹ</string>
+    <string name="share_result">نتیجہ شیئر کرو</string>
+    <string name="works_title">اس سپیڈ تے کیہ چلے گا:</string>
+    <string name="share_text">میری انٹرنیٹ سپیڈ: %.1f Mbps ڈاؤن لوڈ / %.1f Mbps اپ لوڈ (پنگ %.0f ms) - Signal Map توں ٹیسٹ کیتا</string>
+    <string name="speed_tip">ہر ٹیسٹ ہسٹری وچ محفوظ ہوندا اے - سپیڈ تے سگنل اک جگہ تے ویکھو۔</string>
+
+    <!-- Map -->
+    <string name="best">بہترین</string>
+    <string name="go_to_best">بہترین ول جاؤ</string>
+    <string name="open_in_maps">نقشے وچ کھولو</string>
+    <string name="no_reading_yet">ہجے ریڈنگ نہیں - لائیو تے واک ٹیسٹ کرو</string>
+    <string name="my_location">میری جگہ</string>
+    <string name="best_spot_found">بہترین جگہ لبھ گئی - اوتھے جاؤ</string>
+    <string name="first_record">پہلاں لائیو تے ریکارڈ کرو</string>
+    <string name="no_maps_app">نقشے والی ایپ نہیں ملی</string>
+    <string name="map_key_missing">نقشے لئی Google Maps API کی چاہیدی اے — res/values/google_maps_api.xml وچ شامل کرو</string>
+    <string name="best_spot_go">بہترین جگہ %1$s %2$s - اس پاسے ٹرو</string>
+
+    <!-- Towers -->
+    <string name="show_towers">ٹاور</string>
+    <string name="show_readings">ریڈنگاں</string>
+    <string name="tower_title">ٹاور %1$s</string>
+    <string name="tower_snippet">اوسط %1$d dBm • %2$d ریڈنگاں • بہترین %3$d dBm</string>
+    <string name="no_towers_yet">ہجے ٹاور نہیں — موبائل ڈیٹا آن کر کے لائیو تے ریڈنگاں ریکارڈ کرو</string>
+    <string name="tower_approx">ٹاور پناں تہاڈیاں اپنیاں ریڈنگاں توں اندازہ کیتیاں گئیاں نیں، اصل ٹاور دیاں جگہاں نہیں</string>
+
+    <!-- History -->
+    <string name="history_title">ہسٹری</string>
+    <string name="history_cleared">ہسٹری صاف ہو گئی</string>
+    <string name="no_data">ڈیٹا نہیں</string>
+    <string name="export_csv">CSV ایکسپورٹ</string>
+    <string name="clear_history">ہسٹری صاف کرو</string>
+
+    <!-- Supabase cloud -->
+    <string name="cloud_backup">کلاؤڈ بیک اپ</string>
+    <string name="cloud_restore">واپس لیاؤ</string>
+    <string name="cloud_settings">Supabase سیٹنگاں</string>
+    <string name="sb_url_hint">Supabase URL (https://xyz.supabase.co)</string>
+    <string name="sb_key_hint">Anon کی</string>
+    <string name="cloud_no_config">پہلاں سیٹنگاں وچ اپنا Supabase URL تے کی شامل کرو</string>
+    <string name="cloud_backing_up">بیک اپ ہو رہیا اے…</string>
+    <string name="cloud_restoring">واپس آ رہیا اے…</string>
+    <string name="cloud_done">ہو گیا</string>
+    <string name="cloud_failed">ناکام: %1$s</string>
+    <string name="cloud_restore_confirm">مقامی ڈیٹا کلاؤڈ بیک اپ نال بدلیا جاوے؟</string>
+    <string name="cloud_saved">محفوظ ہو گیا</string>
+
+    <!-- Guide -->
+    <string name="guide_title">سگنل گائیڈ</string>
+    <string name="open_guide">سگنل گائیڈ — کتھے بہترین اے؟</string>
+    <string name="guide_dir_title">سگنل کس پاسے بہترین اے؟</string>
+    <string name="guide_dir_none">ہجے ریڈنگ نہیں — پہلاں کجھ جگہاں ریکارڈ کرو (لائیو، واک ٹیسٹ یا کمرے)۔</string>
+    <string name="guide_no_gps">موجودہ جگہ ہجے دستیاب نہیں۔</string>
+    <string name="guide_dir_body">بہترین سگنل %1$d dBm — %2$d میٹر %3$s ول</string>
+    <string name="guide_rooms_title">کمرے دے کونے</string>
+    <string name="guide_rooms_none">ہجے کمرے دیاں ریڈنگاں نہیں — کمرے والے ٹیب وچ کمرہ ٹیپ کر کے اپنا کونا چنو۔</string>
+    <string name="guide_room_line">%1$s — بہترین کونا: %2$s (%3$d dBm، %4$d ریڈنگاں)</string>
+    <string name="guide_outdoor_title">باہر دا رجحان</string>
+    <string name="guide_outdoor_none">رجحان ویکھن لئی کجھ وکھریاں باہر دیاں جگہاں دیاں ریڈنگاں چاہیدیاں نیں — واک ٹیسٹ آزماؤ۔</string>
+    <string name="guide_outdoor_body">سگنل %1$s ول بہتر ہوندا اے — اس پاسے 15–20 میٹر ٹر کے فیر چیک کرو۔</string>
+    <string name="guide_outdoor_weak">ریڈنگاں بڑیاں کھلریاں نیں — ہجے واضح پاسا نہیں۔ کجھ ہور جگہاں ریکارڈ کرو۔</string>
+    <string name="guide_tips_title">ٹپس</string>
+    <string name="tip_call_spot">اہم کالاں اپنی بہترین جگہ توں کرو (%1$d میٹر %2$s)۔</string>
+    <string name="tip_corner_call">%1$s وچ، کال لئی %2$s کونے دے نیڑے بیٹھو۔</string>
+    <string name="tip_weak_all">جتھے وی ماپیا، سگنل کمزور اے — وائی فائی کالنگ یا سگنل بوسٹر آزماؤ۔</string>
+    <string name="tip_walk_more">زیادہ ریڈنگاں = بہتر رہنمائی۔ گھر دے آلے دوالے واک ٹیسٹ کرو۔</string>
+    <string name="corner_pick_title">کمرے وچ کتھے کھڑے او؟</string>
+    <string name="corner_center">وچکار</string>
+    <string name="corner_tl">اتے-کھبے</string>
+    <string name="corner_tr">اتے-سجے</string>
+    <string name="corner_bl">تھلے-کھبے</string>
+    <string name="corner_br">تھلے-سجے</string>
+    <string name="corner_best_short">بہترین: %1$s</string>
+    <string name="dir_n">شمال</string>
+    <string name="dir_ne">شمال-چڑھدا</string>
+    <string name="dir_e">چڑھدا</string>
+    <string name="dir_se">دکھن-چڑھدا</string>
+    <string name="dir_s">دکھن</string>
+    <string name="dir_sw">دکھن-لہندا</string>
+    <string name="dir_w">لہندا</string>
+    <string name="dir_nw">شمال-لہندا</string>
+
+    <!-- Onboarding -->
+    <string name="onboard1_title">اپنے مضبوط کونے لبھو</string>
+    <string name="onboard1_desc">Signal Map تہاڈے وائی فائی تے موبائل سگنل دا نقشہ بناندا اے تاں جے ہر کال صاف ہووے۔</string>
+    <string name="onboard2_title">ٹرو تے آٹو ریکارڈ</string>
+    <string name="onboard2_desc">واک ٹیسٹ شروع کرو تے ٹردے رہو — ہر 10 میٹر تے ریڈنگ محفوظ ہو جاندی اے۔</string>
+    <string name="onboard3_title">اپنے گھر دا خاکہ بناؤ</string>
+    <string name="onboard3_desc">اپنے فرش دا نقشہ بناؤ، جتھے کھڑے او اوتھے ٹیپ کرو — مضبوط سگنل پن ہو جان گے۔</string>
+    <string name="onboard4_title">اپنی سپیڈ ٹیسٹ کرو</string>
+    <string name="onboard4_desc">اصل ڈاؤن لوڈ/اپ لوڈ سپیڈ ویکھو تے ایہ کہ اس تے کیہ چلے گا۔</string>
+    <string name="onboard_next">اگے</string>
+    <string name="onboard_skip">چھڈ دیو</string>
+    <string name="onboard_start">شروع کرو</string>
+
+    <!-- Naksha (floor plan sketch) -->
+    <string name="nav_naksha">خاکہ</string>
+    <string name="sketch_title">گھر دا خاکہ</string>
+    <string name="sketch_draw">بناؤ</string>
+    <string name="sketch_walk">ٹرو</string>
+    <string name="sketch_wall">دیوار</string>
+    <string name="sketch_room">کمرہ</string>
+    <string name="sketch_erase">مٹاؤ</string>
+    <string name="sketch_undo">واپس</string>
+    <string name="sketch_clear">صاف</string>
+    <string name="sketch_save">محفوظ</string>
+    <string name="sketch_walk_start">ٹرنا شروع کرو</string>
+    <string name="sketch_walk_hint">جتھے کھڑے او اوتھے ٹیپ کرو — سگنل آپے محفوظ ہو جاندا اے</string>
+    <string name="sketch_room_name">کمرے دا نام</string>
+    <string name="sketch_saved">محفوظ ہو گیا</string>
+    <string name="sketch_no_signal">سگنل نہیں — وائی فائی/موبائل چیک کرو</string>
+    <string name="sketch_draw_hint">انگلی نال دیواراں بناؤ، فیر ٹرن ول جاؤ</string>
+
+    <!-- Settings -->
+    <string name="settings_title">سیٹنگاں</string>
+    <string name="theme_title">تھیم</string>
+    <string name="theme_dark">ہنیرا</string>
+    <string name="theme_light">چانن</string>
+    <string name="theme_auto">آٹو</string>
+    <string name="lang_title">زبان</string>
+    <string name="user_guide_title">یوزر گائیڈ</string>
+    <string name="about_title">بارے</string>
+    <string name="about_text">Signal Map v6.2 — پاکستان لئی بنایا گیا</string>
+    <string name="delete_history_title">ہسٹری مٹاؤ</string>
+    <string name="del_signals">سگنل ریڈنگاں</string>
+    <string name="del_speed">سپیڈ ٹیسٹ</string>
+    <string name="del_drops">ڈراپ ریکارڈ</string>
+    <string name="del_sketch">خاکے (نقشے) دا ڈیٹا</string>
+    <string name="delete_selected">چنے ہوئے مٹاؤ</string>
+    <string name="delete_confirm_title">چنے ہوئے مٹانے نیں؟</string>
+    <string name="delete_confirm_msg">ایہ ڈیٹا ہمیشہ لئی مٹ جاوے گا۔ جاری رکھنا اے؟</string>
+    <string name="map_focus_toast">ریڈنگ دی جگہ ول لے جایا جا رہیا اے…</string>
+
+    <!-- Signal Radar -->
+    <string name="open_radar">سگنل ریڈار — بہترین جگہ لبھو</string>
+    <string name="radar_title">سگنل ریڈار</string>
+    <string name="radar_hint">ہولی ہولی ٹرو۔ جیویں سگنل مضبوط ہووے گا، بیپ تیز ہووے گی تے تھرتھراہٹ تیز ہو جاوے گی — دھات لبھن والی مشین وانگ، پر سگنل لئی۔ جدوں دوڑن لگے، مضبوط جگہ لبھ گئی: محفوظ کرو! آواز تے تھرتھراہٹ اتوں بند ہو سکدے نیں۔</string>
+    <string name="radar_warmer">▲ گرم — سگنل بہتر ہو رہیا اے، اس پاسے ٹردے رہو</string>
+    <string name="radar_colder">▼ ٹھنڈا — سگنل گھٹ رہیا اے، واپس مڑو</string>
+    <string name="radar_steady">● قائم — رجحان لبھن لئی کجھ قدم ٹرو</string>
+    <string name="radar_best">اس سیشن دا بہترین: %1$d dBm</string>
+    <string name="radar_best_none">اس سیشن دا بہترین: —</string>
+    <string name="radar_save_spot">ایہ جگہ محفوظ کرو</string>
+    <string name="radar_sound_on">آواز: آن</string>
+    <string name="radar_sound_off">آواز: بند</string>
+    <string name="radar_vib_on">تھرتھراہٹ: آن</string>
+    <string name="radar_vib_off">تھرتھراہٹ: بند</string>
+</resources>

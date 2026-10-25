@@ -101,8 +101,8 @@ public class GaugeView extends View {
         canvas.drawLine(cx, cy, nx, ny, needlePaint);
         canvas.drawCircle(cx, cy, 12f, hubPaint);
 
-        // center value
-        canvas.drawText(String.valueOf(value), cx, cy + 78f, textPaint);
-        canvas.drawText("dBm", cx, cy + 112f, unitPaint);
+        // center value — needle hub ke neeche, taake number sui se na takraye
+        canvas.drawText(String.valueOf(value), cx, cy + radius * 0.40f, textPaint);
+        canvas.drawText("dBm", cx, cy + radius * 0.54f, unitPaint);
     }
 }

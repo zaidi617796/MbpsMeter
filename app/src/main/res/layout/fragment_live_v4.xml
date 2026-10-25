@@ -10,71 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
-        <!-- Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/live_title"
-                android:textColor="@color/text_muted"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.15" />
-
-            <Button
-                android:id="@+id/btnLang"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:background="@drawable/bg_pill_dark"
-                app:backgroundTint="@null"
-                android:text="اردو"
-                android:textAllCaps="false"
-                android:textColor="#00E5FF"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:id="@+id/tvStrength"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge"
-                android:text="Strong"
-                android:textColor="#22C55E"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="6dp" />
-        </LinearLayout>
-
-        <!-- Gauge card -->
+        <!-- Gauge card (oper sirf naam wale top bar ke neeche seedha meter) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/bg_card_glass"
-            android:layout_marginTop="12dp"
-            android:padding="16dp"
+            android:layout_marginTop="10dp"
+            android:padding="12dp"
             android:gravity="center_horizontal">
 
             <com.mbpsmeter.app.ui.custom.GaugeView
                 android:id="@+id/gauge"
-                android:layout_width="280dp"
-                android:layout_height="280dp" />
+                android:layout_width="264dp"
+                android:layout_height="264dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="6dp">
 
                 <TextView
                     android:id="@+id/tvOperator"
@@ -115,7 +72,7 @@
                 android:text="GPS: —"
                 android:textColor="@color/text_muted"
                 android:textSize="12sp"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="6dp" />
 
             <TextView
                 android:id="@+id/tvTime"
@@ -140,14 +97,14 @@
             android:textSize="13sp"
             android:gravity="center"
             android:padding="10dp"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="10dp" />
 
         <!-- Record / Stop -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="14dp">
+            android:layout_marginTop="10dp">
 
             <Button
                 android:id="@+id/btnSave"
@@ -182,7 +139,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="10dp">
 
             <Button
                 android:id="@+id/btnWalk"
@@ -206,57 +163,13 @@
                 android:layout_marginStart="12dp" />
         </LinearLayout>
 
-        <!-- Compare SIMs -->
-        <Button
-            android:id="@+id/btnSim"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_pill_dark"
-            app:backgroundTint="@null"
-            android:text="@string/compare_sims"
-            android:textAllCaps="false"
-            android:textColor="#A7F3D0"
-            android:textSize="14sp"
-            android:drawableStart="@drawable/ic_sim"
-            android:drawablePadding="8dp" />
-
-        <!-- Signal Guide -->
-        <Button
-            android:id="@+id/btnGuide"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_pill_dark"
-            app:backgroundTint="@null"
-            android:text="@string/open_guide"
-            android:textAllCaps="false"
-            android:textColor="#FCD34D"
-            android:textSize="14sp"
-            android:drawableStart="@drawable/ic_arrow_up"
-            android:drawablePadding="8dp" />
-
-        <!-- Signal Radar -->
-        <Button
-            android:id="@+id/btnRadar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_pill_dark"
-            app:backgroundTint="@null"
-            android:text="@string/open_radar"
-            android:textAllCaps="false"
-            android:textColor="#00E5FF"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/tip_live"
             android:textColor="@color/text_muted"
             android:textSize="12sp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="10dp"
             android:lineSpacingExtra="3dp" />
     </LinearLayout>
 </ScrollView>

@@ -93,6 +93,15 @@ public class NakshaFragment extends Fragment {
 
             btnWalkStart.setOnClickListener(vv -> toggleWalk());
 
+            v.findViewById(R.id.btnRadarNaksha).setOnClickListener(vv -> {
+                if (getActivity() != null) {
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainer, new com.mbpsmeter.app.ui.radar.RadarFragment())
+                            .addToBackStack("radar")
+                            .commit();
+                }
+            });
+
             tvWalkHint.setText(R.string.sketch_walk_hint);
             tvDrawHint.setText(R.string.sketch_draw_hint);
 
