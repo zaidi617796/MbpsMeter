@@ -38,12 +38,28 @@ public class SpeedV4Fragment extends Fragment {
     private Button btnStart, btnShareSpeed;
     private static final String UA = "Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36";
     private volatile boolean running = false;
+
+    // Speed engine v6.3: parallel streams + muddat wala hisaab.
+    // Pehle 1.5s (connection banna + slow-start ramp) ginne se bahar rakhe jate hain —
+    // sirf woh bytes gine jate hain jo is window me asal me wire se guzre.
+    private static final int DL_THREADS = 4;
+    private static final int UL_THREADS = 3;
+    private static final long TEST_MS = 9000;
+    private static final long RAMP_MS = 1500;
+    private final java.util.concurrent.atomic.AtomicLong dlBytes = new java.util.concurrent.atomic.AtomicLong();
+    private final java.util.concurrent.atomic.AtomicLong ulBytes = new java.util.concurrent.atomic.AtomicLong();
+    private volatile boolean dlStop = false, ulStop = false;
     private double lastDown = -1, lastUp = -1, lastPing = -1;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inf, @Nullable ViewGroup c, @Nullable Bundle b) {
         View v = inf.inflate(R.layout.fragment_speed_v4, c, false);
+        // Page hamesha bilkul top se khule — title kata hua na aaye
+        if (v instanceof android.widget.ScrollView) {
+            final android.widget.ScrollView sv = (android.widget.ScrollView) v;
+            sv.post(() -> sv.scrollTo(0, 0));
+        }
         tvMainSpeed = v.findViewById(R.id.tvMainSpeed);
         tvDownload = v.findViewById(R.id.tvDownload);
         tvUpload = v.findViewById(R.id.tvUpload);
@@ -168,8 +184,11 @@ public class SpeedV4Fragment extends Fragment {
             double pingMs = -1, jitterMs = -1, down = -1, up = -1;
 
             try {
-                double min = Double.MAX_VALUE, max = 0;
-                for (int i = 0; i < 3; i++) {
+                // 5 samples: sab se slow wala (aksar pehle connection/TLS ki wajah se hota hai)
+                // bahar, ping = sab se tez sample, jitter = lagatar samples ka ausat farq.
+                // Purana tareeqa (3 samples ka max-min) ek slow sample se 600+ ms jitter bana deta tha.
+                java.util.ArrayList<Double> samples = new java.util.ArrayList<>();
+                for (int i = 0; i < 5; i++) {
                     long t0 = System.nanoTime();
                     HttpURLConnection c = (HttpURLConnection) new URL("https://speed.cloudflare.com/__down?bytes=1000").openConnection();
                     c.setConnectTimeout(8000);
@@ -180,12 +199,27 @@ public class SpeedV4Fragment extends Fragment {
                     while (in.read(buf) != -1) {}
                     in.close();
                     c.disconnect();
-                    double ms = (System.nanoTime() - t0) / 1e6;
-                    if (ms < min) min = ms;
-                    if (ms > max) max = ms;
+                    samples.add((System.nanoTime() - t0) / 1e6);
                 }
-                pingMs = min;
-                jitterMs = max - min;
+                if (!samples.isEmpty()) {
+                    int worst = 0;
+                    for (int i = 1; i < samples.size(); i++) {
+                        if (samples.get(i) > samples.get(worst)) worst = i;
+                    }
+                    if (samples.size() > 2) samples.remove(worst);
+                    double min = Double.MAX_VALUE;
+                    for (double s : samples) if (s < min) min = s;
+                    pingMs = min;
+                    if (samples.size() > 1) {
+                        double sum = 0;
+                        for (int i = 1; i < samples.size(); i++) {
+                            sum += Math.abs(samples.get(i) - samples.get(i - 1));
+                        }
+                        jitterMs = sum / (samples.size() - 1);
+                    } else {
+                        jitterMs = 0;
+                    }
+                }
                 double p = pingMs, j = jitterMs;
                 ui(() -> {
                     tvPing.setText(String.format(Locale.US, "%.0f %s", p, getString(R.string.ms)));
@@ -194,34 +228,7 @@ public class SpeedV4Fragment extends Fragment {
             } catch (Exception ignored) {}
 
             setText(tvStatus, getString(R.string.testing_down));
-            try {
-                long start = System.nanoTime();
-                long bytes = 0, lastUi = start;
-                HttpURLConnection con = (HttpURLConnection) new URL("https://speed.cloudflare.com/__down?bytes=10000000").openConnection();
-                con.setConnectTimeout(15000);
-                con.setReadTimeout(30000);
-                con.setRequestProperty("User-Agent", UA);
-                InputStream in = con.getInputStream();
-                byte[] buf = new byte[32768];
-                int n;
-                while ((n = in.read(buf)) != -1) {
-                    bytes += n;
-                    long now = System.nanoTime();
-                    if (now - lastUi > 200_000_000L) {
-                        lastUi = now;
-                        double sec = (now - start) / 1e9;
-                        if (sec > 0.2) {
-                            double live = bytes * 8.0 / sec / 1e6;
-                            setText(tvMainSpeed, String.format(Locale.US, "%.1f", live));
-                            setText(tvDownload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
-                        }
-                    }
-                }
-                in.close();
-                con.disconnect();
-                double sec = (System.nanoTime() - start) / 1e9;
-                if (sec > 0) down = bytes * 8.0 / sec / 1e6;
-            } catch (Exception ignored) {}
+            down = measureDownload();
 
             setText(tvStatus, getString(R.string.testing_up));
             up = measureUpload();
@@ -251,68 +258,151 @@ public class SpeedV4Fragment extends Fragment {
     }
 
     /**
-     * Upload speed naapo. Do fix:
-     * 1) Browser wala User-Agent — Cloudflare aksar default Java UA ko block kar deta hai (403),
-     *    jis se purana test khamoshi se fail ho kar "--" dikhata rehta tha.
-     * 2) Waqt sirf data LIKHNE tak gina jata hai; server ka jawab parhna alag try me hai —
-     *    jawab ki error ab measurement ko nahi maar sakti.
+     * Download speed: 4 parallel streams, 9 second ki muddat.
+     * Purana tareeqa ek hi file ko shuru se aakhir tak naapta tha — connection
+     * banne aur slow-start ramp ka waqt bhi shamil hota tha, is liye number
+     * asal speed se hamesha alag (aksar kam) aata tha. Ab ramp ke baad wali
+     * window ke asal bytes gine jate hain — yehi tareeqa baray speed-test
+     * apps use karte hain.
+     */
+    private double measureDownload() {
+        dlBytes.set(0);
+        dlStop = false;
+        Thread[] ts = new Thread[DL_THREADS];
+        for (int i = 0; i < DL_THREADS; i++) {
+            ts[i] = new Thread(() -> {
+                byte[] buf = new byte[32768];
+                while (!dlStop) {
+                    HttpURLConnection con = null;
+                    try {
+                        con = (HttpURLConnection) new URL("https://speed.cloudflare.com/__down?bytes=50000000").openConnection();
+                        con.setConnectTimeout(10000);
+                        con.setReadTimeout(15000);
+                        con.setRequestProperty("User-Agent", UA);
+                        InputStream in = con.getInputStream();
+                        int n;
+                        while (!dlStop && (n = in.read(buf)) != -1) {
+                            dlBytes.addAndGet(n);
+                        }
+                        try { in.close(); } catch (Exception ignored) {}
+                    } catch (Exception e) {
+                        if (!dlStop) {
+                            try { Thread.sleep(250); } catch (Exception ignored) {}
+                        }
+                    } finally {
+                        if (con != null) con.disconnect();
+                    }
+                }
+            });
+            ts[i].start();
+        }
+        double result = runWindow(dlBytes, true);
+        dlStop = true;
+        for (Thread t : ts) {
+            try { t.join(1500); } catch (Exception ignored) {}
+        }
+        return result;
+    }
+
+    /**
+     * Upload speed: 3 parallel streams jo poori muddat data bhejtay rehte hain.
+     * Ramp (pehle 1.5s) guzarne ke baad socket buffer bhar jata hai, phir
+     * write() sirf asal wire speed par aage barhta hai — is liye window me
+     * gine gaye bytes asal bheje gaye bytes hote hain. (v6.2 me sirf likhne
+     * ka waqt ginne se buffer wala jhoota 310 Mbps ban gaya tha.)
      */
     private double measureUpload() {
         String[] upUrls = {
                 "https://speed.cloudflare.com/__up",
-                "https://httpbin.org/post",
-                "https://postman-echo.com/post"
+                "https://httpbin.org/post"
         };
-        byte[] payload = new byte[1000000];
-        java.util.Arrays.fill(payload, (byte) 65);
         for (String upUrl : upUrls) {
-            HttpURLConnection upCon = null;
-            try {
-                upCon = (HttpURLConnection) new URL(upUrl).openConnection();
-                upCon.setRequestMethod("POST");
-                upCon.setDoOutput(true);
-                upCon.setConnectTimeout(15000);
-                upCon.setReadTimeout(20000);
-                upCon.setRequestProperty("User-Agent", UA);
-                upCon.setRequestProperty("Content-Type", "application/octet-stream");
-                upCon.setFixedLengthStreamingMode(payload.length);
-                OutputStream os = upCon.getOutputStream();
-                long upStart = System.nanoTime();
-                // Chunks me likho taake upload ke dauran bhi live speed nazar aaye
-                int chunk = 32768;
-                long upBytes = 0, upLastUi = upStart;
-                for (int off = 0; off < payload.length; off += chunk) {
-                    int len = Math.min(chunk, payload.length - off);
-                    os.write(payload, off, len);
-                    upBytes += len;
-                    long now = System.nanoTime();
-                    if (now - upLastUi > 200_000_000L) {
-                        upLastUi = now;
-                        double sec = (now - upStart) / 1e9;
-                        if (sec > 0.2) {
-                            double liveUp = upBytes * 8.0 / sec / 1e6;
-                            setText(tvMainSpeed, String.format(Locale.US, "%.1f", liveUp));
-                            setText(tvUpload, String.format(Locale.US, "%.1f %s", liveUp, getString(R.string.mbps)));
+            ulBytes.set(0);
+            ulStop = false;
+            Thread[] ts = new Thread[UL_THREADS];
+            for (int i = 0; i < UL_THREADS; i++) {
+                ts[i] = new Thread(() -> {
+                    byte[] chunk = new byte[32768];
+                    java.util.Arrays.fill(chunk, (byte) 65);
+                    while (!ulStop) {
+                        HttpURLConnection con = null;
+                        try {
+                            con = (HttpURLConnection) new URL(upUrl).openConnection();
+                            con.setRequestMethod("POST");
+                            con.setDoOutput(true);
+                            con.setConnectTimeout(10000);
+                            con.setReadTimeout(15000);
+                            con.setRequestProperty("User-Agent", UA);
+                            con.setRequestProperty("Content-Type", "application/octet-stream");
+                            con.setFixedLengthStreamingMode(20_000_000);
+                            OutputStream os = con.getOutputStream();
+                            long sent = 0;
+                            while (!ulStop && sent < 20_000_000L) {
+                                int len = (int) Math.min(chunk.length, 20_000_000L - sent);
+                                os.write(chunk, 0, len);
+                                sent += len;
+                                ulBytes.addAndGet(len);
+                            }
+                            os.flush();
+                            try { os.close(); } catch (Exception ignored) {}
+                        } catch (Exception e) {
+                            if (!ulStop) {
+                                try { Thread.sleep(250); } catch (Exception ignored) {}
+                            }
+                        } finally {
+                            if (con != null) con.disconnect();
                         }
                     }
-                }
-                os.flush();
-                os.close();
-                // Measurement yahin khatam — is ke baad jawab parhna sirf safai hai
-                double upSec = (System.nanoTime() - upStart) / 1e9;
-                double result = upSec > 0 ? payload.length * 8.0 / upSec / 1e6 : -1;
-                try {
-                    InputStream r = upCon.getInputStream();
-                    while (r.read(new byte[4096]) != -1) {}
-                    r.close();
-                } catch (Exception ignored) {}
-                if (result > 0) return result;
-            } catch (Exception ignored) {
-            } finally {
-                if (upCon != null) upCon.disconnect();
+                });
+                ts[i].start();
             }
+            double result = runWindow(ulBytes, false);
+            ulStop = true;
+            for (Thread t : ts) {
+                try { t.join(1500); } catch (Exception ignored) {}
+            }
+            if (result > 0) return result;
         }
         return -1;
+    }
+
+    /**
+     * Test ki muddat (TEST_MS) chalao; ramp (RAMP_MS) ke baad wali window me
+     * counter jitna barha, usi se speed (Mbps) banao. Data bilkul na aaye to -1.
+     * Saath saath live number bhi UI par dikhate raho.
+     */
+    private double runWindow(java.util.concurrent.atomic.AtomicLong counter, boolean isDownload) {
+        long t0 = System.nanoTime();
+        long rampBytes = -1;
+        long lastUiBytes = 0, lastUiT = t0;
+        while (true) {
+            long el = (System.nanoTime() - t0) / 1_000_000L;
+            if (el >= TEST_MS) break;
+            if (el >= RAMP_MS && rampBytes < 0) rampBytes = counter.get();
+            long now = System.nanoTime();
+            if (now - lastUiT > 300_000_000L) {
+                double sec = (now - lastUiT) / 1e9;
+                long b = counter.get();
+                if (sec > 0 && el > RAMP_MS) {
+                    double live = (b - lastUiBytes) * 8.0 / sec / 1e6;
+                    setText(tvMainSpeed, String.format(Locale.US, "%.1f", live));
+                    if (isDownload) {
+                        setText(tvDownload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
+                    } else {
+                        setText(tvUpload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
+                    }
+                }
+                lastUiBytes = b;
+                lastUiT = now;
+            }
+            try { Thread.sleep(150); } catch (Exception e) { break; }
+        }
+        long totalMs = (System.nanoTime() - t0) / 1_000_000L;
+        if (rampBytes < 0) rampBytes = counter.get();
+        long windowBytes = counter.get() - rampBytes;
+        double windowSec = (totalMs - RAMP_MS) / 1000.0;
+        if (windowBytes <= 0 || windowSec <= 0) return -1;
+        return windowBytes * 8.0 / windowSec / 1e6;
     }
 
     private void saveResult(double down, double up, double ping, double jitter) {

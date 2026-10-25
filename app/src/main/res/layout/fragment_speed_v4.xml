@@ -20,6 +20,7 @@
             android:textColor="@color/text_muted"
             android:textSize="13sp"
             android:textStyle="bold"
+            android:paddingTop="6dp"
             android:letterSpacing="0.15" />
 
         <TextView
