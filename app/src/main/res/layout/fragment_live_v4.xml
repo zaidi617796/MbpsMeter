@@ -84,6 +84,21 @@
                 android:layout_marginTop="2dp" />
         </LinearLayout>
 
+        <!-- Weak signal strong banner (-92 dBm se neeche) -->
+        <TextView
+            android:id="@+id/tvWeakAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:background="@drawable/bg_weak_alert"
+            android:text="@string/weak_alert"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginTop="10dp" />
+
         <!-- Drop alert banner -->
         <TextView
             android:id="@+id/tvDropAlert"

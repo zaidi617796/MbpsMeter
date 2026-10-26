@@ -42,7 +42,7 @@ import java.util.Locale;
  */
 public class LiveV4Fragment extends Fragment {
 
-    private TextView tvGps, tvTime, tvOperator, tvNetType, tvCellInfo, tvDropAlert, tvWalkCount;
+    private TextView tvGps, tvTime, tvOperator, tvNetType, tvCellInfo, tvDropAlert, tvWalkCount, tvWeakAlert;
     private GaugeView gauge;
     private Button btnSave, btnStop, btnWalk;
     private SharedPreferences prefs;
@@ -79,6 +79,7 @@ public class LiveV4Fragment extends Fragment {
         tvNetType = v.findViewById(R.id.tvNetType);
         tvCellInfo = v.findViewById(R.id.tvCellInfo);
         tvDropAlert = v.findViewById(R.id.tvDropAlert);
+        tvWeakAlert = v.findViewById(R.id.tvWeakAlert);
         tvWalkCount = v.findViewById(R.id.tvWalkCount);
         gauge = v.findViewById(R.id.gauge);
         btnSave = v.findViewById(R.id.btnSave);
@@ -230,6 +231,12 @@ public class LiveV4Fragment extends Fragment {
         if (gauge != null) {
             if (noSignal) gauge.setValueWithColor(-120);
             else gauge.setValueWithColor(currentDbm);
+        }
+
+        // -92 dBm se neeche: meter ke neeche strong laal banner
+        if (tvWeakAlert != null) {
+            boolean weak = !noSignal && currentDbm <= -92;
+            tvWeakAlert.setVisibility(weak ? View.VISIBLE : View.GONE);
         }
 
         if (tvOperator != null) tvOperator.setText(curOp.isEmpty() ? getString(R.string.unknown_operator) : curOp);

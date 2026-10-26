@@ -17,8 +17,12 @@ public class GaugeView extends View {
     private int value = -85;
     private final int min = -110;
     private final int max = -50;
+    /** Is had se neeche signal "bohat kamzor" — meter par strong indication */
+    static final int WEAK_DBM = -92;
+    private boolean weak = false;
 
     private Paint arcBg, arcProgress, tickPaint, labelPaint, textPaint, unitPaint, needlePaint, hubPaint;
+    private Paint ringPaint, warnBg, warnText;
 
     public GaugeView(Context c, AttributeSet a) {
         super(c, a);
@@ -41,6 +45,12 @@ public class GaugeView extends View {
         unitPaint.setTextAlign(Paint.Align.CENTER);
         needlePaint = paint(Color.parseColor("#EF4444"), 6f, Paint.Style.STROKE, Paint.Cap.ROUND);
         hubPaint = paint(Color.parseColor("#E2E8F0"), 0f, Paint.Style.FILL, Paint.Cap.BUTT);
+        ringPaint = paint(Color.parseColor("#EF4444"), 7f, Paint.Style.STROKE, Paint.Cap.ROUND);
+        warnBg = paint(Color.parseColor("#DC2626"), 0f, Paint.Style.FILL, Paint.Cap.BUTT);
+        warnText = paint(Color.WHITE, 0f, Paint.Style.FILL, Paint.Cap.BUTT);
+        warnText.setTextSize(30f);
+        warnText.setTextAlign(Paint.Align.CENTER);
+        warnText.setFakeBoldText(true);
     }
 
     private Paint paint(int color, float width, Paint.Style style, Paint.Cap cap) {
@@ -55,6 +65,8 @@ public class GaugeView extends View {
     /** Wahi purana API — Live fragment baghair change ke chalega */
     public void setValueWithColor(int v) {
         value = Math.max(min, Math.min(max, v));
+        weak = v <= WEAK_DBM;
+        textPaint.setColor(weak ? Color.parseColor("#EF4444") : Color.WHITE);
         if (v >= -80) arcProgress.setColor(Color.parseColor("#22C55E"));
         else if (v >= -95) arcProgress.setColor(Color.parseColor("#F59E0B"));
         else arcProgress.setColor(Color.parseColor("#EF4444"));
@@ -73,6 +85,13 @@ public class GaugeView extends View {
         float cx = w / 2f, cy = h / 2f;
         float radius = Math.min(w, h) / 2f - 44f;
         RectF rect = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+
+        // Kamzor signal par meter ke gird blink karta laal ghaira
+        if (weak) {
+            long phase = (System.currentTimeMillis() / 1250) % 2;
+            ringPaint.setAlpha(phase == 0 ? 235 : 60);
+            canvas.drawCircle(cx, cy, radius + 24f, ringPaint);
+        }
 
         // background + progress arc
         canvas.drawArc(rect, 135f, 270f, false, arcBg);
@@ -104,5 +123,15 @@ public class GaugeView extends View {
         // center value — needle hub ke neeche, taake number sui se na takraye
         canvas.drawText(String.valueOf(value), cx, cy + radius * 0.40f, textPaint);
         canvas.drawText("dBm", cx, cy + radius * 0.54f, unitPaint);
+
+        // Kamzor signal par meter ke andar bold laal pill
+        if (weak) {
+            String wt = "WEAK SIGNAL";
+            float tw = warnText.measureText(wt);
+            float py = cy + radius * 0.76f;
+            RectF pill = new RectF(cx - tw / 2f - 24f, py - 36f, cx + tw / 2f + 24f, py + 18f);
+            canvas.drawRoundRect(pill, 20f, 20f, warnBg);
+            canvas.drawText(wt, cx, py, warnText);
+        }
     }
 }

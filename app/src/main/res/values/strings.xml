@@ -34,6 +34,7 @@
     <string name="compare_sims">Compare SIMs</string>
     <string name="tip_live">Tip: Turn ON Walk Test and walk around the house - a reading auto-saves every 10 meters. Only measured spots can be compared.</string>
     <string name="drop_alert">Weak zone - calls may drop here</string>
+    <string name="weak_alert">⚠️ VERY WEAK SIGNAL — move to a stronger spot</string>
     <string name="unknown_operator">Unknown operator</string>
     <string name="demo_mode">Demo mode</string>
     <string name="no_signal_data">No signal data - check WiFi/mobile or permissions</string>
