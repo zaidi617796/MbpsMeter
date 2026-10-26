@@ -234,4 +234,23 @@
     <string name="radar_sound_off">Sound: OFF</string>
     <string name="radar_vib_on">Buzz: ON</string>
     <string name="radar_vib_off">Buzz: OFF</string>
+
+    <!-- Ilaqa Map -->
+    <string name="map_mode_mine">My readings</string>
+    <string name="map_mode_ilaqa">Ilaqa Map</string>
+    <string name="ilaqa_consent_title">Join the Ilaqa Map?</string>
+    <string name="ilaqa_consent_msg">Your strong outdoor readings (signal -70 dBm or better) will be included anonymously in area averages, so everyone can see which network is strong in an area.\n\nIndoor and room readings never take part. No name, no device ID and no exact home location is ever shared — the map only shows area blocks, and only where at least 3 different devices have contributed.\n\nYou can turn this off any time from the Map tab.</string>
+    <string name="ilaqa_consent_agree">Yes, include mine</string>
+    <string name="ilaqa_sharing_on">Ilaqa sharing is ON — tap to turn off</string>
+    <string name="ilaqa_off_title">Turn off Ilaqa sharing?</string>
+    <string name="ilaqa_off_msg">Your readings will no longer be added to area averages. On your next backup, your saved readings are uploaded again without the community mark, so your earlier readings drop out of the averages too.</string>
+    <string name="ilaqa_off_confirm">Turn off</string>
+    <string name="ilaqa_loading">Loading area data…</string>
+    <string name="ilaqa_empty">No community data for this area yet — the first readings here could be yours. Record strong outdoor readings with Ilaqa sharing on.</string>
+    <string name="ilaqa_cached_note">Showing saved area data — could not refresh just now</string>
+    <string name="ilaqa_op_all">All</string>
+    <string name="ilaqa_cell_title">Area block</string>
+    <string name="ilaqa_op_line">%1$s: %2$d dBm (%3$d readings)</string>
+    <string name="ilaqa_cell_devices">From %1$d devices</string>
+    <string name="ilaqa_best_line">Best: %1$s</string>
 </resources>

@@ -43,36 +43,202 @@
             android:textStyle="bold"
             android:layout_marginTop="6dp" />
 
+        <Button
+            android:id="@+id/btnNavigateBest"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_pill_mint"
+            app:backgroundTint="@null"
+            android:text="@string/go_to_best"
+            android:textAllCaps="false"
+            android:textColor="#0F172A"
+            android:textStyle="bold" />
+
+        <!-- 3-way mode selector: Meri readings / Ilaqa Map / Towers -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="8dp">
 
             <Button
-                android:id="@+id/btnNavigateBest"
+                android:id="@+id/btnModeMine"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_pill_mint"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_pill_dark"
                 app:backgroundTint="@null"
-                android:text="@string/go_to_best"
+                android:text="@string/map_mode_mine"
                 android:textAllCaps="false"
-                android:textColor="#0F172A"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnTowers"
+                android:id="@+id/btnModeIlaqa"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="48dp"
+                android:layout_height="44dp"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/bg_pill_mint"
+                android:background="@drawable/bg_pill_dark"
+                app:backgroundTint="@null"
+                android:text="@string/map_mode_ilaqa"
+                android:textAllCaps="false"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnModeTowers"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_pill_dark"
                 app:backgroundTint="@null"
                 android:text="@string/show_towers"
                 android:textAllCaps="false"
-                android:textColor="#0F172A"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp"
                 android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Operator filter chips (sirf Ilaqa mode me) -->
+        <HorizontalScrollView
+            android:id="@+id/scrollIlaqaOps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/chipOpAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="64dp"
+                    android:background="@drawable/bg_pill_dark"
+                    app:backgroundTint="@null"
+                    android:text="@string/ilaqa_op_all"
+                    android:textAllCaps="false"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/chipOpJazz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="64dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_dark"
+                    app:backgroundTint="@null"
+                    android:text="Jazz"
+                    android:textAllCaps="false"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/chipOpZong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="64dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_dark"
+                    app:backgroundTint="@null"
+                    android:text="Zong"
+                    android:textAllCaps="false"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/chipOpTelenor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="64dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_dark"
+                    app:backgroundTint="@null"
+                    android:text="Telenor"
+                    android:textAllCaps="false"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/chipOpUfone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="64dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_pill_dark"
+                    app:backgroundTint="@null"
+                    android:text="Ufone"
+                    android:textAllCaps="false"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Ilaqa sharing status (tap = band karne ka dialog) -->
+        <TextView
+            android:id="@+id/tvIlaqaSharing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#00E5FF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <!-- Ilaqa status: loading / empty / cached note -->
+        <TextView
+            android:id="@+id/tvIlaqaStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_muted"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <!-- Cell tap info panel -->
+        <LinearLayout
+            android:id="@+id/layoutIlaqaInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_pill_dark"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvIlaqaInfo"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_main"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnIlaqaClose"
+                android:layout_width="44dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_pill_dark"
+                app:backgroundTint="@null"
+                android:text="✕"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
 

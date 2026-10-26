@@ -33,6 +33,26 @@ public class SupabaseSync {
     private static final int STRONG_DBM = -70;
     // ==================================================
 
+    // ================= ILAQA MAP =================
+    /**
+     * Outdoor reading types jo community layer me ja sakti hain.
+     * App ke asal save types: MANUAL/WALK (Live tab), RADAR (Radar "Save this spot").
+     * ROOM (indoor/room heatmap) kabhi nahi — aur sketch readings "signals" me aati hi nahi.
+     * "normal" purani/restored data ke liye bhi rakha hai.
+     */
+    private static boolean isOutdoorType(String type) {
+        if (type == null) return false;
+        String t = type.trim();
+        return t.equalsIgnoreCase("normal") || t.equalsIgnoreCase("MANUAL")
+                || t.equalsIgnoreCase("WALK") || t.equalsIgnoreCase("RADAR");
+    }
+
+    /** Ilaqa Map opt-in (Map tab ke consent dialog se set hota hai). */
+    public static boolean ilaqaOptIn(SharedPreferences p) {
+        return p.getBoolean("ilaqa_optin", false);
+    }
+    // =============================================
+
     public interface Cb {
         void onResult(boolean ok, String msg);
     }
@@ -110,7 +130,18 @@ public class SupabaseSync {
         new Thread(() -> {
             try {
                 String dev = deviceId(ctx);
-                backupTable(p, dev, "readings", mapReadings(p, dev));
+                JSONArray readingRows = mapReadings(p, dev);
+                try {
+                    backupTable(p, dev, "readings", readingRows);
+                } catch (Exception e) {
+                    // Server par "community" column abhi na ho to insert HTTP 400 dega.
+                    // Backup kabhi na toote: field hata kar EK dafa dobara koshish.
+                    if (e.getMessage() != null && e.getMessage().startsWith("HTTP 400")) {
+                        backupTable(p, dev, "readings", stripCommunity(readingRows));
+                    } else {
+                        throw e;
+                    }
+                }
                 backupTable(p, dev, "speed_tests", mapSpeed(p, dev));
                 backupTable(p, dev, "drops", mapDrops(p, dev));
                 post(h, cb, true, "");
@@ -160,7 +191,24 @@ public class SupabaseSync {
             n.put("corner", o.optInt("corner", 0));
             n.put("net", o.optString("net", ""));
             n.put("op", o.optString("op", ""));
+            // Ilaqa Map: sirf opt-in + outdoor + room-less readings par community nishan.
+            // (dbm >= STRONG_DBM wali filter upar pehle hi lag chuki hai.)
+            if (ilaqaOptIn(p) && isOutdoorType(o.optString("type", ""))
+                    && o.optString("room", "").isEmpty()) {
+                n.put("community", true);
+            }
             out.put(n);
+        }
+        return out;
+    }
+
+    /** Har row se "community" field hata kar copy (HTTP 400 retry ke liye). */
+    private static JSONArray stripCommunity(JSONArray rows) throws Exception {
+        JSONArray out = new JSONArray();
+        for (int i = 0; i < rows.length(); i++) {
+            JSONObject copy = new JSONObject(rows.getJSONObject(i).toString());
+            copy.remove("community");
+            out.put(copy);
         }
         return out;
     }
@@ -296,5 +344,58 @@ public class SupabaseSync {
             out.put(n);
         }
         return out;
+    }
+
+    // ---------- Ilaqa Map: aggregated grid fetch + cache ----------
+
+    public interface GridCb {
+        /** rows == null matlab fetch fail (view abhi nahi / network nahi) */
+        void onGrid(JSONArray rows);
+    }
+
+    /**
+     * Supabase view "ilaqa_grid" se sirf aggregated cells lata hai
+     * (cell_x, cell_y, op, avg_dbm, reading_count, device_count) — raw rows kabhi nahi.
+     * Cell formula (SQL view se identical): cell_x = floor(lng/0.0015), cell_y = floor(lat/0.0015).
+     */
+    public static void fetchIlaqaGrid(Context ctx, long minCellX, long maxCellX,
+                                      long minCellY, long maxCellY, GridCb cb) {
+        SharedPreferences p = ctx.getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+        Handler h = new Handler(Looper.getMainLooper());
+        new Thread(() -> {
+            JSONArray rows = null;
+            try {
+                String q = "?select=cell_x,cell_y,op,avg_dbm,reading_count,device_count"
+                        + "&cell_x=gte." + minCellX + "&cell_x=lte." + maxCellX
+                        + "&cell_y=gte." + minCellY + "&cell_y=lte." + maxCellY
+                        + "&limit=2000";
+                HttpURLConnection g = conn(p, "GET", "ilaqa_grid", q);
+                String body = readAll(g);
+                g.disconnect();
+                rows = new JSONArray(body);
+            } catch (Exception ignored) {
+                rows = null;
+            }
+            final JSONArray r = rows;
+            h.post(() -> cb.onGrid(r));
+        }).start();
+    }
+
+    /** Aakhri kamyab grid response cache karo (offline fallback ke liye). */
+    public static void cacheIlaqaGrid(SharedPreferences p, String json) {
+        p.edit().putString("ilaqa_grid_cache", json)
+                .putLong("ilaqa_grid_cache_time", System.currentTimeMillis())
+                .apply();
+    }
+
+    /** Cached grid JSON, ya null agar kabhi cache nahi hua. */
+    public static String cachedIlaqaGrid(SharedPreferences p) {
+        String s = p.getString("ilaqa_grid_cache", "");
+        return (s == null || s.isEmpty()) ? null : s;
+    }
+
+    /** Cached grid ka waqt (ms), 0 agar cache nahi. */
+    public static long cachedIlaqaGridTime(SharedPreferences p) {
+        return p.getLong("ilaqa_grid_cache_time", 0);
     }
 }

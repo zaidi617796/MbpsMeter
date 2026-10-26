@@ -225,4 +225,23 @@
     <string name="radar_sound_off">آواز: آف</string>
     <string name="radar_vib_on">وائبریشن: آن</string>
     <string name="radar_vib_off">وائبریشن: آف</string>
+
+    <!-- Ilaqa Map -->
+    <string name="map_mode_mine">میری ریڈنگز</string>
+    <string name="map_mode_ilaqa">علاقہ میپ</string>
+    <string name="ilaqa_consent_title">علاقہ میپ میں شامل ہوں؟</string>
+    <string name="ilaqa_consent_msg">آپ کی مضبوط آؤٹ ڈور ریڈنگز (سگنل -70 dBm یا اس سے بہتر) بغیر نام کے علاقے کی اوسط میں شامل ہوں گی، تاکہ سب دیکھ سکیں کہ کسی علاقے میں کون سا نیٹ ورک مضبوط ہے۔\n\nاندرونِ خانہ اور کمروں کی ریڈنگز کبھی شامل نہیں ہوتیں۔ نہ نام، نہ ڈیوائس آئی ڈی اور نہ گھر کی اصل جگہ کبھی شیئر ہوتی ہے — نقشے پر صرف علاقے کے بلاک نظر آتے ہیں، اور صرف وہاں جہاں کم از کم 3 الگ ڈیوائسز کی ریڈنگز ہوں۔\n\nآپ اسے نقشہ ٹیب سے کسی بھی وقت بند کر سکتے ہیں۔</string>
+    <string name="ilaqa_consent_agree">ہاں، شامل کریں</string>
+    <string name="ilaqa_sharing_on">علاقہ شیئرنگ آن ہے — بند کرنے کے لیے یہاں چھوئیں</string>
+    <string name="ilaqa_off_title">علاقہ شیئرنگ بند کریں؟</string>
+    <string name="ilaqa_off_msg">آپ کی ریڈنگز اب علاقے کی اوسط میں شامل نہیں ہوں گی۔ اگلے بیک اپ پر آپ کی محفوظ ریڈنگز کمیونٹی نشان کے بغیر دوبارہ اپ لوڈ ہوں گی، اس لیے آپ کی پچھلی ریڈنگز بھی اوسط سے نکل جائیں گی۔</string>
+    <string name="ilaqa_off_confirm">بند کریں</string>
+    <string name="ilaqa_loading">علاقے کا ڈیٹا لوڈ ہو رہا ہے…</string>
+    <string name="ilaqa_empty">اس علاقے کا کمیونٹی ڈیٹا ابھی نہیں — یہاں کی پہلی ریڈنگز آپ کی ہو سکتی ہیں۔ علاقہ شیئرنگ آن رکھ کر مضبوط آؤٹ ڈور ریڈنگز ریکارڈ کریں۔</string>
+    <string name="ilaqa_cached_note">محفوظ علاقہ ڈیٹا دکھایا جا رہا ہے — ابھی تازہ نہیں ہو سکا</string>
+    <string name="ilaqa_op_all">سب</string>
+    <string name="ilaqa_cell_title">علاقے کا بلاک</string>
+    <string name="ilaqa_op_line">%1$s: %2$d dBm (%3$d ریڈنگز)</string>
+    <string name="ilaqa_cell_devices">%1$d ڈیوائسز کی ریڈنگز سے بنا</string>
+    <string name="ilaqa_best_line">بہترین: %1$s</string>
 </resources>
