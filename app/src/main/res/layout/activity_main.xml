@@ -35,13 +35,18 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <!-- Custom bottom tabs: har tab ke gird circle, Map wala bara aur numaiyan.
+         Tab views MainActivity code se bante hain (purane menu wale tareeqe ki tarah). -->
+    <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:background="@color/bg_card"
-        app:itemIconTint="@color/nav_item_tint"
-        app:itemTextColor="@color/nav_item_tint"
-        app:labelVisibilityMode="labeled" />
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp" />
 
 </LinearLayout>

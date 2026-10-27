@@ -39,17 +39,30 @@ public class LocationHelper {
                 lm = (LocationManager) ctx.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
             }
             if (refCount == 0 && lm != null) {
-                // Pehle last-known try karo taake foran kuch mile
+                // Pehle last-known try karo — teeno providers me se sab se accurate wali
                 try {
-                    Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (l == null) l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    if (l == null) l = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                    if (l != null) lastLocation = l;
+                    Location best = null;
+                    String[] provs = { LocationManager.GPS_PROVIDER,
+                            LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER };
+                    for (String pr : provs) {
+                        try {
+                            Location l = lm.getLastKnownLocation(pr);
+                            if (l == null) continue;
+                            if (best == null) { best = l; continue; }
+                            float accB = best.hasAccuracy() ? best.getAccuracy() : Float.MAX_VALUE;
+                            float accL = l.hasAccuracy() ? l.getAccuracy() : Float.MAX_VALUE;
+                            if (accL < accB) best = l;
+                        } catch (Exception ignored) {}
+                    }
+                    if (best != null) lastLocation = best;
                 } catch (Exception ignored) {}
 
                 internalListener = new LocationListener() {
                     @Override public void onLocationChanged(Location location) {
                         if (location != null) {
+                            // Coarse network fix achhi GPS fix ko overwrite na kare —
+                            // yahi "location thori galat" wali ghalti ki jar thi.
+                            if (!isBetterFix(location, lastLocation)) return;
                             lastLocation = location;
                             Listener cb;
                             synchronized (LocationHelper.class) { cb = callback; }
@@ -88,6 +101,17 @@ public class LocationHelper {
     /** Aakhri maloom location (null ho sakti hai). */
     public static synchronized Location getLast() {
         return lastLocation;
+    }
+
+    /** Nayi fix purani se behtar hai? Zyada accurate, ya khaas tor par zyada taza. */
+    private static boolean isBetterFix(Location fix, Location last) {
+        if (last == null) return true;
+        float accFix = fix.hasAccuracy() ? fix.getAccuracy() : Float.MAX_VALUE;
+        float accLast = last.hasAccuracy() ? last.getAccuracy() : Float.MAX_VALUE;
+        long dt = fix.getTime() - last.getTime();
+        if (accFix <= accLast) return true;              // zyada ya barabar accurate
+        if (dt > 30000 && accFix < accLast + 50f) return true; // purani fix boht purani ho gayi
+        return false;
     }
 
     public static synchronized void setListener(Listener l) {

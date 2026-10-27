@@ -209,7 +209,7 @@
     <string name="lang_title">زبان</string>
     <string name="user_guide_title">رہنمائی</string>
     <string name="about_title">تعارف</string>
-    <string name="about_text">Signal Map v6.2 — پاکستان کے لیے</string>
+    <string name="about_text">Signal Map v%1$s — پاکستان کے لیے</string>
 
     <!-- Signal Radar -->
     <string name="open_radar">سگنل ریڈار — بہترین جگہ تلاش کریں</string>

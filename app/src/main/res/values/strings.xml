@@ -209,7 +209,7 @@
     <string name="lang_title">Language</string>
     <string name="user_guide_title">User Guide</string>
     <string name="about_title">About</string>
-    <string name="about_text">Signal Map v6.2 — Made for Pakistan</string>
+    <string name="about_text">Signal Map v%1$s — Made for Pakistan</string>
     <string name="delete_history_title">Delete History</string>
     <string name="del_signals">Signal readings</string>
     <string name="del_speed">Speed tests</string>

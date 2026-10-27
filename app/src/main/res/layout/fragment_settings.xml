@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_main"
@@ -23,7 +24,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/theme_title"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
@@ -46,7 +47,7 @@
                 android:text="@string/theme_dark"
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
-                android:padding="8dp" />
+                android:padding="6dp" />
 
             <RadioButton
                 android:id="@+id/rbLight"
@@ -55,7 +56,7 @@
                 android:text="@string/theme_light"
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
-                android:padding="8dp" />
+                android:padding="6dp" />
 
             <RadioButton
                 android:id="@+id/rbAuto"
@@ -64,14 +65,14 @@
                 android:text="@string/theme_auto"
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
-                android:padding="8dp" />
+                android:padding="6dp" />
         </RadioGroup>
 
         <!-- Language -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/lang_title"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
@@ -93,8 +94,9 @@
                     android:id="@+id/btnEnglish"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:background="@drawable/bg_pill_cyan"
+                    app:backgroundTint="@null"
                     android:text="English"
                     android:textAllCaps="false"
                     android:textColor="#0F172A"
@@ -105,9 +107,10 @@
                     android:id="@+id/btnUrdu"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bg_pill_cyan"
+                    app:backgroundTint="@null"
                     android:text="اردو"
                     android:textAllCaps="false"
                     android:textColor="#0F172A"
@@ -118,15 +121,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnSindhi"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:background="@drawable/bg_pill_cyan"
+                    app:backgroundTint="@null"
                     android:text="سنڌي"
                     android:textAllCaps="false"
                     android:textColor="#0F172A"
@@ -137,9 +141,10 @@
                     android:id="@+id/btnPashto"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="48dp"
+                    android:layout_height="44dp"
                     android:layout_marginStart="10dp"
                     android:background="@drawable/bg_pill_cyan"
+                    app:backgroundTint="@null"
                     android:text="پښتو"
                     android:textAllCaps="false"
                     android:textColor="#0F172A"
@@ -150,9 +155,10 @@
             <Button
                 android:id="@+id/btnPunjabi"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_pill_cyan"
+                    app:backgroundTint="@null"
                 android:text="پنجابی"
                 android:textAllCaps="false"
                 android:textColor="#0F172A"
@@ -164,7 +170,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/user_guide_title"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
@@ -174,9 +180,10 @@
         <Button
             android:id="@+id/btnGuide"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="46dp"
             android:layout_marginTop="8dp"
             android:background="@color/bg_card"
+            app:backgroundTint="@null"
             android:text="@string/user_guide_title"
             android:textAllCaps="false"
             android:textColor="@color/text_main"
@@ -188,7 +195,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/delete_history_title"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
@@ -201,7 +208,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/bg_card"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="10dp">
 
             <CheckBox
                 android:id="@+id/cbDelSignals"
@@ -211,7 +218,7 @@
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:checked="true"
-                android:padding="6dp" />
+                android:padding="4dp" />
 
             <CheckBox
                 android:id="@+id/cbDelSpeed"
@@ -221,7 +228,7 @@
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:checked="true"
-                android:padding="6dp" />
+                android:padding="4dp" />
 
             <CheckBox
                 android:id="@+id/cbDelDrops"
@@ -231,7 +238,7 @@
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:checked="true"
-                android:padding="6dp" />
+                android:padding="4dp" />
 
             <CheckBox
                 android:id="@+id/cbDelSketch"
@@ -241,14 +248,15 @@
                 android:textColor="@color/text_main"
                 android:textSize="15sp"
                 android:checked="false"
-                android:padding="6dp" />
+                android:padding="4dp" />
 
             <Button
                 android:id="@+id/btnDeleteHistory"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="8dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_pill_red"
+                app:backgroundTint="@null"
                 android:text="@string/delete_selected"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
@@ -260,7 +268,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:text="@string/about_title"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
@@ -273,7 +281,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@color/bg_card"
-            android:padding="16dp"
+            android:padding="12dp"
             android:text="@string/about_text"
             android:textColor="@color/text_main"
             android:textSize="14sp"

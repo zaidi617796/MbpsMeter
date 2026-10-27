@@ -32,7 +32,6 @@ import androidx.fragment.app.Fragment;
 import com.mbpsmeter.app.R;
 import com.mbpsmeter.app.util.LocationHelper;
 import com.mbpsmeter.app.util.SupabaseSync;
-import com.mbpsmeter.app.util.TowerDb;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,10 +66,10 @@ public class MapV4Fragment extends Fragment {
     private boolean focusMode = false;
 
     // ---- Ilaqa Map ----
-    private static final int MODE_MINE = 0, MODE_ILAQA = 1, MODE_TOWERS = 2;
+    private static final int MODE_MINE = 0, MODE_ILAQA = 1;
     /** Grid cell size (degrees) — SQL view "ilaqa_grid" se identical formula. */
     private static final double CELL_DEG = 0.0015;
-    private Button btnModeMine, btnModeIlaqa, btnModeTowers;
+    private Button btnModeMine, btnModeIlaqa;
     private Button chipOpAll, chipOpJazz, chipOpZong, chipOpTelenor, chipOpUfone;
     private View scrollIlaqaOps, layoutIlaqaInfo;
     private TextView tvIlaqaSharing, tvIlaqaStatus, tvIlaqaInfo;
@@ -100,7 +99,6 @@ public class MapV4Fragment extends Fragment {
         // ---- Mode selector: Meri readings / Ilaqa Map / Towers ----
         btnModeMine = v.findViewById(R.id.btnModeMine);
         btnModeIlaqa = v.findViewById(R.id.btnModeIlaqa);
-        btnModeTowers = v.findViewById(R.id.btnModeTowers);
         scrollIlaqaOps = v.findViewById(R.id.scrollIlaqaOps);
         tvIlaqaSharing = v.findViewById(R.id.tvIlaqaSharing);
         tvIlaqaStatus = v.findViewById(R.id.tvIlaqaStatus);
@@ -111,15 +109,14 @@ public class MapV4Fragment extends Fragment {
         chipOpZong = v.findViewById(R.id.chipOpZong);
         chipOpTelenor = v.findViewById(R.id.chipOpTelenor);
         chipOpUfone = v.findViewById(R.id.chipOpUfone);
-        // Purani setting se mode lo (show_towers wale users Towers mode me khulenge)
-        mapMode = prefs.getInt("map_mode",
-                prefs.getBoolean("show_towers", false) ? MODE_TOWERS : MODE_MINE);
+        // Purani setting se mode lo (Towers mode khatam — us par the to Mine par kholo)
+        mapMode = prefs.getInt("map_mode", MODE_MINE);
+        if (mapMode != MODE_ILAQA) mapMode = MODE_MINE;
         // Opt-in khatam ho chuka ho to Ilaqa mode me mat kholo
         if (mapMode == MODE_ILAQA && !SupabaseSync.ilaqaOptIn(prefs)) mapMode = MODE_MINE;
         ilaqaOpKey = prefs.getString("ilaqa_op_filter", "");
         btnModeMine.setOnClickListener(x -> selectMode(MODE_MINE));
         btnModeIlaqa.setOnClickListener(x -> selectMode(MODE_ILAQA));
-        btnModeTowers.setOnClickListener(x -> selectMode(MODE_TOWERS));
         chipOpAll.setOnClickListener(x -> selectIlaqaOp(""));
         chipOpJazz.setOnClickListener(x -> selectIlaqaOp("jazz"));
         chipOpZong.setOnClickListener(x -> selectIlaqaOp("zong"));
@@ -161,9 +158,12 @@ public class MapV4Fragment extends Fragment {
     private void updateModeButtons() {
         styleModeBtn(btnModeMine, mapMode == MODE_MINE);
         styleModeBtn(btnModeIlaqa, mapMode == MODE_ILAQA);
-        styleModeBtn(btnModeTowers, mapMode == MODE_TOWERS);
         boolean ilaqa = mapMode == MODE_ILAQA;
-        if (scrollIlaqaOps != null) scrollIlaqaOps.setVisibility(ilaqa ? View.VISIBLE : View.GONE);
+        if (scrollIlaqaOps != null) {
+            scrollIlaqaOps.setVisibility(ilaqa ? View.VISIBLE : View.GONE);
+            // Chips ki row hamesha shuru se dikhao (pehla chip aadha kata hua na aaye)
+            if (ilaqa) scrollIlaqaOps.post(() -> scrollIlaqaOps.scrollTo(0, 0));
+        }
         if (tvIlaqaSharing != null) tvIlaqaSharing.setVisibility(ilaqa ? View.VISIBLE : View.GONE);
         if (!ilaqa) {
             if (tvIlaqaStatus != null) tvIlaqaStatus.setVisibility(View.GONE);
@@ -181,10 +181,6 @@ public class MapV4Fragment extends Fragment {
         if (mode == MODE_ILAQA && !SupabaseSync.ilaqaOptIn(prefs)) {
             showIlaqaConsent();
             return;
-        }
-        if (mode == MODE_TOWERS && !prefs.getBoolean("tower_note_seen", false)) {
-            prefs.edit().putBoolean("tower_note_seen", true).apply();
-            Toast.makeText(requireContext(), R.string.tower_approx, Toast.LENGTH_LONG).show();
         }
         mapMode = mode;
         prefs.edit().putInt("map_mode", mode).apply();
@@ -325,7 +321,7 @@ public class MapV4Fragment extends Fragment {
         try {
             if (!ilaqaCentered) {
                 try {
-                    osmMap.getController().setZoom(15.0);
+                    osmMap.getController().setZoom(18.0);
                     osmMap.getController().setCenter(decideCenter());
                 } catch (Exception ignored) {}
                 ilaqaCentered = true;
@@ -429,68 +425,11 @@ public class MapV4Fragment extends Fragment {
         } catch (Exception ignored) {}
     }
 
+    /** Unified scale (meter + sketch jaisa hi): -75+ sabz, -76..-91 peela, -92 se neeche laal. */
     private int colorFor(int dbm) {
-        if (dbm >= -80) return Color.parseColor("#22C55E");
-        if (dbm >= -95) return Color.parseColor("#F59E0B");
+        if (dbm >= -75) return Color.parseColor("#22C55E");
+        if (dbm >= -91) return Color.parseColor("#F59E0B");
         return Color.parseColor("#EF4444");
-    }
-
-    /** Tower pins: har Cell ID ka andazan maqam + average/best signal. */
-    private void drawTowerPins() {
-        try {
-            List<TowerDb.Tower> towers = TowerDb.load(requireContext());
-            if (towers.isEmpty()) {
-                Toast.makeText(requireContext(), R.string.no_towers_yet, Toast.LENGTH_LONG).show();
-                return;
-            }
-            for (TowerDb.Tower t : towers) {
-                try {
-                    if (!validLatLng(t.lat, t.lng)) continue;
-                    Marker m = new Marker(osmMap);
-                    m.setPosition(new GeoPoint(t.lat, t.lng));
-                    String title = getString(R.string.tower_title, t.cellId);
-                    if (!t.op.isEmpty()) title += " | " + t.op;
-                    if (!t.band.isEmpty()) title += " | " + t.band;
-                    m.setTitle(title);
-                    m.setSnippet(getString(R.string.tower_snippet, t.avgDbm, t.count, t.bestDbm));
-                    m.setIcon(towerIcon());
-                    m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
-                    osmMap.getOverlays().add(m);
-                } catch (Exception ignored) {}
-            }
-        } catch (Exception ignored) {}
-    }
-
-    /** Tower ka icon: purple circle me safed antenna. */
-    private BitmapDrawable towerIcon() {
-        int s = 84;
-        Bitmap bmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmp);
-        Paint white = new Paint(Paint.ANTI_ALIAS_FLAG);
-        white.setColor(Color.WHITE);
-        c.drawCircle(s / 2f, s / 2f, 34f, white);
-        Paint purple = new Paint(Paint.ANTI_ALIAS_FLAG);
-        purple.setColor(Color.parseColor("#A855F7"));
-        c.drawCircle(s / 2f, s / 2f, 27f, purple);
-        Paint w = new Paint(Paint.ANTI_ALIAS_FLAG);
-        w.setColor(Color.WHITE);
-        w.setStrokeWidth(5f);
-        w.setStyle(Paint.Style.STROKE);
-        w.setStrokeCap(Paint.Cap.ROUND);
-        float cx = s / 2f;
-        // Mast (khamba)
-        c.drawLine(cx, 24, cx - 11, 56, w);
-        c.drawLine(cx, 24, cx + 11, 56, w);
-        // Cross bars
-        c.drawLine(cx - 7, 42, cx + 7, 42, w);
-        c.drawLine(cx - 4, 33, cx + 4, 33, w);
-        // Base
-        c.drawLine(cx - 15, 58, cx + 15, 58, w);
-        // Antenna tip
-        Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
-        dot.setColor(Color.WHITE);
-        c.drawCircle(cx, 20, 4.5f, dot);
-        return new BitmapDrawable(getResources(), bmp);
     }
 
     private BitmapDrawable dotIcon(int color) {
@@ -522,16 +461,14 @@ public class MapV4Fragment extends Fragment {
         // 1. View PEHLE set karo - pins me koi masla ho tab bhi map sahi zoom par khule
         GeoPoint center = decideCenter();
         try {
-            osmMap.getController().setZoom(17.0);
+            osmMap.getController().setZoom(18.0);
             osmMap.getController().setCenter(center);
         } catch (Exception ignored) {}
 
         // 2. Pins - har reading alag try me taake ek kharab reading baqiyon ko na roke
         try {
             osmMap.getOverlays().clear();
-            if (mapMode == MODE_TOWERS) {
-                drawTowerPins();
-            } else {
+            {
                 JSONArray arr = new JSONArray(prefs.getString("signals", "[]"));
                 for (int i = 0; i < arr.length(); i++) {
                     try {
@@ -642,20 +579,43 @@ public class MapV4Fragment extends Fragment {
         return dirs[idx];
     }
 
+    /**
+     * Sab available fixes me se SAB SE ACCURATE wali chuno. Pehle network ki
+     * coarse fix (kai sau meter off) GPS fix par jeet jati thi — isi liye
+     * location "thori galat" dikhti thi (Zahid, 2026-10-27).
+     */
     private Location myLocation() {
-        // Pehle active helper se lo (GPS actively maanga hua)
+        Location best = null;
         try {
             Location h = LocationHelper.getLast();
-            if (h != null && validLatLng(h.getLatitude(), h.getLongitude())) return h;
+            if (h != null && validLatLng(h.getLatitude(), h.getLongitude())) best = h;
         } catch (Exception ignored) {}
         try {
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) return null;
-            LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (l == null) l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            return l;
-        } catch (Exception ignored) { return null; }
+                    == PackageManager.PERMISSION_GRANTED) {
+                LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+                if (lm != null) {
+                    best = betterFix(best, lm.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                    best = betterFix(best, lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+                }
+            }
+        } catch (Exception ignored) {}
+        return best;
+    }
+
+    /** Do fixes me se behtar chuno: taza + chhota accuracy ghaira jeet-ta hai. */
+    private Location betterFix(Location a, Location b) {
+        if (b == null || !validLatLng(b.getLatitude(), b.getLongitude())) return a;
+        if (a == null) return b;
+        long now = System.currentTimeMillis();
+        long ageA = now - a.getTime(), ageB = now - b.getTime();
+        // 5 minute se purani fix sirf tab, jab doosri us se bhi purani ho
+        if (ageB > 5 * 60 * 1000L && ageA <= 5 * 60 * 1000L) return a;
+        if (ageA > 5 * 60 * 1000L && ageB <= 5 * 60 * 1000L) return b;
+        float accA = a.hasAccuracy() ? a.getAccuracy() : Float.MAX_VALUE;
+        float accB = b.hasAccuracy() ? b.getAccuracy() : Float.MAX_VALUE;
+        if (accB != accA) return accB < accA ? b : a;
+        return ageB < ageA ? b : a;
     }
 
     private void centerBest() {

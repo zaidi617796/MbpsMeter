@@ -162,10 +162,13 @@ public class LiveV4Fragment extends Fragment {
 
         long now = System.currentTimeMillis();
 
-        // Walk Test: indoor ke liye har 5 meter par auto record
+        // Walk Test: har 5 meter par auto record — SIRF strong signal (-73 ya zyada)
+        // save hoga (Zahid, 2026-10-27); kamzor point skip, faasla aakhri SAVED
+        // point se naapa jayega taake agla strong spot miss na ho.
         if (walkMode) {
             Location loc = currentLocation();
-            if (loc != null && (lastWalkLoc == null || loc.distanceTo(lastWalkLoc) >= 5f)) {
+            if (loc != null && !noSignal && currentDbm >= -73
+                    && (lastWalkLoc == null || loc.distanceTo(lastWalkLoc) >= 5f)) {
                 save(false, "WALK", "");
                 lastWalkLoc = loc;
                 walkCount++;

@@ -3,8 +3,16 @@ package com.mbpsmeter.app;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -22,7 +30,6 @@ import androidx.fragment.app.Fragment;
 
 import org.osmdroid.config.Configuration;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mbpsmeter.app.ui.history.HistoryV4Fragment;
 import com.mbpsmeter.app.ui.live.LiveV4Fragment;
 import com.mbpsmeter.app.ui.map.MapV4Fragment;
@@ -35,7 +42,23 @@ import com.mbpsmeter.app.ui.speed.SpeedV4Fragment;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERMS = 101;
-    private BottomNavigationView bottomNav;
+    private LinearLayout bottomNav;
+
+    // ---- Custom circle tabs ----
+    private static final int[] NAV_IDS = {
+            R.id.nav_live, R.id.nav_speed, R.id.nav_map, R.id.nav_naksha, R.id.nav_history };
+    private static final int[] NAV_ICONS = {
+            R.drawable.ic_nav_live, R.drawable.ic_nav_speed, R.drawable.ic_nav_map,
+            R.drawable.ic_nav_naksha, R.drawable.ic_nav_history };
+    private static final int[] NAV_LABELS = {
+            R.string.nav_live, R.string.nav_speed, R.string.nav_map,
+            R.string.nav_naksha, R.string.nav_history };
+    private static final int MAP_INDEX = 2;
+    private FrameLayout[] tabCircles;
+    private ImageView[] tabIcons;
+    private TextView[] tabLabels;
+    private int currentTabId = R.id.nav_live;
+    private boolean tabShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,44 +162,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Settings ka icon ab History tab me hai (v6.2) — top bar me sirf naam
 
-        if (bottomNav != null) {
-            // Menu bilkul code se banao - XML inflation se parhez
-            // Har item alag try-catch me taake ek kharab icon baaqi tabs na rokay
-            try {
-                android.view.Menu menu = bottomNav.getMenu();
-                menu.clear();
-                addNavItem(menu, R.id.nav_live, R.string.nav_live, R.drawable.ic_nav_live, 0);
-                addNavItem(menu, R.id.nav_speed, R.string.nav_speed, R.drawable.ic_nav_speed, 1);
-                addNavItem(menu, R.id.nav_map, R.string.nav_map, R.drawable.ic_nav_map, 2);
-                addNavItem(menu, R.id.nav_naksha, R.string.nav_naksha, R.drawable.ic_nav_naksha, 3);
-                addNavItem(menu, R.id.nav_history, R.string.nav_history, R.drawable.ic_nav_history, 4);
-            } catch (Exception e) {
-                android.util.Log.e("MbpsMeterCrash", "Menu build failed", e);
-            }
-            bottomNav.setOnItemSelectedListener(item -> {
-                Fragment sel = null;
-                int id = item.getItemId();
-                try {
-                    if (id == R.id.nav_live) sel = new LiveV4Fragment();
-                    else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
-                    else if (id == R.id.nav_map) sel = new MapV4Fragment();
-                    else if (id == R.id.nav_naksha) sel = new NakshaFragment();
-                    else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
-                } catch (Exception ignored) {}
-                if (sel != null) {
-                    try {
-                        // back stack saaf taake DualSim se wapas par nav sahi rahe
-                        getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commitAllowingStateLoss();
-                    } catch (Exception ignored) {}
-                }
-                return true;
-            });
+        // Circle tabs code se banao (purane menu wale tareeqe ki tarah)
+        try {
+            buildTabs();
+        } catch (Exception e) {
+            android.util.Log.e("MbpsMeterCrash", "Tab build failed", e);
         }
 
         if (savedInstanceState == null) {
             try {
-                if (bottomNav != null) bottomNav.setSelectedItemId(R.id.nav_live);
+                selectTab(R.id.nav_live);
+            } catch (Exception ignored) {}
+        } else {
+            try {
+                currentTabId = savedInstanceState.getInt("sel_tab", R.id.nav_live);
+                applyTabStyles();
             } catch (Exception ignored) {}
         }
 
@@ -190,20 +190,140 @@ public class MainActivity extends AppCompatActivity {
     /** Kisi bhi tab par programmatically jao (e.g. History se Map par) */
     public void selectTab(int menuId) {
         try {
-            if (bottomNav != null) bottomNav.setSelectedItemId(menuId);
+            if (menuId == currentTabId && tabShown) {
+                applyTabStyles();
+                return;
+            }
+            currentTabId = menuId;
+            applyTabStyles();
+            showFragmentFor(menuId);
+            tabShown = true;
         } catch (Exception ignored) {}
     }
 
-    /** Bottom nav ka ek item banao - icon fail ho to bhi text wala item zaroor banao */
-    private void addNavItem(android.view.Menu menu, int id, int titleRes, int iconRes, int order) {
-        try {
-            android.view.MenuItem item = menu.add(0, id, order, titleRes);
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("sel_tab", currentTabId);
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+    /** Bottom tabs banao: har tab = circle (icon) + neeche label. Map wala circle bara. */
+    private void buildTabs() {
+        if (bottomNav == null) return;
+        bottomNav.removeAllViews();
+        tabCircles = new FrameLayout[NAV_IDS.length];
+        tabIcons = new ImageView[NAV_IDS.length];
+        tabLabels = new TextView[NAV_IDS.length];
+        for (int i = 0; i < NAV_IDS.length; i++) {
+            final int navId = NAV_IDS[i];
+            boolean isMap = i == MAP_INDEX;
+
+            LinearLayout root = new LinearLayout(this);
+            root.setOrientation(LinearLayout.VERTICAL);
+            root.setGravity(Gravity.CENTER_HORIZONTAL);
+            LinearLayout.LayoutParams rootLp = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            root.setLayoutParams(rootLp);
+            root.setPadding(0, dp(2), 0, 0);
+            root.setClickable(true);
+
+            FrameLayout circle = new FrameLayout(this);
+            int circleSize = dp(isMap ? 58 : 46);
+            circle.setLayoutParams(new LinearLayout.LayoutParams(circleSize, circleSize));
+
+            ImageView icon = new ImageView(this);
+            int iconSize = dp(isMap ? 29 : 24);
+            FrameLayout.LayoutParams iconLp = new FrameLayout.LayoutParams(iconSize, iconSize);
+            iconLp.gravity = Gravity.CENTER;
+            icon.setLayoutParams(iconLp);
+            try { icon.setImageResource(NAV_ICONS[i]); } catch (Exception ignored) {}
+            circle.addView(icon);
+
+            TextView label = new TextView(this);
+            label.setText(NAV_LABELS[i]);
+            label.setTextSize(isMap ? 12 : 11);
+            LinearLayout.LayoutParams labelLp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            labelLp.topMargin = dp(3);
+            label.setLayoutParams(labelLp);
+
+            root.addView(circle);
+            root.addView(label);
+            root.setOnClickListener(x -> selectTab(navId));
+            bottomNav.addView(root);
+
+            tabCircles[i] = circle;
+            tabIcons[i] = icon;
+            tabLabels[i] = label;
+        }
+        applyTabStyles();
+    }
+
+    /** Circle ka background: selected = cyan→purple gradient; warna halka ghaira (Map par cyan ghaira). */
+    private GradientDrawable circleDrawable(boolean selected, boolean isMap) {
+        GradientDrawable d = new GradientDrawable();
+        d.setShape(GradientDrawable.OVAL);
+        if (selected) {
+            d.setColors(new int[]{ Color.parseColor("#00E5FF"), Color.parseColor("#7C4DFF") });
+            d.setOrientation(GradientDrawable.Orientation.TL_BR);
+        } else if (isMap) {
+            d.setColor(ContextCompat.getColor(this, R.color.bg_card));
+            d.setStroke(dp(3), Color.parseColor("#00E5FF"));
+        } else {
+            d.setColor(ContextCompat.getColor(this, R.color.bg_card));
+            d.setStroke(dp(2), Color.parseColor("#2A3A6B"));
+        }
+        return d;
+    }
+
+    /** Selection ke rang lagao: selected tab ka text SAFED, icon safed; Map hamesha numaiyan. */
+    private void applyTabStyles() {
+        if (tabCircles == null) return;
+        int muted = ContextCompat.getColor(this, R.color.text_muted);
+        int accent = Color.parseColor("#00E5FF");
+        for (int i = 0; i < NAV_IDS.length; i++) {
+            boolean selected = NAV_IDS[i] == currentTabId;
+            boolean isMap = i == MAP_INDEX;
             try {
-                item.setIcon(iconRes);
-            } catch (Exception ignored) {
-                // Icon na lage to text hi sahi
-            }
+                tabCircles[i].setBackground(circleDrawable(selected, isMap));
+                if (selected) {
+                    tabIcons[i].setImageTintList(ColorStateList.valueOf(Color.WHITE));
+                    tabLabels[i].setTextColor(Color.WHITE);
+                    tabLabels[i].setTypeface(null, android.graphics.Typeface.BOLD);
+                } else if (isMap) {
+                    tabIcons[i].setImageTintList(ColorStateList.valueOf(accent));
+                    tabLabels[i].setTextColor(muted);
+                    tabLabels[i].setTypeface(null, android.graphics.Typeface.BOLD);
+                } else {
+                    tabIcons[i].setImageTintList(ColorStateList.valueOf(muted));
+                    tabLabels[i].setTextColor(muted);
+                    tabLabels[i].setTypeface(null, android.graphics.Typeface.NORMAL);
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
+    /** Tab id ke hisab se fragment dikhao (purana listener wala kaam) */
+    private void showFragmentFor(int id) {
+        Fragment sel = null;
+        try {
+            if (id == R.id.nav_live) sel = new LiveV4Fragment();
+            else if (id == R.id.nav_speed) sel = new SpeedV4Fragment();
+            else if (id == R.id.nav_map) sel = new MapV4Fragment();
+            else if (id == R.id.nav_naksha) sel = new NakshaFragment();
+            else if (id == R.id.nav_history) sel = new HistoryV4Fragment();
         } catch (Exception ignored) {}
+        if (sel != null) {
+            try {
+                // back stack saaf taake DualSim se wapas par nav sahi rahe
+                getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, sel).commitAllowingStateLoss();
+            } catch (Exception ignored) {}
+        }
     }
 
     /** App khulte hi permission popup */

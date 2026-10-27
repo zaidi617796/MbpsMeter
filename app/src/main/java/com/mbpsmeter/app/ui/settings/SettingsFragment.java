@@ -122,8 +122,15 @@ public class SettingsFragment extends Fragment {
         } catch (Exception ignored) {}
 
         // ---------- About ----------
+        // Version hamesha asal installed version se — hardcode kabhi purana nahi hoga
         TextView tvAbout = v.findViewById(R.id.tvAbout);
-        tvAbout.setText(getString(R.string.about_text));
+        try {
+            String vn = requireContext().getPackageManager()
+                    .getPackageInfo(requireContext().getPackageName(), 0).versionName;
+            tvAbout.setText(getString(R.string.about_text, vn));
+        } catch (Exception e) {
+            tvAbout.setText("Signal Map — Made for Pakistan");
+        }
     }
 
     private void setLang(String tag) {

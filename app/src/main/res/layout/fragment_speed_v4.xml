@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_main"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="16dp"
         android:gravity="center_horizontal">
 
         <TextView
@@ -27,9 +28,9 @@
             android:id="@+id/tvMainSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:text="--"
-            android:textSize="52sp"
+            android:textSize="44sp"
             android:textStyle="bold"
             android:textColor="@color/text_main" />
 
@@ -43,9 +44,9 @@
 
         <Button
             android:id="@+id/btnStartSpeed"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:layout_marginTop="14dp"
             android:background="@drawable/bg_neon_ring"
             app:backgroundTint="@null"
             android:text="GO"
@@ -57,7 +58,7 @@
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:text="@string/tap_go"
             android:textColor="@color/text_muted"
             android:textSize="12sp" />
@@ -72,8 +73,8 @@
             android:textColor="@color/text_muted"
             android:textSize="12sp"
             android:gravity="center"
-            android:padding="12dp"
-            android:layout_marginTop="14dp"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
             android:lineSpacingExtra="3dp" />
 
         <!-- Download / Upload cards -->
@@ -81,12 +82,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="14dp">
+            android:layout_marginTop="10dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="110dp"
+                android:layout_height="92dp"
                 android:background="@drawable/bg_card_glass"
                 android:padding="14dp"
                 android:orientation="vertical"
@@ -104,7 +105,7 @@
                     android:id="@+id/tvDownload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:text="--"
                     android:textColor="@color/text_main"
                     android:textStyle="bold"
@@ -114,7 +115,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="110dp"
+                android:layout_height="92dp"
                 android:background="@drawable/bg_card_glass"
                 android:padding="14dp"
                 android:orientation="vertical"
@@ -132,7 +133,7 @@
                     android:id="@+id/tvUpload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:text="--"
                     android:textColor="@color/text_main"
                     android:textStyle="bold"
@@ -145,12 +146,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="10dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="90dp"
+                android:layout_height="78dp"
                 android:background="@drawable/bg_card_glass"
                 android:padding="14dp"
                 android:orientation="vertical"
@@ -168,7 +169,7 @@
                     android:id="@+id/tvPing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="--"
                     android:textColor="@color/text_main"
                     android:textStyle="bold"
@@ -178,7 +179,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="90dp"
+                android:layout_height="78dp"
                 android:background="@drawable/bg_card_glass"
                 android:padding="14dp"
                 android:orientation="vertical"
@@ -196,7 +197,7 @@
                     android:id="@+id/tvJitter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="--"
                     android:textColor="@color/text_main"
                     android:textStyle="bold"
@@ -207,7 +208,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:text="@string/speed_tip"
             android:textColor="@color/text_muted"
             android:textSize="12sp"
@@ -221,8 +222,8 @@
             android:background="@drawable/bg_card_glass"
             android:textColor="@color/text_muted"
             android:textSize="13sp"
-            android:padding="14dp"
-            android:layout_marginTop="14dp"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
             android:lineSpacingExtra="4dp"
             android:visibility="gone" />
 
@@ -230,7 +231,7 @@
             android:id="@+id/btnShareSpeed"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/bg_pill_dark"
             app:backgroundTint="@null"

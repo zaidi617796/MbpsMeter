@@ -483,8 +483,9 @@ public class SketchView extends View {
     }
 
     private int dotColor(int dbm) {
-        if (dbm >= -70) return Color.parseColor("#22C55E"); // strong
-        if (dbm >= -85) return Color.parseColor("#F59E0B"); // fair
+        // Unified scale (meter jaisa hi, 2026-10-27): -75+ strong, -76..-91 fair, -92 se neeche weak
+        if (dbm >= -75) return Color.parseColor("#22C55E"); // strong
+        if (dbm >= -91) return Color.parseColor("#F59E0B"); // fair
         return Color.parseColor("#EF4444"); // weak
     }
 

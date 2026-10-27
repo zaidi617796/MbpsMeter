@@ -55,7 +55,7 @@
             android:textColor="#0F172A"
             android:textStyle="bold" />
 
-        <!-- 3-way mode selector: Meri readings / Ilaqa Map / Towers -->
+        <!-- 2-way mode selector: Meri readings / Ilaqa Map (Towers tab khatam, 2026-10-27) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,6 +67,10 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="44dp"
+                android:minWidth="0dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:singleLine="true"
                 android:background="@drawable/bg_pill_dark"
                 app:backgroundTint="@null"
                 android:text="@string/map_mode_mine"
@@ -80,24 +84,14 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="44dp"
+                android:minWidth="0dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:singleLine="true"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_pill_dark"
                 app:backgroundTint="@null"
                 android:text="@string/map_mode_ilaqa"
-                android:textAllCaps="false"
-                android:textColor="#E2E8F0"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btnModeTowers"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="44dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_pill_dark"
-                app:backgroundTint="@null"
-                android:text="@string/show_towers"
                 android:textAllCaps="false"
                 android:textColor="#E2E8F0"
                 android:textSize="13sp"
