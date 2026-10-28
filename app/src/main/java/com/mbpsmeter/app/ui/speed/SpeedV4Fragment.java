@@ -385,15 +385,21 @@ public class SpeedV4Fragment extends Fragment {
      * Saath saath live number bhi UI par dikhate raho.
      */
     private double runWindow(java.util.concurrent.atomic.AtomicLong counter, boolean isDownload) {
+        // Naye phase ke shuru me purana number saaf — warna download ki aakhri
+        // reading upload ke shuru me chipki rehti hai (flux ki ek wajah ye bhi thi)
+        setText(tvMainSpeed, "--");
         long t0 = System.nanoTime();
         long rampBytes = -1;
         // Live number ke liye rolling window: har 150ms par (waqt, kul bytes) ka
-        // sample rakho aur speed pichhle ~1.5 second ke samples se nikalo.
+        // sample rakho aur speed pichhle ~2.5 second ke samples se nikalo.
         // Purana tareeqa har 300ms ke chhote tukre ki speed dikhata tha — data
         // ruk-ruk kar aane par number 0 aur asal speed ke darmiyan uchhalta tha
         // (Zahid ki shikayat: "0 se shuffle ho rahi thi 13 ke darmiyan").
+        // v1.0.3: window 1.5s -> 2.5s, smoothing mazboot, UI update 300ms par —
+        // number ab glide karega, dance nahi. Final result ka hisaab unchanged.
         java.util.ArrayDeque<long[]> hist = new java.util.ArrayDeque<>();
         double shown = -1;
+        long lastPushMs = -1;
         while (true) {
             long el = (System.nanoTime() - t0) / 1_000_000L;
             if (el >= TEST_MS) break;
@@ -401,25 +407,29 @@ public class SpeedV4Fragment extends Fragment {
                 rampBytes = counter.get();
                 hist.clear();
                 shown = -1;
+                lastPushMs = -1;
             }
             if (el > RAMP_MS) {
                 long nowMs = (System.nanoTime() - t0) / 1_000_000L;
                 hist.addLast(new long[]{nowMs, counter.get()});
-                while (hist.size() > 2 && nowMs - hist.peekFirst()[0] > 1500) hist.pollFirst();
+                while (hist.size() > 2 && nowMs - hist.peekFirst()[0] > 2500) hist.pollFirst();
                 if (hist.size() >= 2) {
                     long[] first = hist.peekFirst();
                     long[] last = hist.peekLast();
                     double sec = (last[0] - first[0]) / 1000.0;
-                    if (sec >= 0.5) {
+                    if (sec >= 0.8) {
                         double live = (last[1] - first[1]) * 8.0 / sec / 1e6;
-                        // Halki smoothing taake number aahista badle, jhatke se nahi
-                        shown = shown < 0 ? live : (0.65 * shown + 0.35 * live);
-                        final String main = String.format(Locale.US, "%.1f", shown);
-                        setText(tvMainSpeed, main);
-                        if (isDownload) {
-                            setText(tvDownload, String.format(Locale.US, "%.1f %s", shown, sMbps));
-                        } else {
-                            setText(tvUpload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                        // Mazboot smoothing: number aahista glide kare, jhatke se nahi
+                        shown = shown < 0 ? live : (0.80 * shown + 0.20 * live);
+                        if (lastPushMs < 0 || nowMs - lastPushMs >= 300) {
+                            lastPushMs = nowMs;
+                            final String main = String.format(Locale.US, "%.1f", shown);
+                            setText(tvMainSpeed, main);
+                            if (isDownload) {
+                                setText(tvDownload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                            } else {
+                                setText(tvUpload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                            }
                         }
                     }
                 }
