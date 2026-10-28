@@ -45,20 +45,21 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout bottomNav;
 
     // ---- Custom circle tabs ----
-    // Tartib (Zahid, 2026-10-28): Speed Test CENTER me aur app ki pehli page.
+    // Tartib (Zahid, 2026-10-28 shaam): Speed 1st, Map 2nd, LIVE center (main page),
+    // phir Sketch, History. Bara circle + pehli page = Live.
     private static final int[] NAV_IDS = {
-            R.id.nav_live, R.id.nav_map, R.id.nav_speed, R.id.nav_naksha, R.id.nav_history };
+            R.id.nav_speed, R.id.nav_map, R.id.nav_live, R.id.nav_naksha, R.id.nav_history };
     private static final int[] NAV_ICONS = {
-            R.drawable.ic_nav_live, R.drawable.ic_nav_map, R.drawable.ic_nav_speed,
+            R.drawable.ic_nav_speed, R.drawable.ic_nav_map, R.drawable.ic_nav_live,
             R.drawable.ic_nav_naksha, R.drawable.ic_nav_history };
     private static final int[] NAV_LABELS = {
-            R.string.nav_live, R.string.nav_map, R.string.nav_speed,
+            R.string.nav_speed, R.string.nav_map, R.string.nav_live,
             R.string.nav_naksha, R.string.nav_history };
     private static final int CENTER_INDEX = 2;
     private FrameLayout[] tabCircles;
     private ImageView[] tabIcons;
     private TextView[] tabLabels;
-    private int currentTabId = R.id.nav_speed;
+    private int currentTabId = R.id.nav_live;
     private boolean tabShown = false;
 
     @Override
@@ -172,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             try {
-                selectTab(R.id.nav_speed);
+                selectTab(R.id.nav_live);
             } catch (Exception ignored) {}
         } else {
             try {
-                currentTabId = savedInstanceState.getInt("sel_tab", R.id.nav_speed);
+                currentTabId = savedInstanceState.getInt("sel_tab", R.id.nav_live);
                 applyTabStyles();
             } catch (Exception ignored) {}
         }
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
         return d;
     }
 
-    /** Selection ke rang lagao: selected tab ka text SAFED, icon safed; center (Speed) hamesha numaiyan. */
+    /** Selection ke rang lagao: selected tab ka text SAFED, icon safed; center (Live) hamesha numaiyan. */
     private void applyTabStyles() {
         if (tabCircles == null) return;
         int muted = ContextCompat.getColor(this, R.color.text_muted);
