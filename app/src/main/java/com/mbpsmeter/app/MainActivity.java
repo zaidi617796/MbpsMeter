@@ -45,19 +45,20 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout bottomNav;
 
     // ---- Custom circle tabs ----
+    // Tartib (Zahid, 2026-10-28): Speed Test CENTER me aur app ki pehli page.
     private static final int[] NAV_IDS = {
-            R.id.nav_live, R.id.nav_speed, R.id.nav_map, R.id.nav_naksha, R.id.nav_history };
+            R.id.nav_live, R.id.nav_map, R.id.nav_speed, R.id.nav_naksha, R.id.nav_history };
     private static final int[] NAV_ICONS = {
-            R.drawable.ic_nav_live, R.drawable.ic_nav_speed, R.drawable.ic_nav_map,
+            R.drawable.ic_nav_live, R.drawable.ic_nav_map, R.drawable.ic_nav_speed,
             R.drawable.ic_nav_naksha, R.drawable.ic_nav_history };
     private static final int[] NAV_LABELS = {
-            R.string.nav_live, R.string.nav_speed, R.string.nav_map,
+            R.string.nav_live, R.string.nav_map, R.string.nav_speed,
             R.string.nav_naksha, R.string.nav_history };
-    private static final int MAP_INDEX = 2;
+    private static final int CENTER_INDEX = 2;
     private FrameLayout[] tabCircles;
     private ImageView[] tabIcons;
     private TextView[] tabLabels;
-    private int currentTabId = R.id.nav_live;
+    private int currentTabId = R.id.nav_speed;
     private boolean tabShown = false;
 
     @Override
@@ -171,11 +172,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             try {
-                selectTab(R.id.nav_live);
+                selectTab(R.id.nav_speed);
             } catch (Exception ignored) {}
         } else {
             try {
-                currentTabId = savedInstanceState.getInt("sel_tab", R.id.nav_live);
+                currentTabId = savedInstanceState.getInt("sel_tab", R.id.nav_speed);
                 applyTabStyles();
             } catch (Exception ignored) {}
         }
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         return (int) (v * getResources().getDisplayMetrics().density + 0.5f);
     }
 
-    /** Bottom tabs banao: har tab = circle (icon) + neeche label. Map wala circle bara. */
+    /** Bottom tabs banao: har tab = circle (icon) + neeche label. Center (Speed) wala circle bara. */
     private void buildTabs() {
         if (bottomNav == null) return;
         bottomNav.removeAllViews();
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
         tabLabels = new TextView[NAV_IDS.length];
         for (int i = 0; i < NAV_IDS.length; i++) {
             final int navId = NAV_IDS[i];
-            boolean isMap = i == MAP_INDEX;
+            boolean isCenter = i == CENTER_INDEX;
 
             LinearLayout root = new LinearLayout(this);
             root.setOrientation(LinearLayout.VERTICAL);
@@ -232,11 +233,11 @@ public class MainActivity extends AppCompatActivity {
             root.setClickable(true);
 
             FrameLayout circle = new FrameLayout(this);
-            int circleSize = dp(isMap ? 58 : 46);
+            int circleSize = dp(isCenter ? 58 : 46);
             circle.setLayoutParams(new LinearLayout.LayoutParams(circleSize, circleSize));
 
             ImageView icon = new ImageView(this);
-            int iconSize = dp(isMap ? 29 : 24);
+            int iconSize = dp(isCenter ? 29 : 24);
             FrameLayout.LayoutParams iconLp = new FrameLayout.LayoutParams(iconSize, iconSize);
             iconLp.gravity = Gravity.CENTER;
             icon.setLayoutParams(iconLp);
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
             TextView label = new TextView(this);
             label.setText(NAV_LABELS[i]);
-            label.setTextSize(isMap ? 12 : 11);
+            label.setTextSize(isCenter ? 12 : 11);
             LinearLayout.LayoutParams labelLp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             labelLp.topMargin = dp(3);
@@ -263,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
         applyTabStyles();
     }
 
-    /** Circle ka background: selected = cyan→purple gradient; warna halka ghaira (Map par cyan ghaira). */
-    private GradientDrawable circleDrawable(boolean selected, boolean isMap) {
+    /** Circle ka background: selected = cyan→purple gradient; warna halka ghaira (center par cyan ghaira). */
+    private GradientDrawable circleDrawable(boolean selected, boolean isCenter) {
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
         if (selected) {
             d.setColors(new int[]{ Color.parseColor("#00E5FF"), Color.parseColor("#7C4DFF") });
             d.setOrientation(GradientDrawable.Orientation.TL_BR);
-        } else if (isMap) {
+        } else if (isCenter) {
             d.setColor(ContextCompat.getColor(this, R.color.bg_card));
             d.setStroke(dp(3), Color.parseColor("#00E5FF"));
         } else {
@@ -280,21 +281,21 @@ public class MainActivity extends AppCompatActivity {
         return d;
     }
 
-    /** Selection ke rang lagao: selected tab ka text SAFED, icon safed; Map hamesha numaiyan. */
+    /** Selection ke rang lagao: selected tab ka text SAFED, icon safed; center (Speed) hamesha numaiyan. */
     private void applyTabStyles() {
         if (tabCircles == null) return;
         int muted = ContextCompat.getColor(this, R.color.text_muted);
         int accent = Color.parseColor("#00E5FF");
         for (int i = 0; i < NAV_IDS.length; i++) {
             boolean selected = NAV_IDS[i] == currentTabId;
-            boolean isMap = i == MAP_INDEX;
+            boolean isCenter = i == CENTER_INDEX;
             try {
-                tabCircles[i].setBackground(circleDrawable(selected, isMap));
+                tabCircles[i].setBackground(circleDrawable(selected, isCenter));
                 if (selected) {
                     tabIcons[i].setImageTintList(ColorStateList.valueOf(Color.WHITE));
                     tabLabels[i].setTextColor(Color.WHITE);
                     tabLabels[i].setTypeface(null, android.graphics.Typeface.BOLD);
-                } else if (isMap) {
+                } else if (isCenter) {
                     tabIcons[i].setImageTintList(ColorStateList.valueOf(accent));
                     tabLabels[i].setTextColor(muted);
                     tabLabels[i].setTypeface(null, android.graphics.Typeface.BOLD);

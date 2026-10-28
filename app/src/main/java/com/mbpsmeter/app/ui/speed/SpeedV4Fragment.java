@@ -51,6 +51,12 @@ public class SpeedV4Fragment extends Fragment {
     private volatile boolean dlStop = false, ulStop = false;
     private double lastDown = -1, lastUp = -1, lastPing = -1;
 
+    // Background thread ke liye pehle se (UI thread par) liye gaye strings.
+    // Thread ke andar getString() MAT lagao: user tab badal de to fragment
+    // detach ho jata hai aur requireContext() "not attached to a context"
+    // crash karta hai — v1.0 ka Last Error yehi tha.
+    private String sMbps = "Mbps", sMs = "ms", sTestingDown = "", sTestingUp = "";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inf, @Nullable ViewGroup c, @Nullable Bundle b) {
@@ -78,7 +84,7 @@ public class SpeedV4Fragment extends Fragment {
 
     /** Meteor-style: is speed par kaunsi apps chalengi */
     private void showWorksOnSpeed(double down, double up) {
-        if (tvWorks == null) return;
+        if (tvWorks == null || !isAdded()) return;
         StringBuilder sb = new StringBuilder(getString(R.string.works_title));
         sb.append("\n").append(worksRow("YouTube 4K", down >= 20));
         sb.append(worksRow("YouTube HD (1080p)", down >= 5));
@@ -179,6 +185,11 @@ public class SpeedV4Fragment extends Fragment {
             if (btnShareSpeed != null) btnShareSpeed.setVisibility(View.GONE);
         });
         setText(tvStatus, getString(R.string.measuring_ping));
+        // Strings abhi (attached, UI thread par) le lo — thread inhin ko use karega
+        sMbps = getString(R.string.mbps);
+        sMs = getString(R.string.ms);
+        sTestingDown = getString(R.string.testing_down);
+        sTestingUp = getString(R.string.testing_up);
 
         new Thread(() -> {
             double pingMs = -1, jitterMs = -1, down = -1, up = -1;
@@ -222,23 +233,25 @@ public class SpeedV4Fragment extends Fragment {
                 }
                 double p = pingMs, j = jitterMs;
                 ui(() -> {
-                    tvPing.setText(String.format(Locale.US, "%.0f %s", p, getString(R.string.ms)));
-                    tvJitter.setText(String.format(Locale.US, "%.0f %s", j, getString(R.string.ms)));
+                    if (!isAdded()) return;
+                    tvPing.setText(String.format(Locale.US, "%.0f %s", p, sMs));
+                    tvJitter.setText(String.format(Locale.US, "%.0f %s", j, sMs));
                 });
             } catch (Exception ignored) {}
 
-            setText(tvStatus, getString(R.string.testing_down));
+            setText(tvStatus, sTestingDown);
             down = measureDownload();
 
-            setText(tvStatus, getString(R.string.testing_up));
+            setText(tvStatus, sTestingUp);
             up = measureUpload();
 
             double fd = down, fu = up, fp = pingMs, fj = jitterMs;
             ui(() -> {
                 running = false;
+                if (!isAdded()) return;
                 btnStart.setEnabled(true);
                 btnStart.setAlpha(1f);
-                String mbps = getString(R.string.mbps);
+                String mbps = sMbps;
                 tvMainSpeed.setText(fd >= 0 ? String.format(Locale.US, "%.1f", fd) : "--");
                 tvDownload.setText(fd >= 0 ? String.format(Locale.US, "%.2f %s", fd, mbps) : "--");
                 tvUpload.setText(fu >= 0 ? String.format(Locale.US, "%.2f %s", fu, mbps) : "--");
@@ -374,26 +387,42 @@ public class SpeedV4Fragment extends Fragment {
     private double runWindow(java.util.concurrent.atomic.AtomicLong counter, boolean isDownload) {
         long t0 = System.nanoTime();
         long rampBytes = -1;
-        long lastUiBytes = 0, lastUiT = t0;
+        // Live number ke liye rolling window: har 150ms par (waqt, kul bytes) ka
+        // sample rakho aur speed pichhle ~1.5 second ke samples se nikalo.
+        // Purana tareeqa har 300ms ke chhote tukre ki speed dikhata tha — data
+        // ruk-ruk kar aane par number 0 aur asal speed ke darmiyan uchhalta tha
+        // (Zahid ki shikayat: "0 se shuffle ho rahi thi 13 ke darmiyan").
+        java.util.ArrayDeque<long[]> hist = new java.util.ArrayDeque<>();
+        double shown = -1;
         while (true) {
             long el = (System.nanoTime() - t0) / 1_000_000L;
             if (el >= TEST_MS) break;
-            if (el >= RAMP_MS && rampBytes < 0) rampBytes = counter.get();
-            long now = System.nanoTime();
-            if (now - lastUiT > 300_000_000L) {
-                double sec = (now - lastUiT) / 1e9;
-                long b = counter.get();
-                if (sec > 0 && el > RAMP_MS) {
-                    double live = (b - lastUiBytes) * 8.0 / sec / 1e6;
-                    setText(tvMainSpeed, String.format(Locale.US, "%.1f", live));
-                    if (isDownload) {
-                        setText(tvDownload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
-                    } else {
-                        setText(tvUpload, String.format(Locale.US, "%.1f %s", live, getString(R.string.mbps)));
+            if (el >= RAMP_MS && rampBytes < 0) {
+                rampBytes = counter.get();
+                hist.clear();
+                shown = -1;
+            }
+            if (el > RAMP_MS) {
+                long nowMs = (System.nanoTime() - t0) / 1_000_000L;
+                hist.addLast(new long[]{nowMs, counter.get()});
+                while (hist.size() > 2 && nowMs - hist.peekFirst()[0] > 1500) hist.pollFirst();
+                if (hist.size() >= 2) {
+                    long[] first = hist.peekFirst();
+                    long[] last = hist.peekLast();
+                    double sec = (last[0] - first[0]) / 1000.0;
+                    if (sec >= 0.5) {
+                        double live = (last[1] - first[1]) * 8.0 / sec / 1e6;
+                        // Halki smoothing taake number aahista badle, jhatke se nahi
+                        shown = shown < 0 ? live : (0.65 * shown + 0.35 * live);
+                        final String main = String.format(Locale.US, "%.1f", shown);
+                        setText(tvMainSpeed, main);
+                        if (isDownload) {
+                            setText(tvDownload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                        } else {
+                            setText(tvUpload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                        }
                     }
                 }
-                lastUiBytes = b;
-                lastUiT = now;
             }
             try { Thread.sleep(150); } catch (Exception e) { break; }
         }

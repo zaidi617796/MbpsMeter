@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings: har section ka header (professional tartib ke liye ek hi style) -->
+    <style name="SettingsSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:textColor">@color/text_muted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
+    </style>
+
+    <!-- Settings: zubaan ke buttons — sab ek jaisay neutral chips -->
+    <style name="SettingsLangButton">
+        <item name="android:background">@drawable/bg_lang_btn</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+</resources>

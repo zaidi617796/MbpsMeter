@@ -96,13 +96,13 @@ public class SettingsFragment extends Fragment {
                         .commit());
 
         // ---------- Last error viewer (diagnostic) ----------
+        // Button ab layout me apni mukammal jagah par hai (btnLastError, default gone) —
+        // pehle ye code se kahin bhi chipka diya jata tha, layout bigarta tha.
         try {
             String lastCrash = prefs.getString("last_crash", "");
-            if (!lastCrash.isEmpty()) {
-                android.widget.Button btnErr = new android.widget.Button(requireContext());
-                btnErr.setText("⚠️ Last Error Dekho");
-                btnErr.setAllCaps(false);
-                ((android.view.ViewGroup) v.findViewById(R.id.btnGuide).getParent()).addView(btnErr);
+            android.widget.Button btnErr = v.findViewById(R.id.btnLastError);
+            if (!lastCrash.isEmpty() && btnErr != null) {
+                btnErr.setVisibility(View.VISIBLE);
                 final String crashText = lastCrash;
                 btnErr.setOnClickListener(x -> {
                     android.widget.TextView tv = new android.widget.TextView(requireContext());
