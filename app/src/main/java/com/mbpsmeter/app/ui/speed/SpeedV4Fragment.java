@@ -412,13 +412,18 @@ public class SpeedV4Fragment extends Fragment {
                 double tSec = (el - RAMP_MS) / 1000.0;
                 if (tSec >= 1.0) {
                     double avg = (counter.get() - rampBytes) * 8.0 / tSec / 1e6;
-                    if (shown < 0) {
+                    // Data abhi chala hi nahi (connections garam ho rahi hain) to
+                    // "0.0" mat dikhao — "--" hi rehne do. Zahid ki screenshot
+                    // (v1.0.4 test): upload ke shuru me main number 0.0 tha.
+                    if (shown < 0 && avg < 0.1) {
+                        // abhi koi number nahi — agle chakkar ka intezar
+                    } else if (shown < 0) {
                         shown = avg;
                     } else {
                         double target = 0.6 * shown + 0.4 * avg;
                         shown = Math.max(shown * 0.75, Math.min(shown * 1.25, target));
                     }
-                    if (lastPushMs < 0 || el - lastPushMs >= 300) {
+                    if (shown >= 0 && (lastPushMs < 0 || el - lastPushMs >= 300)) {
                         lastPushMs = el;
                         final String main = String.format(Locale.US, "%.1f", shown);
                         setText(tvMainSpeed, main);
