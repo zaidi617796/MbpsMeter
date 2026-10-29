@@ -390,14 +390,16 @@ public class SpeedV4Fragment extends Fragment {
         setText(tvMainSpeed, "--");
         long t0 = System.nanoTime();
         long rampBytes = -1;
-        // Live number = ramp ke baad se ab tak ka CUMULATIVE average (wohi hisaab
-        // jo aakhir me result banta hai). Wajah: mobile data tower se ruk-ruk kar
-        // (bursts me) aata hai — chhoti window wali reading kabhi 0, kabhi 30
-        // dikhati thi (Zahid ki shikayat: "0 sy 30 tak gai or wapis aai").
-        // Cumulative average ke saath number data chalte hue 0 par gir hi nahi
-        // sakta, aur waqt ke saath apni asal jagah par thehrta jata hai.
-        // Display par halki pabandi: ek update me number ±25% se zyada na hile —
-        // shuru ki burst wali unchai bhi neeche sakoon se glide karke aayegi.
+        // Live number = ramp ke baad se ab tak ka CUMULATIVE average — bilkul
+        // wohi hisaab jo neeche final result ke liye istemal hota hai, BINA kisi
+        // smoothing ya pabandi ke. Wajah (Zahid ki shikayat v1.0.5 par bhi):
+        // smoothing/clamp display ko peeche chor deti thi, is liye test ke
+        // aakhir me number jump karke final result se badal jata tha
+        // ("last my kuch or aata hy"). Ab jo number test ke doran dikhega,
+        // wohi result card par aayega — beech me koi jump nahi.
+        // Shuru ke ~1.5s ka average bohat kam data se banta hai aur tez hilta
+        // hai, is liye display 1.5s ke baad shuru hota hai; data chalne se
+        // pehle "--" rehta hai (0.0 kabhi nahi).
         double shown = -1;
         long lastPushMs = -1;
         while (true) {
@@ -410,27 +412,19 @@ public class SpeedV4Fragment extends Fragment {
             }
             if (rampBytes >= 0) {
                 double tSec = (el - RAMP_MS) / 1000.0;
-                if (tSec >= 1.0) {
+                if (tSec >= 1.5) {
                     double avg = (counter.get() - rampBytes) * 8.0 / tSec / 1e6;
-                    // Data abhi chala hi nahi (connections garam ho rahi hain) to
-                    // "0.0" mat dikhao — "--" hi rehne do. Zahid ki screenshot
-                    // (v1.0.4 test): upload ke shuru me main number 0.0 tha.
-                    if (shown < 0 && avg < 0.1) {
-                        // abhi koi number nahi — agle chakkar ka intezar
-                    } else if (shown < 0) {
+                    if (avg >= 0.1) {
                         shown = avg;
-                    } else {
-                        double target = 0.6 * shown + 0.4 * avg;
-                        shown = Math.max(shown * 0.75, Math.min(shown * 1.25, target));
-                    }
-                    if (shown >= 0 && (lastPushMs < 0 || el - lastPushMs >= 300)) {
-                        lastPushMs = el;
-                        final String main = String.format(Locale.US, "%.1f", shown);
-                        setText(tvMainSpeed, main);
-                        if (isDownload) {
-                            setText(tvDownload, String.format(Locale.US, "%.1f %s", shown, sMbps));
-                        } else {
-                            setText(tvUpload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                        if (lastPushMs < 0 || el - lastPushMs >= 300) {
+                            lastPushMs = el;
+                            final String main = String.format(Locale.US, "%.1f", shown);
+                            setText(tvMainSpeed, main);
+                            if (isDownload) {
+                                setText(tvDownload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                            } else {
+                                setText(tvUpload, String.format(Locale.US, "%.1f %s", shown, sMbps));
+                            }
                         }
                     }
                 }
