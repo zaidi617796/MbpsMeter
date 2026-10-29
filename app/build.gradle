@@ -9,10 +9,10 @@ android {
 
     defaultConfig {
         applicationId 'com.mbpsmeter.app'
-        minSdk 23
+        minSdk 24
         targetSdk 36
-        versionCode 20
-        versionName '1.0.6'
+        versionCode 21
+        versionName '1.0.7'
     }
 
     signingConfigs {
