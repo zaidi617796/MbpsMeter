@@ -124,7 +124,64 @@ public class SupabaseSync {
 
     // ---------- backup ----------
 
+    /** Ek waqt me ek hi sync (manual backup aur auto-sync apas me na takrayen). */
+    private static final java.util.concurrent.atomic.AtomicBoolean SYNCING =
+            new java.util.concurrent.atomic.AtomicBoolean(false);
+
     public static void backup(Context ctx, Cb cb) {
+        if (!SYNCING.compareAndSet(false, true)) {
+            cb.onResult(false, "Sync already running");
+            return;
+        }
+        backupInternal(ctx, (ok, msg) -> {
+            SYNCING.set(false);
+            cb.onResult(ok, msg);
+        });
+    }
+
+    /** Is waqt local STRONG readings (cloud filter: dbm >= STRONG_DBM) ki tadaad; -1 = parh nahi sakay. */
+    private static int strongCount(SharedPreferences p) {
+        try {
+            JSONArray src = new JSONArray(p.getString("signals", "[]"));
+            int n = 0;
+            for (int i = 0; i < src.length(); i++) {
+                if (src.getJSONObject(i).optInt("dbm", -120) >= STRONG_DBM) n++;
+            }
+            return n;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    /**
+     * AUTO SYNC (Zahid, 2026-10-31): strong readings KHUD Supabase par save hon —
+     * History se backup button dabane ki zaroorat nahi. Sirf tab chalta hai jab
+     * strong readings ki tadaad aakhri kamyab sync se badli ho. Fail ho to
+     * khamoshi — agle save par dobara koshish hogi. Yahi auto-upload Ilaqa Map
+     * ko doosre users ka (aggregated) data deta hai.
+     */
+    public static void autoSync(Context ctx) {
+        try {
+            final Context app = ctx.getApplicationContext();
+            SharedPreferences p = app.getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
+            if (!hasConfig(p)) return;
+            int n = strongCount(p);
+            if (n < 0 || n == p.getInt("auto_synced_strong", -1)) return;
+            if (!SYNCING.compareAndSet(false, true)) return;
+            backupInternal(app, (ok, msg) -> {
+                SYNCING.set(false);
+                if (ok) {
+                    try {
+                        SharedPreferences pp = app.getSharedPreferences(
+                                "MbpsMeter", Context.MODE_PRIVATE);
+                        pp.edit().putInt("auto_synced_strong", strongCount(pp)).apply();
+                    } catch (Exception ignored) {}
+                }
+            });
+        } catch (Exception ignored) {}
+    }
+
+    private static void backupInternal(Context ctx, Cb cb) {
         SharedPreferences p = ctx.getSharedPreferences("MbpsMeter", Context.MODE_PRIVATE);
         Handler h = new Handler(Looper.getMainLooper());
         new Thread(() -> {

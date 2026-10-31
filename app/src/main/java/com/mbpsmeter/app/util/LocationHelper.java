@@ -6,7 +6,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 
 import androidx.core.app.ActivityCompat;
 
@@ -48,6 +50,12 @@ public class LocationHelper {
                         try {
                             Location l = lm.getLastKnownLocation(pr);
                             if (l == null) continue;
+                            // 10 minute se purani last-known fix seed mat karo —
+                            // wahi purani jagah readings par stamp ho jati thi.
+                            if (l.getTime() > 0
+                                    && System.currentTimeMillis() - l.getTime() > 10 * 60 * 1000L) {
+                                continue;
+                            }
                             if (best == null) { best = l; continue; }
                             float accB = best.hasAccuracy() ? best.getAccuracy() : Float.MAX_VALUE;
                             float accL = l.hasAccuracy() ? l.getAccuracy() : Float.MAX_VALUE;
@@ -101,6 +109,24 @@ public class LocationHelper {
     /** Aakhri maloom location (null ho sakti hai). */
     public static synchronized Location getLast() {
         return lastLocation;
+    }
+
+    /**
+     * Fix TAZA hai? Age <= 60 sec AUR accuracy <= 100 m.
+     * Reading sirf fresh fix par save/stamp hogi (Zahid, 2026-10-31):
+     * ek phone par GPS fix na milne par app purani/default jagah dikha
+     * aur save kar rahi thi — user ke liye ye "app jhoot" tha.
+     */
+    public static boolean isFresh(Location loc) {
+        if (loc == null) return false;
+        long ageMs;
+        if (Build.VERSION.SDK_INT >= 17 && loc.getElapsedRealtimeNanos() > 0) {
+            ageMs = (SystemClock.elapsedRealtimeNanos() - loc.getElapsedRealtimeNanos()) / 1_000_000L;
+        } else {
+            ageMs = System.currentTimeMillis() - loc.getTime();
+        }
+        if (ageMs < 0 || ageMs > 60_000L) return false;
+        return loc.hasAccuracy() && loc.getAccuracy() <= 100f;
     }
 
     /** Nayi fix purani se behtar hai? Zyada accurate, ya khaas tor par zyada taza. */

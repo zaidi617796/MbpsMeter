@@ -17,6 +17,8 @@ import android.telephony.CellInfoNr;
 import android.telephony.CellInfoWcdma;
 import android.telephony.CellSignalStrength;
 import android.telephony.SignalStrength;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
 import androidx.core.app.ActivityCompat;
@@ -71,13 +73,50 @@ public class SignalReader {
         return r;
     }
 
-    /** Mobile cell signal - getAllCellInfo, fallback getSignalStrength */
+    /**
+     * TelephonyManager ko DEFAULT DATA subscription par bind karo.
+     * Dual-SIM phone par base manager aksar voice SIM ka naam/signal deta hai,
+     * jabke data doosri SIM par chal raha hota hai — wahi "galat operator"
+     * wala masla tha jo Zahid ne 2026-10-31 ko pakra (data Jazz, naam Zong).
+     */
+    private static TelephonyManager dataTm(Context ctx, TelephonyManager base) {
+        try {
+            SubscriptionManager sm = (SubscriptionManager)
+                    ctx.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+            if (sm == null) return base;
+            int subId = sm.getDefaultDataSubscriptionId();
+            if (subId == SubscriptionManager.INVALID_SUBSCRIPTION_ID) return base;
+            TelephonyManager t = base.createForSubscriptionId(subId);
+            return t != null ? t : base;
+        } catch (Exception e) {
+            return base;
+        }
+    }
+
+    /** Mobile cell signal - getAllCellInfo, fallback getSignalStrength (hamesha DATA SIM) */
     private static Result readMobile(Context ctx) {
         Result r = new Result();
         try {
-            TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
-            if (tm == null) return r;
+            TelephonyManager base = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
+            if (base == null) return r;
+            TelephonyManager tm = dataTm(ctx, base);
             try { r.operator = tm.getNetworkOperatorName(); } catch (Exception ignored) {}
+            if (r.operator == null || r.operator.isEmpty()) {
+                // Fallback: data subscription ke carrier naam se
+                try {
+                    SubscriptionManager sm = (SubscriptionManager)
+                            ctx.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+                    if (sm != null) {
+                        int subId = sm.getDefaultDataSubscriptionId();
+                        if (subId != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
+                            SubscriptionInfo si = sm.getActiveSubscriptionInfo(subId);
+                            if (si != null && si.getCarrierName() != null) {
+                                r.operator = si.getCarrierName().toString();
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
             if (r.operator == null) r.operator = "";
             r.networkType = netTypeName(tm);
 

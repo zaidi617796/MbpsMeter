@@ -35,6 +35,9 @@
     <string name="tip_live">ٹپ: واک ٹیسٹ آن کر کے گھر میں گھومیں - ہر 10 میٹر پر ریڈنگ خود محفوظ ہوگی۔ صرف وہی جگہیں موازنہ ہوں گی جہاں ریڈنگ لی۔</string>
     <string name="drop_alert">کمزور سگنل - یہاں کال گر سکتی ہے</string>
     <string name="weak_alert">⚠️ سگنل بہت کمزور ہے — بہتر جگہ پر جائیں</string>
+    <string name="gps_searching">GPS: تازہ فکس ڈھونڈ رہا ہے…</string>
+    <string name="gps_wait_toast">تازہ GPS فکس کا انتظار کریں — ریڈنگ محفوظ نہیں ہوئی، تاکہ غلط جگہ ریکارڈ نہ ہو۔</string>
+    <string name="modem_note">نوٹ: ہر فون کا موڈیم الگ ہوتا ہے، اس لیے دو فونز ساتھ رکھنے پر ریڈنگ میں ہلکا فرق آنا عام بات ہے۔</string>
     <string name="unknown_operator">نامعلوم آپریٹر</string>
     <string name="demo_mode">ڈیمو موڈ</string>
     <string name="no_signal_data">کوئی سگنل ڈیٹا نہیں - وائی فائی/موبائل یا اجازت چیک کریں</string>

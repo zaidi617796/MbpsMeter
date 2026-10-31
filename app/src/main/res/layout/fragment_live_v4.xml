@@ -186,5 +186,15 @@
             android:textSize="12sp"
             android:layout_marginTop="10dp"
             android:lineSpacingExtra="3dp" />
+
+        <!-- Aitmaad wali wazahat (v1.0.8): do phones ki reading ka farq aam baat hai -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/modem_note"
+            android:textColor="@color/text_muted"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="3dp" />
     </LinearLayout>
 </ScrollView>

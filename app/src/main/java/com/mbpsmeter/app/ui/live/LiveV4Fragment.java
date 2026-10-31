@@ -53,6 +53,10 @@ public class LiveV4Fragment extends Fragment {
     private int currentDbm = -85;
     private boolean noSignal = false;
     private double curLat = 24.8607, curLng = 67.0011;
+    // GPS freshness (v1.0.8): reading sirf TAZA fix par save hogi.
+    // curLat/curLng sirf display-center ke liye hain jab tak fix na mile.
+    private boolean locFresh = false;
+    private float locAcc = -1;
     private String curNet = "Unknown", curOp = "", curCell = "", curBand = "";
     private boolean isRunning = false;
 
@@ -176,9 +180,9 @@ public class LiveV4Fragment extends Fragment {
             }
         }
 
-        // Drop diary + alarm
+        // Drop diary + alarm (diary entry sirf fresh fix par — galat jagah stamp na ho)
         if (currentDbm <= -105) {
-            if (!inDrop) {
+            if (!inDrop && locFresh) {
                 inDrop = true;
                 dropStart = now;
                 dropMin = currentDbm;
@@ -253,7 +257,16 @@ public class LiveV4Fragment extends Fragment {
                 tvCellInfo.setText("");
             }
         }
-        if (tvGps != null) tvGps.setText(String.format(Locale.getDefault(), "GPS: %.5f, %.5f", curLat, curLng));
+        if (tvGps != null) {
+            if (locFresh) {
+                String s = String.format(Locale.getDefault(), "GPS: %.5f, %.5f", curLat, curLng);
+                if (locAcc > 0) s += String.format(Locale.getDefault(), " (±%.0f m)", locAcc);
+                tvGps.setText(s);
+            } else {
+                // Jhooti purani location dikhane se behtar saaf "searching"
+                tvGps.setText(getString(R.string.gps_searching));
+            }
+        }
         if (tvTime != null) tvTime.setText(new SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(new Date()));
     }
 
@@ -261,37 +274,29 @@ public class LiveV4Fragment extends Fragment {
 
     private void updateLocation() {
         try {
-            // Pehle active helper se (fresh GPS)
+            // Sirf TAZA fix ko sach mano. Purani/last-known fix par curLat/curLng
+            // update nahi honge aur locFresh=false rahega — display par
+            // "GPS: searching" aayega aur save gate reading rok dega.
             android.location.Location h = com.mbpsmeter.app.util.LocationHelper.getLast();
-            if (h != null) {
+            if (h != null && com.mbpsmeter.app.util.LocationHelper.isFresh(h)) {
                 curLat = h.getLatitude();
                 curLng = h.getLongitude();
-                return;
-            }
-            LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (last == null) last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                if (last != null) {
-                    curLat = last.getLatitude();
-                    curLng = last.getLongitude();
-                }
+                locFresh = true;
+                locAcc = h.hasAccuracy() ? h.getAccuracy() : -1;
+            } else {
+                locFresh = false;
+                locAcc = (h != null && h.hasAccuracy()) ? h.getAccuracy() : -1;
             }
         } catch (Exception ignored) {}
     }
 
+    /** Sirf fresh fix (Walk Test ke liye) — stale fix par null. */
     private Location currentLocation() {
         try {
             android.location.Location h = com.mbpsmeter.app.util.LocationHelper.getLast();
-            if (h != null) return h;
-            LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) return null;
-            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (l == null) l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            return l;
-        } catch (Exception ignored) { return null; }
+            if (h != null && com.mbpsmeter.app.util.LocationHelper.isFresh(h)) return h;
+        } catch (Exception ignored) {}
+        return null;
     }
 
     // ---------- save ----------
@@ -300,6 +305,15 @@ public class LiveV4Fragment extends Fragment {
         if (noSignal) {
             if (!silent && getContext() != null) {
                 Toast.makeText(getContext(), R.string.no_signal_data, Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+        // GPS gate (v1.0.8): taza fix ke baghair reading save NAHI hogi —
+        // warna purani/default jagah par pin lag kar user ka aitmaad toot'ta hai.
+        updateLocation();
+        if (!locFresh) {
+            if (!silent && !"WALK".equals(type) && getContext() != null) {
+                Toast.makeText(getContext(), R.string.gps_wait_toast, Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -329,6 +343,8 @@ public class LiveV4Fragment extends Fragment {
             }
             ed.apply();
             if (!silent) Toast.makeText(getContext(), currentDbm + " dBm " + getString(R.string.room_recorded), Toast.LENGTH_SHORT).show();
+            // Strong readings khud Supabase par (auto-sync, throttled)
+            try { com.mbpsmeter.app.util.SupabaseSync.autoSync(requireContext()); } catch (Exception ignored) {}
         } catch (Exception e) { e.printStackTrace(); }
     }
 

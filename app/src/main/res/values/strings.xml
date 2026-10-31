@@ -35,6 +35,9 @@
     <string name="tip_live">Tip: Turn ON Walk Test and walk around the house - a reading auto-saves every 10 meters. Only measured spots can be compared.</string>
     <string name="drop_alert">Weak zone - calls may drop here</string>
     <string name="weak_alert">⚠️ VERY WEAK SIGNAL — move to a stronger spot</string>
+    <string name="gps_searching">GPS: searching for a fresh fix…</string>
+    <string name="gps_wait_toast">Wait for a fresh GPS fix — reading not saved, so it never lands on the wrong spot.</string>
+    <string name="modem_note">Note: every phone\'s modem is different, so two phones side by side can show slightly different readings — that\'s normal.</string>
     <string name="unknown_operator">Unknown operator</string>
     <string name="demo_mode">Demo mode</string>
     <string name="no_signal_data">No signal data - check WiFi/mobile or permissions</string>

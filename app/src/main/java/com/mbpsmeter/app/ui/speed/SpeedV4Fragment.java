@@ -452,6 +452,8 @@ public class SpeedV4Fragment extends Fragment {
             arr.put(o);
             while (arr.length() > 100) arr.remove(0);
             prefs.edit().putString("speed_tests", arr.toString()).apply();
+            // Cloud copy bhi taza rakho (auto-sync, throttled)
+            try { com.mbpsmeter.app.util.SupabaseSync.autoSync(requireContext()); } catch (Exception ignored) {}
         } catch (Exception ignored) {}
     }
 }

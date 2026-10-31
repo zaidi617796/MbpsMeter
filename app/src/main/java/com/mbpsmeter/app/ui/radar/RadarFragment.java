@@ -298,23 +298,19 @@ public class RadarFragment extends Fragment {
 
     // ---------- location (Live tab wala hi tareeqa) ----------
 
+    private boolean locFresh = false;
+
     private void updateLocation() {
         try {
+            // Live wala hi usool (v1.0.8): sirf TAZA fix par bharosa —
+            // purani/last-known jagah readings par stamp nahi hogi.
             Location h = LocationHelper.getLast();
-            if (h != null) {
+            if (h != null && LocationHelper.isFresh(h)) {
                 curLat = h.getLatitude();
                 curLng = h.getLongitude();
-                return;
-            }
-            LocationManager lm = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-            if (lm != null && ActivityCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Location last = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (last == null) last = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                if (last != null) {
-                    curLat = last.getLatitude();
-                    curLng = last.getLongitude();
-                }
+                locFresh = true;
+            } else {
+                locFresh = false;
             }
         } catch (Exception ignored) {}
     }
@@ -325,6 +321,14 @@ public class RadarFragment extends Fragment {
         if (noSignal) {
             if (getContext() != null) {
                 Toast.makeText(getContext(), R.string.no_signal_data, Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+        // GPS gate (v1.0.8): taza fix ke baghair save nahi
+        updateLocation();
+        if (!locFresh) {
+            if (getContext() != null) {
+                Toast.makeText(getContext(), R.string.gps_wait_toast, Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -356,6 +360,8 @@ public class RadarFragment extends Fragment {
                 Toast.makeText(getContext(), curDbm + " dBm " + getString(R.string.room_recorded),
                         Toast.LENGTH_SHORT).show();
             }
+            // Strong readings khud Supabase par (auto-sync, throttled)
+            try { com.mbpsmeter.app.util.SupabaseSync.autoSync(requireContext()); } catch (Exception ignored) {}
         } catch (Exception e) { e.printStackTrace(); }
     }
 
